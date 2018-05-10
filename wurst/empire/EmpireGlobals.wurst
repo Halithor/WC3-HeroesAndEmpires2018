@@ -165,6 +165,8 @@ public constant kUID_StoneThrower = compiletime(UNIT_ID_GEN.next())
 
 // Structures
 public constant kUID_Struct_Hall1 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hall2 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hall3 = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Barracks1 = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_LumberMill = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Road = compiletime(UNIT_ID_GEN.next())
