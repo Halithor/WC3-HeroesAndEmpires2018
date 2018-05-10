@@ -1,0 +1,6 @@
+package HeroGlobals
+
+import ObjectIdGenerator
+public constant kUID_HeroFighter = compiletime(HERO_ID_GEN.next())
+public constant kUID_HeroRanger = compiletime(HERO_ID_GEN.next())
+public constant kUID_HeroWizard = compiletime(HERO_ID_GEN.next())

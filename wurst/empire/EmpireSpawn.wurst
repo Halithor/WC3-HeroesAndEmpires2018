@@ -1,0 +1,130 @@
+package EmpireSpawn
+
+import EmpireGlobals
+import UnitObjEditing
+import AbilityObjEditing
+import Assets
+import TerrainUtils
+import TimerUtils
+import ObjectIdGenerator
+import ObjectIds
+import Globals
+import PlayerInfo
+import EmpireUpdate
+
+constant kAID_Found = compiletime(ABIL_ID_GEN.next())
+
+trigger caravanTp = null
+timer caravanTpEnd = null
+
+int fogCount = 0
+fogmodifier array fogs
+
+function turnOffCaravanTp()
+    caravanTp.destr()
+    for i = 0 to fogCount
+        FogModifierStop(fogs[i])
+        DestroyFogModifier(fogs[i])
+    fogCount = 0
+    CreateForce()
+        ..enumPlayers(Filter(() -> GetFilterPlayer().getRole() == PlayerRole.Empire))
+        ..forEach(() -> begin
+            let fog = CreateFogModifierRect(GetEnumPlayer(), FOG_OF_WAR_MASKED, GetPlayableMapRect(), false, false)
+            FogModifierStart(fog)
+            fogs[fogCount] = fog
+            fogCount += 1                
+        end)
+    getTimer()
+        ..start(1.0, () -> begin
+            for i = 0 to fogCount
+                FogModifierStop(fogs[i])
+                DestroyFogModifier(fogs[i])
+            GetExpiredTimer()..release()
+        end)
+
+public function BeginEmpireGameForPlayer(player p)
+    // Create the tp trigger
+    if (caravanTp == null)
+        caravanTp = CreateTrigger()
+        caravanTp.addAction(() -> begin
+            let orderPos = vec2(GetOrderPointX(), GetOrderPointY())
+            if orderPos.distanceTo(vec2(GetOrderedUnit().getX(), GetOrderedUnit().getY())) > 1200 
+                    and isTerrainWalkable(GetOrderPointX(), GetOrderPointY())
+                flashEffect(Abilities.blinkCaster, GetSpellAbilityUnit().getPos())
+                flashEffect(Abilities.blinkTarget, orderPos)
+                GetOrderedUnit().setXY(orderPos)
+
+        end)
+        caravanTpEnd = getTimer()
+        caravanTpEnd.start(150, function turnOffCaravanTp)
+    // Move cam and make the caravan
+    SetCameraPositionForPlayer(p, 0, 0)
+    let u = CreateUnit(p, kUID_StartingCaravan, 0, 0, 0)
+    SelectUnitAddForPlayer(u, p)
+    caravanTp.registerUnitEvent(u, EVENT_UNIT_ISSUED_POINT_ORDER)
+    // Create a fog modifier
+    let fog = CreateFogModifierRect(p, FOG_OF_WAR_FOGGED, GetPlayableMapRect(), false, false)
+    FogModifierStart(fog)
+    fogs[fogCount] = fog
+    fogCount += 1
+    // Create Empire info
+    p.setEmpireInfo(new EmpireInfo(p))
+    // Disable all the ages except stone
+    for i = 1 to kAgeMax
+        SetPlayerTechMaxAllowed(p, kRID_Ages[i], 0)
+    // Limit constructions
+    SetPlayerTechMaxAllowed(p, kUID_Struct_ResearchCenter, 1)
+
+public function foundEmpire()
+    // print("Spellcast: " + int2fourchar(GetSpellAbilityId()))
+    // print("kAID_Found = " + int2fourchar(kAID_Found))
+    if GetSpellAbilityId() == kAID_Found
+        var p = GetTriggerUnit().getOwner()
+        var pos = GetTriggerUnit().getPos()
+        GetTriggerUnit().kill()
+        CreateNUnitsAtLoc(5, kUID_Worker, p, Location(pos.x, pos.y), 0)
+        for u in GetLastCreatedGroup()
+            u.removeAbility(kAID_RetireUnit) // no retiring the first builders
+        CreateNUnitsAtLoc(5, kUID_StoneThrower, p, Location(pos.x, pos.y), 0)
+        CreateNUnitsAtLoc(5, kUID_Clubman, p, Location(pos.x, pos.y), 0)
+        p.setGold(800)
+        p.setLumber(10000)
+
+init
+    // Founding trigger
+    CreateTrigger()
+        ..registerAnyUnitEvent(EVENT_PLAYER_UNIT_SPELL_ENDCAST)
+        ..addAction(function foundEmpire)
+
+
+@compiletime function genCaravan()
+    
+    new AbilityDefinitionWarStompcreep(kAID_Found)
+        ..setName("Found here")
+        ..setTooltipNormal(1, "Found Here [" + kStrGold + "Q|r]")
+        ..setTooltipNormalExtended(1, "Found your empire here. Using this ability will destory the caravan and create a small unit of builders and basic fighters.")
+        ..setHotkeyNormal("Q")
+        ..setManaCost(1, 0)
+        ..setAreaofEffect(1, 0)
+        ..setDamage(1, 0)
+        ..setDurationNormal(1, 0)
+        ..setDurationHero(1, 0)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(2)
+        ..setCooldown(1, 5)
+        ..setIconNormal(Icons.bTNHumanCaptureFlag)
+
+    new UnitDefinition(kUID_StartingCaravan, 'hfoo')
+        ..setSpeedBase(500)
+        ..setModelFile(Units.bloodElfWagon)
+        ..setArmorType(ArmorType.Divine)
+        ..setUnitSoundSet(Soundsets.peasant)
+        ..setSightRadiusDay(2400)
+        ..setSightRadiusNight(2400)
+        ..setHitPointsMaximumBase(1000)
+        ..setAttacksEnabled(0)
+        ..setName("Founding Caravan")
+        ..setNormalAbilities(int2fourchar(kAID_Found))
+        ..setUpgradesUsed("")
+
+

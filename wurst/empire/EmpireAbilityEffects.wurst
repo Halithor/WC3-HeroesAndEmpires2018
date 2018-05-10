@@ -1,0 +1,95 @@
+package EmpireAbilityEffects
+
+import EmpireGlobals
+import RegisterEvents
+import Abilities
+import PlayerInfo
+import EmpireUpdate
+import StandardTextTags
+
+bool isItemNearby
+
+function handleEmpireCast()
+    let spellId = GetSpellAbilityId()
+    let caster = GetSpellAbilityUnit()
+    switch spellId
+        case kAID_RetireUnit
+            flashEffect(Abilities.blinkCaster, caster.getPos())
+            caster.remove()
+        case kAID_DemolishBuilding
+            caster.damageTarget(caster, caster.getMaxHP() * 0.75)
+            flashEffect(Abilities.warStompCaster, caster.getPos())
+        case kAID_DestroyRoad
+            let p = vec2(GetSpellTargetX(), GetSpellTargetY())
+            let rec = Rect(
+                p.x - kRoadRadius,
+                p.y - kRoadRadius, 
+                p.x + kRoadRadius + kRoadRadius, 
+                p.y + kRoadRadius + kRoadRadius
+            )
+            EnumDestructablesInRectAll(rec, () -> begin
+                if GetEnumDestructable().getTypeId() == kDID_RoadPlatform
+                    GetEnumDestructable().remove()
+            end)
+            rec.remove()
+        case kAID_GrowTrees
+            let loc = GetSpellTargetLoc()
+            EnumDestructablesInCircleBJ(kTreeKillRadius, loc, () -> begin
+                if GetEnumDestructable().getTypeId() == 'LTlt'
+                    DestructableRestoreLife(GetEnumDestructable(), 10000000, true)
+            end)
+            RemoveLocation(loc)
+        case kAID_KillTrees
+            let loc = GetSpellTargetLoc()
+            EnumDestructablesInCircleBJ(kTreeKillRadius, loc, () -> begin
+                if GetEnumDestructable().getTypeId() == 'LTlt'
+                    GetEnumDestructable().kill()
+            end)
+            RemoveLocation(loc)
+        case kAID_TaxIncrease
+            caster.getOwner().getEmpireInfo().taxRate += 1
+        case kAID_TaxDecrease
+            caster.getOwner().getEmpireInfo().taxRate -= 1
+            if caster.getOwner().getEmpireInfo().taxRate < 0
+                caster.getOwner().getEmpireInfo().taxRate = 0
+        case kAID_RationIncrease
+            caster.getOwner().getEmpireInfo().foodRate += 1
+        case kAID_RationDecrease
+            caster.getOwner().getEmpireInfo().foodRate -= 1
+            if caster.getOwner().getEmpireInfo().foodRate < 0
+                caster.getOwner().getEmpireInfo().foodRate = 0
+        case kAID_GateLower
+            var idx = 0
+            while kUID_Struct_Gates[idx] != caster.getTypeId()
+                idx += 1
+            
+            var newUnit = ReplaceUnitBJ(caster, kUID_Struct_Gates_Lowered[idx], bj_UNIT_STATE_METHOD_RELATIVE)
+            newUnit.getOwner().select(newUnit)
+        case kAID_GateRaise
+            var grp = CreateGroup()
+                ..enumUnitsInRange(caster.getPos(), 150, Filter(() -> GetFilterUnit().isAlive() and GetFilterUnit().isType(UNIT_TYPE_GROUND) and not GetFilterUnit().isType(UNIT_TYPE_STRUCTURE)))
+            if not grp.isEmpty()
+                standardTextTag(caster.getPos() - vec2(200, 0), "Units are too close!")
+                    ..setColor(255, 30, 30, 255)
+                return
+            var rec = Rect(caster.getPos().x - 100, caster.getPos().y - 100, caster.getPos().x + 100, caster.getPos().y + 100)
+            isItemNearby = false
+            EnumItemsInRect(rec, null, (() -> begin
+                isItemNearby = true
+            end))
+            rec.remove()
+            if isItemNearby
+                standardTextTag(caster.getPos() - vec2(200, 0), "Items are too close!")
+                    ..setColor(255, 30, 30, 255)
+                return
+            // Now that it's clear, raise em all
+            var idx = 0
+            while kUID_Struct_Gates_Lowered[idx] != caster.getTypeId()
+                idx += 1
+            
+            var newUnit = ReplaceUnitBJ(caster, kUID_Struct_Gates[idx], bj_UNIT_STATE_METHOD_RELATIVE)
+            newUnit.getOwner().select(newUnit)
+    
+
+init
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SPELL_EFFECT, function handleEmpireCast)

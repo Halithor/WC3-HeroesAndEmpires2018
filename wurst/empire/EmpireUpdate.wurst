@@ -1,0 +1,406 @@
+package EmpireUpdate
+
+import EmpireGlobals
+import StandardTextTags
+import StringUtils
+import StructureFinished
+import Globals
+import TextUtilities
+import ObjectIds
+import initlater EmpireResearches
+
+player tempP
+
+function log( real py, real pbase ) returns real
+    real y = py
+    real curBase = pbase
+    real factor = 1.0
+    real logy = 0.0
+    real sign = 1.0
+    if y < 0.
+        return 0.0
+
+    if y < 1.
+        y = 1.0/y
+        sign = -1.0
+
+    //Chop out powers of the base
+    while y >= 1.0001
+        if y > curBase
+            y = y / curBase
+            logy = logy + factor
+        else
+            curBase = SquareRoot(curBase)	 //If you use just one base a lot, precompute its squareroots
+            factor = factor / 2.
+    return sign*logy
+
+function getPlayerHuts(player p) returns group
+    tempP = p
+    return CreateGroup()
+            ..enumUnitsInRect(GetPlayableMapRect(), 
+                Filter(() -> GetFilterUnit().isHouse() and GetFilterUnit().getOwner() == tempP and GetFilterUnit().isStructureFinished()))
+
+public class EmpireInfo
+    // Player who owns this empire.
+    player p
+
+    // Research stuff
+    int currentAge = -1
+    int currentResearchIndex = -1
+    int array[kResearchCount] researchLevels
+    real array[kResearchCount] researchProgresses
+    unit researchCenter = null
+    trigger researchStart = null
+
+    // Hired hero stuff
+    player hiredHero = null
+
+    // Population related variables
+    int population = 0
+    int popRelaxing = 100
+    int popIndustry = 0
+    int popCommerce = 0
+    int popScience = 0
+    int houses = 0
+    real lastGrowthRate = 0.0
+    real lastGrowthSum = 0.0
+    real lastGrowthBonusAvg = 0.0
+    int negativeGrowths = 0
+    bool autoHouseUpgrade = true
+
+    // Tax rate
+    int taxRate = 3
+    // Food related stuff
+    int food = 5000
+    int foodRate = 10
+    int farms = 0
+    // Incomes
+    int goldIncome = 0
+    int lumberIncome = 0
+    int foodIncome = 0
+    // Happiness ranges from -100 to 100
+    real happiness = 75.0
+    real happinessRatio = 1.0
+    real happyIncome = 0.0
+    real starvationReq = 0.0
+
+
+    construct(player p)
+        this.p = p
+        for i = 0 to kResearchCount - 1
+            researchProgresses[i] = 0
+
+    // Standard update function. Called every 6 seconds.
+    function update()
+        updateHappiness()
+        updatePopulation()
+        updateIncome()
+        updateResearch()
+        updateEvents()
+        updateElectricity()
+    
+    function updateHappiness()
+        // First calculate required happiness
+        real req = 0.0
+        req += (taxRate.toReal() * (taxRate.toReal() + 1.0)) / 2.0 // Tax requirements
+        req += population > 0 ? log(population.toReal(), kHappinessPopulationReqBase) : 0 // Pop reqs
+        req += starvationReq
+        // reduce the starvation requirements over time.
+        starvationReq *= 0.9
+        // TODO add in unit deaths happiness stuff
+        // Now calculate the happiness production
+        real prod = 0.0
+        // Food is only 100% effective up to 20, then it peters out
+        prod += min(foodRate, kHappinessFoodMaxFullEffect)
+        if (foodRate > kHappinessFoodMaxFullEffect)
+            real part = min(foodRate - kHappinessFoodMaxFullEffect, kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect).toReal()
+            prod += part - (part * part) * (0.5 / (kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect))
+        
+        
+        real ratio = req != 0 ? prod/req : 2.5 
+        if prod > req
+            happyIncome = (req != 0 ? prod/req : 3.0) - 1.0
+        else 
+            happyIncome = ((prod != 0 ? req/prod : 3) - 1.0) * -1
+        
+
+        // Having high happiness requires high ratios
+        // TODO FIX THIS WIERDNESS
+        if (happyIncome > 0 and happiness > 75.0 * ratio)
+            happyIncome = (happiness - (75 * ratio)) / 50
+        if (happyIncome < 0)
+            happyIncome *= 2
+            if (.50 < ratio and ratio < 1.0 and happiness < 50 * ((ratio - 0.5) / .5))
+                happyIncome = ((50 * ((ratio - 0.5) / .5)) - happiness) / 50
+            if ratio < 0.5 and happiness < ((ratio - 0.5) / 0.5) * 100 
+                happyIncome = ((((ratio - 0.5) / 0.5) * 100) - happiness) / 50
+        // Now add the happy income! My god this is crazy
+        happiness += happyIncome
+        happiness = min(max(happiness, -kHappinessMax), kHappinessMax)
+            
+
+
+    // Updates the number of people you have and upgrades houses
+    function updatePopulation()
+        let huts = getPlayerHuts(this.p)
+        population = 0
+        houses = 0
+        // Calculate the happiness growth
+        real growth = (happiness / kPopulationHappinessGrowthFactor)
+        if growth > 0
+            // Add the relaxing bonus
+            growth *= 1.0 + (popRelaxing.toReal() / kPopulationRelaxingGrowthMultiplier)
+            negativeGrowths = 0
+        if growth < 0
+            // Negative growth will escalate quickly.
+            growth *= (1.0 + kPopulationNegativeGrowthFactor * negativeGrowths)
+            negativeGrowths += 1
+        
+        lastGrowthRate = growth
+        lastGrowthSum = 0.0
+        lastGrowthBonusAvg = 0.0
+        for hut in huts
+            houses += 1
+            real hpop = hut.getMana()
+            real hpop_old = hpop
+            // Add in aura bonus. Yes this is ugly.
+            var multiplier = 100.0
+            if UnitHasBuffBJ(hut, kBID_PopMarket)
+                multiplier += kMarketAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopTavern)
+                multiplier += kTavernAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopChurch)
+                multiplier += kChurchAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopTheatre)
+                multiplier += kTheatreAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopShoppingMall)
+                multiplier += kShoppingMallAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopSwimmingPool)
+                multiplier += kSwimmingPoolAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopFireLight)
+                multiplier += kFireLightAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopLaternLight)
+                multiplier += kLaternLightAuraRate
+            var m = (multiplier / 100.0)
+            lastGrowthBonusAvg += (m - 1.0)
+            hpop = hpop + m * growth
+            
+            // Make sure that we don't get bigger than the max
+            if hpop > hut.getMaxMana()
+                hpop = hut.getMaxMana()
+                if hut.getHouseLevel() < kHouseMaxLevel and (currentAge >= kHouseTierAges[hut.getHouseLevel()]) and autoHouseUpgrade
+                    hut.issueImmediateOrderById(UnitId2OrderIdBJ(kUID_Struct_Huts[hut.getHouseLevel() + 1]))                    
+                
+            hut.setMana(hpop)
+            // count the pop etc
+            lastGrowthSum += hpop - hpop_old
+            population += hpop.round()
+        
+        lastGrowthBonusAvg = houses > 0 ? lastGrowthBonusAvg  / houses.toReal() : 0
+        huts.destr()
+        
+
+    // Calculates income and gives it to the empire.
+    function updateIncome()      
+        tempP = p
+        let fgrp = CreateGroup()
+            ..enumUnitsInRect(GetPlayableMapRect(),
+                Filter(() -> GetFilterUnit().getTypeId() == kUID_Struct_Farm and GetFilterUnit().getOwner() == tempP and GetFilterUnit().isStructureFinished()))   
+        farms = fgrp.size()
+        // Food income is the farms production minus pop consumption
+        foodIncome = farms * kFoodPerFarm - ((population * foodRate) div 100)
+
+        food += foodIncome
+
+        // Check to see if the food is dropping fast
+        if (food + foodIncome * 15) < 0
+            printWarningMessage(this.p, "Food stocks are dropping quickly!")
+
+        // Starve the peoples if we went negative
+        if food < 0
+            let starved = (food.abs() * foodRate)
+            food = 0
+            starvePeople(starved)
+        // Now calculate gold and lumber income
+        goldIncome = (((population * taxRate).toReal() / kIncomeGoldTaxPopDivisor) 
+            * (1. + popCommerce.toReal() * kIncomeGoldCommerceMultiplier)).round() 
+            + kIncomeGoldBasic
+        lumberIncome = ((((population).toReal() / kIncomeLumberPopDivisor) 
+            * (popIndustry.toReal() * kIncomeLumberIndustryMultiplier))).round() 
+            + kIncomeLumberBasic
+
+        // add to player state
+        p.addGold(goldIncome)
+        p.addLumber(lumberIncome)
+
+        // Now some floating text
+        let text = kStrGoldIncome + "+" + goldIncome.toString() + "|r|n"
+                + kStrLumberIncome +"+" + lumberIncome.toString() + "|r|n"
+                + kStrFoodIncome + (foodIncome > 0 ? "+" : "") + foodIncome.toString()
+        tempP = p
+        let halls = CreateGroup()
+            ..enumUnitsInRect(GetPlayableMapRect(), 
+                Filter(() -> GetFilterUnit().isType(UNIT_TYPE_TOWNHALL) and GetFilterUnit().getOwner() == tempP))
+        for hall in halls
+            standardTextTag(hall.getPos() + vec2(16., 0.), text)
+                ..setVisibility(GetLocalPlayer() == p)
+        
+
+    // Progresses the research you are currently conducting
+    function updateResearch()
+        if researchCenter != null and researchCenter.isAlive()
+            print("Found center")
+            if popScience > 0
+                // we have science workers!
+                if currentResearchIndex > -1
+                    let ri = getResearchInfoFromIndex(currentResearchIndex)
+                    int researchCapacity = ((population * popScience).toReal() / (100.0 * kResearchPopPerCapacity)).toInt()
+                    int totalCost = ri.getTotalCostGold()
+                    real percGold = researchCapacity.toReal() / totalCost.toReal()
+                    real newProgress = researchProgresses[currentResearchIndex] + percGold
+                    if newProgress > 1.0
+                        // only need part of this update, remove the overflow gold cost.
+                        researchCapacity -= ((newProgress - 1.0) * totalCost).toInt()
+                    if p.getGold() > researchCapacity
+                        p.addGold(-researchCapacity)
+                        researchProgresses[currentResearchIndex] = newProgress
+                        if researchProgresses[currentResearchIndex] > 1.0
+                            // finished!
+                            print("research finished!")
+                            currentResearchIndex = -1
+                            researchProgresses[currentResearchIndex] = 0
+                        
+                        standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-" + researchCapacity.toString())
+                            ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-" + researchCapacity.toString(), 10.434)
+                    else 
+                        // Not enough gold
+                        standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-0")
+                            ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-0", 10.434)
+                else 
+                    // pop in science but no active research.
+                    standardTextTag(researchCenter.getPos(), kStrBlue + "No active research!")
+                            ..center(researchCenter.getPos3Zero(),kStrBlue + "No active research!", 10.434)
+            else 
+                if currentResearchIndex > -1
+                    // research, but nobody in science
+                    standardTextTag(researchCenter.getPos(), kStrBlue + "No people in research!")
+                            ..center(researchCenter.getPos3Zero(),kStrBlue + "No people in research!", 10.434)
+
+    // Generate random empire specific events such as fires
+    private function updateEvents()
+        skip
+    
+    // Check the status of the power grid.
+    private function updateElectricity()
+        skip
+
+    function toString() returns string
+        return kStrGold + "===== Empire Report =====\n" +
+            kStrBlue + "Owner:|r " + p.getName() + "\n" +
+            kStrBlue + "Hero:|r " + hiredHero.getName() + "\n" +
+            kStrBlue + "Happiness:|r " + happiness.toString() + "(" + happyIncome.toString() + ")\n" +
+            kStrBlue + "Population:|r " + population.toString() + " [" + houses.toString() + " houses |" + lastGrowthRate.toString(2) + " growth rate | " + lastGrowthSum.toString(2) + " total | " + (lastGrowthBonusAvg * 100.0).toString(2) + "% aura bonus avg]\n" +
+            kStrBlue + "PopulationDist:|r " + popRelaxing.toString() + "/" + popCommerce.toString() + "/" + popIndustry.toString() + "/" + popScience.toString()  + "(rel/com/ind/sci)\n" +
+            kStrBlue + "Tax Rate:|r " + taxRate.toString() + "\n" +
+            kStrBlue + "Income:|r " + "|cffffdc00+" + goldIncome.toString() + "|r |cff00c850+" + lumberIncome.toString() + "|r" + "\n" +
+            kStrBlue + "Food:|r " + food.toString() + "\n" +
+            kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
+            kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
+            kStrBlue + "Research:|r " + currentResearchIndex.toString() + " @ " + (currentResearchIndex > -1 ? researchProgresses[currentResearchIndex].toString() : "NONE") + "%)\n" 
+    
+    private function starvePeople(int starved)
+        // what percent of the pop is left?
+        real left = (population - starved) / population
+        starvationReq += (1.0 - left) * kHappinessStarvationEffect
+        let huts = getPlayerHuts(this.p)
+        population = 0
+        for hut in huts
+            let newPop = (hut.getMana() * left).toInt()
+            population += newPop
+            hut.setMana(newPop.toReal())
+        printWarningMessage(p, "Your people are starving!")
+
+    function increasePopCommerce()
+        if popRelaxing > 0
+            popCommerce += 5
+            popRelaxing -= 5
+        fixTownHallItems()
+
+    function increasePopIndustry()
+        if popRelaxing > 0
+            popIndustry += 5
+            popRelaxing -= 5
+        fixTownHallItems()
+
+    function increasePopScience()
+        if popRelaxing > 0
+            popScience += 5
+            popRelaxing -= 5
+        fixTownHallItems()
+
+    function resetPopFocus()
+        popScience = 0
+        popIndustry = 0
+        popCommerce = 0
+        popRelaxing = 100
+        fixTownHallItems()
+
+    function fixTownHallItems()
+        tempP = p
+        let halls = CreateGroup()
+            ..enumUnitsInRect(GetPlayableMapRect(), 
+                Filter(() -> GetFilterUnit().isType(UNIT_TYPE_TOWNHALL) and GetFilterUnit().getOwner() == tempP))
+        for hall in halls
+            var i = hall.itemInSlot(0)
+            if i.getTypeId() != kIID_PopIndustry
+                i.remove()
+                hall.addItemToSlot(kIID_PopIndustry, 0)
+                i = hall.itemInSlot(0)
+            SetItemCharges(i, popIndustry)
+            
+            i = hall.itemInSlot(1)
+            if i.getTypeId() != kIID_PopRelaxing
+                i.remove()
+                hall.addItemToSlot(kIID_PopRelaxing, 1)
+                i = hall.itemInSlot(1)
+            SetItemCharges(i, popRelaxing)
+            
+            i = hall.itemInSlot(2)
+            if i.getTypeId() != kIID_PopCommerce
+                i.remove()
+                hall.addItemToSlot(kIID_PopCommerce, 2)
+                i = hall.itemInSlot(2)
+            SetItemCharges(i, popCommerce)
+            
+            i = hall.itemInSlot(3)
+            if i.getTypeId() != kIID_PopReset
+                i.remove()
+                hall.addItemToSlot(kIID_PopReset, 3)
+            
+            i = hall.itemInSlot(4)
+            if i.getTypeId() != kIID_PopScience
+                i.remove()
+                hall.addItemToSlot(kIID_PopScience, 4)
+                i = hall.itemInSlot(4)
+            SetItemCharges(i, popScience)
+
+    function setAge(int age)
+        if age > this.currentAge
+            this.currentAge = age
+
+    function setResearchCenter(unit u)
+        print("Center Built")
+        this.researchCenter = u
+    
+    function setActiveResearch(int rid)
+        print("started R " + int2fourchar(rid))
+        currentResearchIndex =  getResearchInfo(rid).index
+        if (researchProgresses[currentResearchIndex] < 0
+                or researchProgresses[currentResearchIndex] > 1.0)
+            // Make sure it's valid, or reset it.
+            researchProgresses[currentResearchIndex] = 0
+
+    function setActiveResearchOff()
+        print("research off")
+        currentResearchIndex = -1
+

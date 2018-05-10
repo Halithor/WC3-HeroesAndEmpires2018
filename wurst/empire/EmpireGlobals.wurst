@@ -1,0 +1,382 @@
+package EmpireGlobals
+
+import ObjectIdGenerator
+import ObjectIds
+
+constant RSCH_ID_GEN = new IdGenerator('RM00')
+
+// ===== real constants ====== DO NOT CHANGE
+public constant kRoadRadius = 32.0
+public constant kDID_RoadPlatform = 'B000' // ID for the platform road
+public constant kHouseMaxLevel = 7
+public constant kAgeMax = 13
+public constant kAgeNames = [
+    "Stone Age",
+    "Bronze Age", //1
+    "Iron Age", 
+    "Dark Age", //2
+    "Middle Age", 
+    "Renaissance Age", // 3
+    "Age of Discovery",
+    "Enlightenment Age", // 4
+    "Industrial Age", 
+    "Machine Age", //5
+    "World War Age",
+    "Atomic Age", // 6
+    "Digital Age",
+    "Space Age" // 7
+]
+public constant kResearchCount = 5
+// ======================================
+
+// ===== BALANCE VALUES =====
+
+// ## Happiness ##
+// Max happiness
+public constant kHappinessMax = 100.0
+// The factor used as a the log base for happiness calculations.
+public constant kHappinessPopulationReqBase = 4.0
+// The amount of food that can directly contribute to happiness
+public constant kHappinessFoodMaxFullEffect = 20
+// The amount of food that can possible contribute to happiness - effectiveness is reduced as increase
+public constant kHappinessFoodMaxEffective = 70
+// the multiplier on what percentage of people starved to happiness
+public constant kHappinessStarvationEffect = 100.0
+
+// ## Growth ##
+// Growth happiness divisor (how much happiness per base growth)
+public constant kPopulationHappinessGrowthFactor = 100.0
+// Growth relaxing divisor (divide relaxing pop by this for % bonus)
+public constant kPopulationRelaxingGrowthMultiplier = 200.0
+// negative growth previous factor
+public constant kPopulationNegativeGrowthFactor = 0.1
+
+// ## Food & Income ##
+// Food produced per farm
+public constant kFoodPerFarm = 100
+// Pop * taxRate divisor. 100 = 1% of population in income per cycle.
+public constant kIncomeGoldTaxPopDivisor = 200.0
+// Increase per pop in commerce
+public constant kIncomeGoldCommerceMultiplier = 0.03
+// Basic income
+public constant kIncomeGoldBasic = 3
+// Number of people to increase *base* income by 1
+public constant kIncomeLumberPopDivisor = 10
+// Increase per pop in industry: not that there is no lumber income without industry
+public constant kIncomeLumberIndustryMultiplier = 0.05
+// Basic income of lumber
+public constant kIncomeLumberBasic = 10
+
+// ## Research ##
+// The count of people that needs to be in science for 1 capacity
+public constant kResearchPopPerCapacity = 300
+
+// Population aura rates
+public constant kMarketAuraRate = 20
+public constant kMarketAuraRange = 500
+public constant kTavernAuraRate = 40
+public constant kTavernAuraRange = 500
+public constant kChurchAuraRate = 40
+public constant kChurchAuraRange = 750
+public constant kTheatreAuraRate = 40
+public constant kTheatreAuraRange = 1000
+public constant kShoppingMallAuraRate = 40
+public constant kShoppingMallAuraRange = 750
+public constant kSwimmingPoolAuraRate = 60
+public constant kSwimmingPoolAuraRange = 500
+public constant kFireLightAuraRate = 20
+public constant kFireLightAuraRange = 500
+public constant kLaternLightAuraRate = 40
+public constant kLaternLightAuraRange = 500
+
+// How big the AoE of kill/grow trees is
+public constant kTreeKillRadius = 32.0 * 6.0
+
+// When do houses advance? Broze, Dark, Ren, Enlight, Machine, Atom, and Space. current just every other.
+public constant kHouseTierAges = [1, 3, 5, 7, 9, 11, 13]
+
+// Wall and tower ages
+public constant kWallTierAges = [0, 2, 5, 8, 11, 13]
+// constant wallAgeRequirements = [
+//     kRID_Age00_Stone,
+//     kRID_Age02_Iron,
+//     kRID_Age05_Renaissance,
+//     kRID_Age08_Industrial,
+//     kRID_Age11_Atomic,
+//     kRID_Age13_Space
+// ]
+
+// ## Building costs ##
+// power base of the houses gold cost
+public constant kHouseCostGoldPowBase = 1.8
+public constant kHouseCostLumberPowBase = 2
+
+// ===== Unit & Building Balance Values ====
+// these are based on tech level.
+public constant kBuildingHpPower = 1.25
+public constant kBuildingDefenseCostPowerGold = 1.7
+public constant kBuildingDefenseCostPowerLumber = 1.7
+public constant kWallCostBaseGold = 10
+public constant kWallCostBaseLumber = 50
+public constant kWallHpBase = 200
+public constant kWallHpPower = 1.30
+
+
+// Tower costs - THESE ARE BASED ON TECH LEVEL, NOT TOWER LEVEL
+public constant kTowerCostBaseGold = 20
+public constant kTowerCostBaseLumber = 150
+public constant kTowerCostConstantGold = -5
+public constant kTowerCostConstantLumber = -25
+public constant kTowerCostPowerGold = 1.7
+public constant kTowerCostPowerLumber = 1.7
+public constant kTowerHpBase = 100
+public constant kTowerHpPower = 1.25
+public constant kTowerArmorBase = 2
+public constant kTowerArmorPower = 1.25
+public constant kTowerDpsBase = 6.5
+public constant kTowerDpsPower = 1.4
+
+
+// ======= End of balance constants ========
+
+// Unit
+public constant kUID_StartingCaravan = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Worker = compiletime(UNIT_ID_GEN.next())
+
+// Combat units
+public constant kUID_Clubman = compiletime(UNIT_ID_GEN.next())
+public constant kUID_StoneThrower = compiletime(UNIT_ID_GEN.next())
+
+// Structures
+public constant kUID_Struct_Hall1 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Barracks1 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_LumberMill = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Road = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Foundation = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_ResearchCenter = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopMarket = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopTavern = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopChurch = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopTheatre = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopShoppingMall = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopSwimmingPool = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PopPool = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Farm = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Campfire = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Firepit = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Latern = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_StreetLight = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Wall0 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Wall1 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Wall2 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Wall3 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Wall4 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Wall5 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate0 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate1 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate2 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate3 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate4 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate5 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate6 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate0_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate1_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate2_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate3_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate4_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate5_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Gate6_Lowered = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower0 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower1_Guard = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower1_AntiHero = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower2_Guard = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower2_AntiHero = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower3_AntiHero = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower4_AntiHero = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower5_AntiHero = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower3_MachineGun = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower4_MachineGun = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower5_MachineGun = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower3_Artillery = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower4_Artillery = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower5_Artillery = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower3_AntiAir = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower4_AntiAir = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower5_AntiAir = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower4_Radar = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Tower5_Radar = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut0 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut1 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut2 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut3 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut4 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut5 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut6 = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hut7 = compiletime(UNIT_ID_GEN.next())
+public constant integer array kUID_Struct_Huts = [
+    kUID_Struct_Hut0,
+    kUID_Struct_Hut1,
+    kUID_Struct_Hut2,
+    kUID_Struct_Hut3,
+    kUID_Struct_Hut4,
+    kUID_Struct_Hut5,
+    kUID_Struct_Hut6,
+    kUID_Struct_Hut7
+]
+public constant integer array kUID_Struct_Walls = [
+    kUID_Struct_Wall0,
+    kUID_Struct_Wall1,
+    kUID_Struct_Wall2,
+    kUID_Struct_Wall3,
+    kUID_Struct_Wall4,
+    kUID_Struct_Wall5
+]
+public constant integer array kUID_Struct_Gates = [
+    kUID_Struct_Gate0,
+    kUID_Struct_Gate1,
+    kUID_Struct_Gate2,
+    kUID_Struct_Gate3,
+    kUID_Struct_Gate4,
+    kUID_Struct_Gate5
+]
+public constant integer array kUID_Struct_Gates_Lowered = [
+    kUID_Struct_Gate0_Lowered,
+    kUID_Struct_Gate1_Lowered,
+    kUID_Struct_Gate2_Lowered,
+    kUID_Struct_Gate3_Lowered,
+    kUID_Struct_Gate4_Lowered,
+    kUID_Struct_Gate5_Lowered
+]
+// Abilties
+public constant kAID_TownHallInventory = compiletime(ABIL_ID_GEN.next())
+public constant kAID_RetireUnit = compiletime(ABIL_ID_GEN.next())
+public constant kAID_DemolishBuilding = compiletime(ABIL_ID_GEN.next())
+public constant kAID_WorkerHarvest = 'AD00'
+public constant kAID_WorkerRepair = compiletime(ABIL_ID_GEN.next())
+public constant kAID_DestroyRoad = compiletime(ABIL_ID_GEN.next())
+public constant kAID_KillTrees = compiletime(ABIL_ID_GEN.next())
+public constant kAID_GrowTrees = compiletime(ABIL_ID_GEN.next())
+public constant kAID_TaxIncrease = compiletime(ABIL_ID_GEN.next())
+public constant kAID_TaxDecrease = compiletime(ABIL_ID_GEN.next())
+public constant kAID_RationIncrease = compiletime(ABIL_ID_GEN.next())
+public constant kAID_RationDecrease = compiletime(ABIL_ID_GEN.next())
+public constant kAID_UselessItemAbility = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopMarket = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopTavern = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopChurch = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopTheatre = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopShoppingMall = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopSwimmingPool = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopFireLight = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopLaternLight = compiletime(ABIL_ID_GEN.next())
+public constant kAID_GateLower = compiletime(ABIL_ID_GEN.next())
+public constant kAID_GateRaise = compiletime(ABIL_ID_GEN.next())
+// Buffs
+public constant kBID_PopMarket = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopTavern = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopChurch = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopTheatre = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopShoppingMall = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopSwimmingPool = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopFireLight = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopLaternLight = compiletime(BUFF_ID_GEN.next())
+
+// Researches
+public constant kRID_Age00_Stone            = 'R000' // w1
+public constant kRID_Age01_Bronze           = 'R001'
+public constant kRID_Age02_Iron             = 'R002' // w2
+public constant kRID_Age03_Dark             = 'R003' 
+public constant kRID_Age04_Middle           = 'R004'
+public constant kRID_Age05_Renaissance      = 'R005' // w3
+public constant kRID_Age06_Discovery        = 'R006' 
+public constant kRID_Age07_Enlightenment    = 'R007'
+public constant kRID_Age08_Industrial       = 'R008' // w4
+public constant kRID_Age09_Machine          = 'R009' 
+public constant kRID_Age10_WorldWar         = 'R00A'
+public constant kRID_Age11_Atomic           = 'R00B' // w5
+public constant kRID_Age12_Digital          = 'R00C'
+public constant kRID_Age13_Space            = 'R00D' //w6
+public constant kRID_Ages = [kRID_Age00_Stone, kRID_Age01_Bronze, kRID_Age02_Iron, kRID_Age03_Dark,
+    kRID_Age04_Middle, kRID_Age05_Renaissance, kRID_Age06_Discovery, kRID_Age07_Enlightenment, 
+    kRID_Age08_Industrial, kRID_Age09_Machine, kRID_Age10_WorldWar, kRID_Age11_Atomic, 
+    kRID_Age12_Digital,kRID_Age13_Space]
+// Civilian upgrades
+public constant kRID_Farming = 'R00I'
+public constant kRID_Housing = 'R00H'
+public constant kRID_CivilianBuildings = 'R00F'
+public constant kRID_LumberHarvesting = 'R00J'
+// Military Upgrades
+public constant kRID_DefenseStructures = 'R00G'
+
+// Items
+public constant kIID_PopRelaxing = compiletime(ITEM_ID_GEN.next())
+public constant kIID_PopCommerce = compiletime(ITEM_ID_GEN.next())
+public constant kIID_PopIndustry = compiletime(ITEM_ID_GEN.next())
+public constant kIID_PopScience = compiletime(ITEM_ID_GEN.next())
+public constant kIID_PopReset = compiletime(ITEM_ID_GEN.next())
+
+public function unit.isHouse() returns bool
+    for i = 0 to 6
+        if this.getTypeId() == kUID_Struct_Huts[i]
+            return true
+    return false
+
+public function unit.getHouseLevel() returns int
+    for i = 0 to 6
+        if this.getTypeId() == kUID_Struct_Huts[i]
+            return i
+    return -1
+
+public function getAgeIndex(int rid) returns int
+    for i = 0 to 13
+        if kRID_Ages[i] == rid
+            return i
+    return -1
+
+public function isResearchAge(int rid) returns bool
+    return getAgeIndex(rid) > -1
+
+public function GetWorkerStructuresBuilt() returns string
+    return int2fourchar(kUID_Struct_Hall1) 
+        + "," + int2fourchar(kUID_Struct_Road)
+        + "," + int2fourchar(kUID_Struct_Hut0)
+        + "," + int2fourchar(kUID_Struct_Foundation)
+        + "," + int2fourchar(kUID_Struct_Farm)
+        + "," + int2fourchar(kUID_Struct_Campfire)
+        + "," + int2fourchar(kUID_Struct_Wall0)
+        + "," + int2fourchar(kUID_Struct_Gate0)
+        + "," + int2fourchar(kUID_Struct_Tower0)
+        + "," + int2fourchar(kUID_Struct_Barracks1)
+        + "," + int2fourchar(kUID_Struct_LumberMill)
+
+public function GetTownHallAbilities() returns string
+    return "Argl"
+        + "," + int2fourchar(kAID_TownHallInventory)
+        + "," + int2fourchar(kAID_TaxIncrease)
+        + "," + int2fourchar(kAID_TaxDecrease)
+        + "," + int2fourchar(kAID_RationDecrease)
+        + "," + int2fourchar(kAID_RationIncrease)
+
+public function GetFoundationUpgrades() returns string
+    return  int2fourchar(kUID_Struct_PopMarket)
+        + "," + int2fourchar(kUID_Struct_PopTavern)
+        + "," + int2fourchar(kUID_Struct_PopChurch)
+        + "," + int2fourchar(kUID_Struct_PopTheatre)
+        + "," + int2fourchar(kUID_Struct_PopShoppingMall)
+        + "," + int2fourchar(kUID_Struct_PopSwimmingPool)
+        + "," + int2fourchar(kUID_Struct_ResearchCenter)
+
+public function GetTownHallResearches() returns string
+    var str = ""
+    for i = 0 to kAgeMax
+        str += int2fourchar(kRID_Ages[i])
+        if (i < kAgeMax)
+            str += ","
+    return str
+
+public function kUID_Struct_ResearchCenter() returns string
+    return int2fourchar(kRID_CivilianBuildings)
+        + "," + int2fourchar(kRID_Farming)
+        + "," + int2fourchar(kRID_Housing)
+        + "," + int2fourchar(kRID_LumberHarvesting)
+        + "," + int2fourchar(kRID_DefenseStructures)

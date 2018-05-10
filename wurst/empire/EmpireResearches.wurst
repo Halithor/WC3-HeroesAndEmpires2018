@@ -1,0 +1,78 @@
+package EmpireResearches
+
+import EmpireGlobals
+import UpgradeObjEditing
+import PlayerInfo
+import Globals
+import RegisterEvents
+import HashMap
+
+int researchCount = 0
+ResearchInfo array researches = []
+HashMap<int, ResearchInfo> infoLookup = new HashMap<int, ResearchInfo>
+
+public function getResearchInfo(int rid) returns ResearchInfo
+    return infoLookup.get(rid)
+
+public function getResearchInfoFromIndex(int idx) returns ResearchInfo
+    return researches[idx]
+
+class ResearchInfo
+    int rid
+    int maxLvl
+    int index
+
+    int costGoldBase = 0
+    int costLumberBase = 0
+
+    construct(int rid, int maxLvl, int costGoldBase, int costLumberBase)
+        this.rid = rid
+        this.maxLvl = maxLvl
+        this.costGoldBase = costGoldBase
+        this.costLumberBase = costLumberBase
+        this.index = researchCount
+        researches[this.index] = this
+        researchCount += 1
+        infoLookup.put(rid, this)
+    
+    function getMaxLevel() returns int
+        return maxLvl
+
+    function onTechFinished(player p, int newLvl)
+        skip
+    
+    function getTotalCostGold() returns int
+        return costGoldBase
+    
+    function getTotalCostLumber() returns int
+        return costLumberBase
+
+function handleResearchFinished()
+    let rid = GetResearched()
+    let p = GetResearchingUnit().getOwner()
+    // Needs to be an empire for this to care
+    if p.getRole() != PlayerRole.Empire
+        return
+
+    if isResearchAge(rid)
+        int idx = getAgeIndex(rid)
+        p.getEmpireInfo().setAge(idx)
+        if idx < kAgeMax
+            SetPlayerTechMaxAllowed(p, kRID_Ages[idx + 1], 1)
+    else
+        // This is some other research, so this might not be required.
+        skip
+        
+
+init
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_RESEARCH_FINISH, function handleResearchFinished)
+    genResearches()
+
+@compiletime function genResearches()
+    new ResearchInfo(kRID_Farming, 50, 100, 0)
+    new ResearchInfo(kRID_Housing, 50, 100, 0)
+    new ResearchInfo(kRID_CivilianBuildings, 50, 100, 0)
+    new ResearchInfo(kRID_LumberHarvesting, 50, 100, 0)
+    new ResearchInfo(kRID_DefenseStructures, 50, 100, 0)
+
+

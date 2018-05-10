@@ -1,0 +1,27 @@
+package EmpireMiscEvents
+
+import RegisterEvents
+import EmpireGlobals
+import PlayerInfo
+import Globals
+
+init 
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH, () -> begin
+        if GetConstructedStructure().getTypeId() == kUID_Struct_Hall1
+            GetConstructedStructure().getOwner().getEmpireInfo().fixTownHallItems()
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_FINISH, () -> begin
+        if GetTriggerUnit().getTypeId() == kUID_Struct_ResearchCenter
+            GetTriggerUnit().getOwner().getEmpireInfo().setResearchCenter(GetTriggerUnit())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_RESEARCH_START, () -> begin
+        let center = GetResearchingUnit()
+        if center.getOwner().getRole() == PlayerRole.Empire and center.getTypeId() == kUID_Struct_ResearchCenter
+            // It's a research, set the active research
+            center.getOwner().getEmpireInfo().setActiveResearch(GetResearched())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_RESEARCH_CANCEL, () -> begin
+        let center = GetResearchingUnit()
+        if center.getOwner().getRole() == PlayerRole.Empire and center.getTypeId() == kUID_Struct_ResearchCenter
+            
+    end)

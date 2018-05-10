@@ -1,0 +1,26 @@
+package HeroClass_Ranger
+
+import HeroGlobals
+import HeroInfo
+import Assets
+
+
+public class HeroInfoRanger extends HeroInfo
+
+    override function onLevelUp()
+        skip
+
+    
+
+
+
+@compiletime function genRanger()
+    var def = genBlankHero(kUID_HeroRanger)
+    def..setIconGameInterface(Icons.bTNSylvanusWindRunner)
+        ..setName("Ranger")
+        ..setProperNames("Ranger")
+        ..setProperNamesUsed(1)
+        ..setModelFile(Units.sylvanusWindrunner1)
+        ..setUnitSoundSet(Soundsets.archer)
+        ..setSelectionScale(1.0)
+        ..setPrimaryAttribute("AGI")

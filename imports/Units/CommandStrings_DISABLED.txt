@@ -1,0 +1,53 @@
+
+
+/////////////////////////////
+//Shared Commands (attack, etc.)
+/////////////////////////////
+
+//move
+[CmdMove]
+Hotkey=Q
+Tip=Move [|cffffcc00Q|r]
+Ubertip=Orders your units to move to the targeted area while ignoring all enemy units and attacks. Issuing a move order onto a target unit will cause your unit to follow the target using move orders.
+
+//attack
+//[CmdAttack]
+//Tip=Attack [|cffffcc00R|r]
+//Hotkey=R
+//Ubertip=Orders your units to move to the target area and attack any enemy units they see on the way. If you order them to attack a specific unit, your units will ignore other enemy units and will attack the targeted unit until it is destroyed.
+
+//attack ground
+[CmdAttackGround]
+Tip=Attack Ground [|cffffcc00F|r]
+Hotkey=F
+Ubertip=Orders your units to fire at the targeted area of ground until they are told to stop or are given another order.
+
+//hold position
+[CmdHoldPos]
+Tip=Hold Position [|cffffcc00E|r]
+Hotkey=E
+Ubertip=Orders your units to stand where they are and attack units that are within range. When on Hold Position your units will not chase down enemy units that run away, nor move to engage ranged attackers.
+
+//patrol
+[CmdPatrol]
+Tip=Patrol [|cffffcc00P|r]
+Hotkey=P
+Ubertip=Orders your units to continually move from their current position to the targeted area until given another command. Units on patrol will move to engage enemy units that come within range. Issuing a patrol order onto a target will cause your unit to imitate the targeted unit's behavior.
+
+//rally
+[CmdRally]
+Tip=Set Rally Point [|cffffcc00F|r]
+Hotkey=F
+Ubertip=Orders units that pop out of the building to immediately attack move to the targeted area. You can rally point gold mines or trees to auto-harvest. You can rally point a unit to have new units follow it when they finish building.
+
+//select skill
+[CmdSelectSkill]
+Tip=Hero Attributes [|cffffcc00F|r]
+Hotkey=F
+Ubertip=Brings up a selection of hero attributes that you can choose from when you level up.
+
+//stop
+[CmdStop]
+Tip=Stop [|cffffcc00W|r]
+Hotkey=W
+Ubertip=Orders your units to stop whatever order they were previously given. Units that have been told to stop will attack enemy units and move to engage nearby enemies.

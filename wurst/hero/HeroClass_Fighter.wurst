@@ -1,0 +1,26 @@
+package HeroClass_Fighter
+
+import HeroGlobals
+import HeroInfo
+import Assets
+
+
+public class HeroInfoFighter extends HeroInfo
+
+    override function onLevelUp()
+        skip
+
+    
+
+
+
+@compiletime function genFighter()
+    var def = genBlankHero(kUID_HeroFighter)
+    def..setIconGameInterface(Icons.bTNArthas)
+        ..setName("Fighter")
+        ..setProperNames("Fighter")
+        ..setProperNamesUsed(1)
+        ..setModelFile(Units.arthaswithSword)
+        ..setUnitSoundSet("Arthas")
+        ..setSelectionScale(1.1)
+        ..setPrimaryAttribute("STR")

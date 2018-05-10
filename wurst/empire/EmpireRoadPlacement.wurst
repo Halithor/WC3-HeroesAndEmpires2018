@@ -1,0 +1,153 @@
+package EmpireRoadPlacement
+
+import EmpireGlobals
+import RegisterEvents
+import TextUtilities
+import Orders
+import ObjectIds
+import TimerUtils
+import StructureFinished
+
+
+constant kRoadFudge = 3.0 // fudge factor for nearby roads
+constant kHallDistance = 186.6 // How far away is a hall from a valid road?
+
+// Temps for the functions
+unit tempCurrentBuilding
+real tempRadius
+group tempGroup
+boolexpr tempFilter
+bool tempHasRoad
+
+function group.enumLocustsInRange(vec2 pos, real range, boolexpr filter)
+    var grp = CreateGroup()
+
+    for i = 0 to 23
+        GroupEnumUnitsOfPlayer(grp, Player(i), filter)
+        for u from grp
+            if u.getPos().distanceToSq(pos) < range * range and u.getAbilityLevel('Aloc') > 0
+                this.addUnit(u)
+
+
+function unit.needsRoadAccess() returns bool
+    return this.getTypeId() == kUID_Struct_Road or this.getTypeId() == kUID_Struct_Hut0 or this.getTypeId() == kUID_Struct_Foundation
+// Checks to see if this is a valid place for a building to be placed that needs
+// a road.
+
+function checkNearbyDestForRoad()
+    let d = GetEnumDestructable()
+    if d.getTypeId() == kDID_RoadPlatform
+        let p1 = tempCurrentBuilding.getPos()
+        let p2 = d.getPos()
+        // print(" - road @ " + p2.toString() + " | dy: " + R2S(((p1.y - p2.y).abs() - (tempRadius + kRoadRadius)).abs()) + " | dx: " + R2S(((p1.x - p2.x).abs() - (tempRadius + kRoadRadius)).abs()))
+        if p1.x - tempRadius < p2.x and p2.x < p1.x + tempRadius and ((p1.y - p2.y).abs() - (tempRadius + kRoadRadius)).abs() < kRoadFudge
+            // print(" + Is up/down")
+            tempHasRoad = true
+        // if it's left right
+        if p1.y - tempRadius < p2.y and p2.y < p1.y + tempRadius and ( (p1.x - p2.x).abs() - (tempRadius + kRoadRadius) ).abs() < kRoadFudge
+            // print(" + isleftright")
+            tempHasRoad = true
+
+
+
+function unit.isRoadNearby() returns bool
+    tempRadius = kRoadRadius
+    tempHasRoad = false
+    if (this.getTypeId() == kUID_Struct_Hut0 or this.getTypeId() == kUID_Struct_Foundation)
+        tempRadius = 64
+    // set the global to this unit for the callbacks
+    tempCurrentBuilding = this
+    // First look for all the destructables.
+    let p = this.getPos()
+    let r = (tempRadius + kRoadRadius + kRoadFudge)
+    let rec = Rect(p.x - r,
+        p.y - r, 
+        p.x + r + kRoadRadius, 
+        p.y + r + kRoadRadius)
+    EnumDestructablesInRectAll(rec, function checkNearbyDestForRoad)
+    rec.remove()
+
+    // return early to avoid looking for actual road units
+    if tempHasRoad
+        return true
+
+    // ==== Look for road units===
+    // This is commented
+    // var grp = CreateGroup()
+    //     ..enumLocustsInRange(this.getPos(), (tempRadius + kRoadRadius) * 1.5, 
+    //         Filter(() -> GetFilterUnit().getTypeId() == kUID_Struct_Road and GetFilterUnit() != tempCurrentBuilding and GetFilterUnit().isStructureFinished()))
+    // let p1 = this.getPos()
+    // print("constructing: " + this.getName() + "@" + this.getPos().toString())
+    // for u in grp
+    //     let p2 = u.getPos()
+    //     print(" - road @ " + p2.toString() + " | dy: " + R2S(((p1.y - p2.y).abs() - (tempRadius + kRoadRadius)).abs()) + " | dx: " + R2S(((p1.x - p2.x).abs() - (tempRadius + kRoadRadius)).abs()))
+    //     // If road is up/down
+    //     if p1.x - tempRadius < p2.x and p2.x < p1.x + tempRadius and ((p1.y - p2.y).abs() - (tempRadius + kRoadRadius)).abs() < kRoadFudge
+    //         print(" + Is up/down")
+    //         tempHasRoad = true
+    //         break
+    //     // if it's left right
+    //     if p1.y - tempRadius < p2.y and p2.y < p1.y + tempRadius and ( (p1.x - p2.x).abs() - (tempRadius + kRoadRadius) ).abs() < kRoadFudge
+    //         print(" + isleftright")
+    //         tempHasRoad = true
+    //         break
+    // print("Found no valid roads nearby")
+    // grp.destr()
+
+    // return early to avoid looking in a big radius for the hall
+    if tempHasRoad
+        return true
+    // Only actual roads can use the hall for placement
+    if this.getTypeId() == kUID_Struct_Road
+        // TODO Add in other halls
+        let grp = CreateGroup()
+            ..enumUnitsInRange(this.getPos(), kHallDistance + kRoadFudge, 
+            Filter(() -> GetFilterUnit().getTypeId() == kUID_Struct_Hall1 and GetFilterUnit().isStructureFinished() ))
+        tempHasRoad = grp.size() > 0
+        grp.destr()
+        return tempHasRoad
+    return false
+
+class IssueCancelOrder
+    unit u
+    timer t
+
+    construct(unit u)
+        this.u = u
+    function start()
+        t = getTimer()
+        t.setData(this castTo int)
+        t.start(0.001, () -> begin
+            var that = GetExpiredTimer().getData() castTo IssueCancelOrder
+            that.u.issueImmediateOrderById(SpecialOrders.cancel)
+            that.t.release()
+            destroy that
+        end)
+
+function onRoadBuildStart()
+    // Dont do anything with structures that don't need roads.
+    let b = GetConstructingStructure()
+    // print("constructing: " + b.getName() + "@" + b.getPos().toString())
+    // print("id: " + int2fourchar(b.getTypeId()) + "/" + int2fourchar(kUID_Struct_Hut0))
+    if not b.needsRoadAccess()
+        //  print("construction doesn't need road")
+        return
+    if not b.isRoadNearby()
+        // print("no road nearby!")
+        new IssueCancelOrder(b).start()
+        FakeErrorMessage(b.getOwner(), "Placement Invalid. Needs to be next to a road.")
+    else
+        // print("road nearby all good")
+
+    
+
+function onRoadBuildFinish()
+    if GetConstructedStructure().getTypeId() == kUID_Struct_Road
+        var pos = GetConstructedStructure().getPos()
+        GetConstructedStructure().remove()
+        CreateDestructable(kDID_RoadPlatform, pos.x, pos.y, 0, 0.16, 0)
+    
+
+init 
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START, function onRoadBuildStart)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH, function onRoadBuildFinish)

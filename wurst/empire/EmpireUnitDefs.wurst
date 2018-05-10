@@ -1,0 +1,101 @@
+package EmpireUnitDefs
+
+import UnitObjEditing
+import AbilityObjEditing
+import Assets
+import EmpireGlobals
+import ObjectIdGenerator
+import Globals
+import ObjectIds
+import ChannelAbilityPreset
+
+
+function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides, 
+        real cd, int range, int hitpoints, int armor, ArmorType armorType, int costGold, 
+        int costLumber, int buildTime, int btnX, int btnY) returns UnitDefinition
+    let def = new UnitDefinition(newId, 'hfoo')
+        ..setHitPointsMaximumBase(hitpoints)
+        ..setHitPointsRegenerationRate(0.5)
+        ..setManaMaximum(0)
+        ..setSpeedBase(260)
+        ..setNormalAbilities(int2fourchar(kAID_RetireUnit))
+        ..setAttack1DamageBase(dmgBase)
+        ..setAttack1DamageNumberofDice(dmgDice)
+        ..setAttack1DamageSidesperDie(dmgDiceSides)
+        ..setAttack1Range(range)
+        ..setAttack1CooldownTime(cd)
+        ..setAttack1Range(50)
+        ..setFoodCost(1)
+        ..setGoldCost(costGold)
+        ..setLumberCost(costLumber)
+        ..setBuildTime(buildTime)
+        ..setButtonPositionX(btnX)
+        ..setButtonPositionY(btnY)
+        ..setArmorType(armorType)
+        ..setDefenseBase(armor)
+        ..setDefenseUpgradeBonus(max(1, (armor / 3).round() ))
+        ..setSelectionScale(0.5)
+        ..setScalingValue(0.5)
+        ..setCollisionSize(15.0)
+        ..setShadowImageCenterX(25)
+        ..setShadowImageCenterY(25)
+        ..setShadowImageHeight(65)
+        ..setShadowImageWidth(65)
+        ..setUpgradesUsed("")
+        ..setAttack1TargetsAllowed("ground,structure,debris,item,ward")
+    if range > 100
+        def.setAttack1AttackType(AttackType.Pierce)
+        def.setAttack1WeaponType(WeaponType.Missile)
+        def.setAttack1ProjectileSpeed(900)
+        def.setAttack1ProjectileArc(0.1)
+        def.setAttack1ProjectileArt(Abilities.arrowMissile1)
+        def.setAttack1TargetsAllowed("ground,structure,debris,item,ward,air")
+    return def
+
+
+
+
+@compiletime function genUnitDefs()
+    // Worker
+    new UnitDefinition(kUID_Worker, 'hpea')
+        ..setHitPointsMaximumBase(10)
+        ..setAttack1DamageBase(0)
+        ..setAttack1DamageNumberofDice(1)
+        ..setAttack1DamageSidesperDie(3)
+        ..setAttack1Range(40)
+        ..setStructuresBuilt(GetWorkerStructuresBuilt())
+        ..setUpgradesUsed("")
+        ..setBuildTime(10)
+        ..setGoldCost(10)
+        ..setLumberCost(200)
+        ..setFoodCost(1)
+        ..setNormalAbilities(
+            int2fourchar(kAID_WorkerHarvest) 
+            + "," + int2fourchar(kAID_WorkerRepair)
+            + "," + int2fourchar(kAID_RetireUnit)
+            + "," + int2fourchar(kAID_KillTrees)
+            + "," + int2fourchar(kAID_GrowTrees)
+            + "," + int2fourchar(kAID_DestroyRoad)
+        )
+        ..setSelectionScale(0.5)
+        ..setScalingValue(0.5)
+        ..setCollisionSize(7.0)
+        ..setSpeedBase(200)
+        ..setShadowImageCenterX(20)
+        ..setShadowImageCenterY(20)
+        ..setShadowImageHeight(50)
+        ..setShadowImageWidth(50)
+        ..setButtonPositionX(0)
+        ..setButtonPositionY(2)
+        ..setTooltipBasic("Train Worker [" + kStrGold + "Z|r]")
+        ..setTooltipExtended("Basic worker unit. Builds structures and harvests lumber.")
+        ..setHotkey("Z")
+    genCombatUnit(kUID_Clubman, 2, 1, 3, 2.0, 80, 30, 3, ArmorType.Large, 20, 100, 15, 0, 0)
+        ..setModelFile(Units.bandit1)
+        ..setIconGameInterface(Icons.bTNBandit)
+        ..setUnitSoundSet(Soundsets.bandit)
+    genCombatUnit(kUID_StoneThrower, 4, 1, 5, 2.5, 350, 15, 0, ArmorType.Small, 25, 150, 17, 0, 1)
+        ..setModelFile(Units.banditSpearThrower)
+        ..setIconGameInterface(Icons.bTNBanditSpearThrower)
+        ..setUnitSoundSet(Soundsets.bandit)
+        ..setSpeedBase(290)

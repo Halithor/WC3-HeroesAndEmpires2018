@@ -1,0 +1,12 @@
+package HeroSpawnRects
+
+constant spawnCount = 4
+constant spawns = [
+    gg_rct_HeroSpawnEast,
+    gg_rct_HeroSpawnMid,
+    gg_rct_HeroSpawnNorth,
+    gg_rct_HeroSpawnSouth
+]
+
+public function getRandomHeroSpawn() returns rect
+    return spawns[GetRandomInt(0, spawnCount - 1)]

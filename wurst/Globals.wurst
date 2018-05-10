@@ -1,0 +1,43 @@
+package Globals
+
+public constant kStrGold = "|cffffcc00"
+public constant kStrBlue = "|cff3B97D3"
+public constant kStrGreen = "|cff10AA10"
+public constant kStrHint = "|cff909090"
+public constant kStrWarning = "|cffdd0000"
+public constant kStrGoldIncome = "|cffffdc00"
+public constant kStrLumberIncome = "|cff00c850"
+public constant kStrFoodIncome = "|cffa0522d"
+public constant kStringStrColor = "|cffff6060"
+public constant kStringAgiColor = "|cff60ff60"
+public constant kStringIntColor = "|cff6060ff"
+
+
+constant kMaxPlayerNumber = 22
+constant kPlayerId_Evil = 23
+
+public int PlayersInGame = 0
+
+
+public enum PlayerRole
+    NONE    
+    Hero
+    Empire
+
+public enum HeroClass
+    NONE
+    Fighter
+    Ranger
+    Wizard
+
+public function HeroClass.getName() returns string
+    switch this
+        case NONE
+            return "NO CLASS"
+        case Fighter
+            return "Fighter"
+        case Ranger
+            return "Ranger"
+        case Wizard
+            return "Wizard"
+    return "NO CLASS"

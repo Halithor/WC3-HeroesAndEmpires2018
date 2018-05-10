@@ -1,0 +1,53 @@
+package HeroInfo
+
+import UnitObjEditing
+import Assets
+
+// This class is the global for a given player. The class the hero selects will 
+// implement individual methods in this class and add to it.
+public class HeroInfo
+    unit hero
+    int lives
+
+    // Called whenever the hero levels up
+    function onLevelUp()
+        skip
+
+    function onHeroDeath()
+        lives -= 1
+
+
+
+public function genBlankHero(int newId) returns HeroDefinition
+    var def =  new HeroDefinition(newId, 'Hpal')
+    def..setName("Default Hero Name")
+        ..setProperNamesUsed(1)
+        ..setProperNames("Proper name")
+        ..setSpeedBase(300)
+        ..setTurnRate(0.6)
+        ..setSelectionScale(1.0)
+        ..setCollisionSize(15.0)
+        ..setAttack1AttackType(AttackType.Hero)
+        ..setAttack1WeaponType(WeaponType.Missile)
+        ..setAttack1Range(90)
+        ..setAttack1ProjectileSpeed(900)
+        ..setAttack1CooldownTime(3.0)
+        ..setAttack1DamageBase(0)
+        ..setAttack1DamageNumberofDice(2)
+        ..setAttack1DamageSidesperDie(6)
+        ..setUpgradesUsed("")
+        ..setStrengthPerLevel(0)
+        ..setAgilityPerLevel(0)
+        ..setIntelligencePerLevel(0)
+        ..setStartingAgility(0)
+        ..setStartingIntelligence(0)
+        ..setStartingStrength(0)
+        ..setHitPointsMaximumBase(50)
+        ..setHitPointsRegenerationType("always")
+        ..setHitPointsRegenerationRate(0.1)
+        ..setManaMaximum(25)
+        ..setManaRegeneration(0.1)
+        ..setManaInitialAmount(25)
+        ..setHeroAbilities("")
+    return def
+

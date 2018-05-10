@@ -1,0 +1,71 @@
+package PlayerInfo
+
+import Globals
+import EmpireUpdate
+import HeroInfo
+
+PlayerInfo array playerInfos
+
+public function player.getRole() returns PlayerRole
+    if (playerInfos[this.getId()] != null)
+        return playerInfos[this.getId()].role
+    return PlayerRole.NONE
+
+public function player.setRole(PlayerRole role)
+    if (playerInfos[this.getId()] == null)
+        playerInfos[this.getId()] = new PlayerInfo()
+    playerInfos[this.getId()].role = role
+
+public function player.getHeroClass() returns HeroClass
+    if (playerInfos[this.getId()] != null)
+        return playerInfos[this.getId()].cls
+    return HeroClass.NONE
+
+public function player.setHeroClass(HeroClass cls)
+    if (playerInfos[this.getId()] != null)
+        playerInfos[this.getId()].cls = cls
+
+public function player.isActive() returns bool
+    if (playerInfos[this.getId()] != null)
+        return playerInfos[this.getId()].isActive
+    return false
+
+public function player.getHeroInfo() returns HeroInfo
+    if (playerInfos[this.getId()] != null)
+        return playerInfos[this.getId()].heroInfo
+    return null
+
+public function player.setHeroInfo(HeroInfo hi)
+    if (playerInfos[this.getId()] != null)
+        playerInfos[this.getId()].heroInfo = hi
+
+public function player.getEmpireInfo() returns EmpireInfo
+    if (playerInfos[this.getId()] != null)
+        return playerInfos[this.getId()].empireInfo
+    return null
+
+public function player.setEmpireInfo(EmpireInfo ei)
+    if (playerInfos[this.getId()] != null)
+        playerInfos[this.getId()].empireInfo = ei
+
+class PlayerInfo
+    bool isActive = false
+    PlayerRole role = PlayerRole.NONE
+    HeroClass cls = HeroClass.NONE
+
+    HeroInfo heroInfo = null
+    EmpireInfo empireInfo = null
+
+init
+    // Count the players in game
+    CreateForce()
+        ..enumPlayers(null)
+        ..forEach(() -> begin
+            playerInfos[GetEnumPlayer().getId()] = new PlayerInfo()
+            if GetEnumPlayer().isIngame()
+                PlayersInGame += 1
+                playerInfos[GetEnumPlayer().getId()].isActive = true
+            else 
+                playerInfos[GetEnumPlayer().getId()].isActive = false
+        end)
+        ..destr()

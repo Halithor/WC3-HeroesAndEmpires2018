@@ -1,0 +1,62 @@
+package EmpireStartGame
+
+import TimerUtils
+import Globals
+import PlayerInfo
+import RegisterEvents
+
+
+constant kEmpireUpdateCycleDuration = 6.0
+
+function updateHappiness()
+    CreateForce()
+        ..enumPlayers(Filter(()-> GetFilterPlayer().isActive() and GetFilterPlayer().getRole() == PlayerRole.Empire))
+        ..forEach(() -> GetEnumPlayer().getEmpireInfo().updateHappiness())
+
+function updatePopulation()
+    CreateForce()
+        ..enumPlayers(Filter(()-> GetFilterPlayer().isActive() and GetFilterPlayer().getRole() == PlayerRole.Empire))
+        ..forEach(() -> GetEnumPlayer().getEmpireInfo().updatePopulation())
+function updateIncome()
+    CreateForce()
+        ..enumPlayers(Filter(()-> GetFilterPlayer().isActive() and GetFilterPlayer().getRole() == PlayerRole.Empire))
+        ..forEach(() -> begin
+            GetEnumPlayer().getEmpireInfo().updateIncome()
+            printTimedToPlayer(GetEnumPlayer().getEmpireInfo().toString(), 4, GetEnumPlayer())
+        end)
+
+function updateResearch()
+    bj_FORCE_ALL_PLAYERS
+        .forEach(() -> begin
+            if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+                GetEnumPlayer().getEmpireInfo().updateResearch()
+        end)
+
+public function startEmpires()
+    getTimer()
+        ..startPeriodic(kEmpireUpdateCycleDuration, function updateHappiness)
+    getTimer()
+        ..start(1.0, () -> begin
+            getTimer()
+                ..startPeriodic(kEmpireUpdateCycleDuration, function updatePopulation)
+            GetExpiredTimer().release()
+        end)
+    getTimer()
+        ..start(2.0, () -> begin
+            getTimer()
+                ..startPeriodic(kEmpireUpdateCycleDuration, function updateIncome)
+            GetExpiredTimer().release()
+        end)
+    getTimer()
+        ..start(3.0, () -> begin
+            getTimer()
+                ..startPeriodic(kEmpireUpdateCycleDuration, function updateResearch)
+            GetExpiredTimer().release()
+        end)
+    for i = 0 to 23
+        CreateTrigger()..registerPlayerChatEvent(Player(i), "-stats", true)
+            ..addAction(() -> begin
+                if GetTriggerPlayer().getRole() == PlayerRole.Empire
+                    printTimedToPlayerClear(GetTriggerPlayer().getEmpireInfo().toString(), 15.0, GetTriggerPlayer())
+            end)
+    
