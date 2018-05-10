@@ -54,8 +54,9 @@ public constant kIncomeLumberBasic = 10
 // ## Research ##
 // The count of people that needs to be in science for 1 capacity
 public constant kResearchPopPerCapacity = 50
-// How what multipler on the previous cost will the new level cost?
+// What multipler on the previous cost will the new level cost?
 public constant kResearchCostMultiplier = 1.25
+//
 
 
 // Population aura rates

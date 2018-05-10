@@ -17,6 +17,8 @@ function handleItemUse()
                 p.getEmpireInfo().increasePopIndustry()
             case kIID_PopScience
                 p.getEmpireInfo().increasePopScience()
+            case kIID_PopRelaxing
+                p.getEmpireInfo().increasePopRelaxing()
             case kIID_PopReset
                 p.getEmpireInfo().resetPopFocus()
 

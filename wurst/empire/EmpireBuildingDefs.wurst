@@ -377,7 +377,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setBuildTime(60)
         ..setGoldCost(2500)
         ..setLumberCost(25000)
-        ..setDefenseBase(50)
+        ..setDefenseBase(100)
         ..setHitPointsMaximumBase(5000)
         ..setRepairGoldCost(250)
         ..setRepairLumberCost(2500)
@@ -405,12 +405,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setRequirements(int2fourchar(kRID_Age05_Renaissance))
     new BuildingDefinition(kUID_Struct_Hall3, 'htow')
         ..setBuildTime(60)
-        ..setGoldCost(2500)
-        ..setLumberCost(25000)
-        ..setDefenseBase(50)
-        ..setHitPointsMaximumBase(5000)
-        ..setRepairGoldCost(250)
-        ..setRepairLumberCost(2500)
+        ..setGoldCost(12500)
+        ..setLumberCost(65000)
+        ..setDefenseBase(200)
+        ..setHitPointsMaximumBase(30000)
+        ..setRepairGoldCost(1250)
+        ..setRepairLumberCost(6500)
         ..setRepairTime(60)
         ..setModelFile(Buildings.townHall)
         ..setRequiredAnimationNames("upgrade,first")
@@ -424,7 +424,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(.65)
         ..setSelectionScale(4.0)
         ..setGroundTexture("HMED")
-        ..setFoodProduced(150)
+        ..setFoodProduced(200)
         ..setShadowTextureBuilding(Textures.shadowTownhall)
         ..setButtonPositionX(1)
         ..setButtonPositionY(1)
@@ -565,7 +565,20 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.4)
         ..setIconGameInterface(Icons.bTNFarm)
         ..setTooltipExtended("Farms provide food for your citizens. Each income a farm produces 100 food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
-        ..setCasterUpgradeArt(Icons.bT)
+        ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
+        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings) + "," + int2fourchar(kRID_Farming))
+    // Caster names and tips
+    var names = ""
+    var tips = ""
+    for i = 0 to 50
+        names += "" + I2S(100 + i * 20) + " / cycle"
+        tips += "Food Production Per Cycle\n+" + I2S(i * 20) + "% from upgrades"
+        if i != 50
+            names += ","
+            tips += ","
+    farmDef.setCasterUpgradeNames(names)
+    farmDef.setCasterUpgradeTips(tips)
+
     createTower(kUID_Struct_Tower0, 0, 
         "Watch Tower", 
         "C", false, 

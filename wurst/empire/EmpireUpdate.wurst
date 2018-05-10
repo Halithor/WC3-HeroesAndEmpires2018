@@ -51,9 +51,10 @@ public class EmpireInfo
     real array[kResearchCount] researchProgresses
     unit researchCenter = null
     trigger researchStart = null
+    int researchEtaCycles = 0
 
-    // Hired hero stuff
-    player hiredHero = null
+    // Hero stuff
+    int heroSupport = 0
 
     // Population related variables
     int population = 0
@@ -257,9 +258,15 @@ public class EmpireInfo
                 if currentResearchIndex > -1
                     let ri = getResearchInfoFromIndex(currentResearchIndex)
                     int researchCapacity = ((population * popScience).toReal() / (100.0 * kResearchPopPerCapacity)).toInt()
-                    int totalCost = ri.getTotalCostGold()
+                    int totalCost = ri.getTotalCostGold(researchLevels[currentResearchIndex] + 1)
                     real percGold = researchCapacity.toReal() / totalCost.toReal()
                     real newProgress = researchProgresses[currentResearchIndex] + percGold
+                    if percGold == 0.0
+                        researchEtaCycles = -1
+                    else 
+                        // calculate eta, the .999 is for ceiling calculation
+                        researchEtaCycles = (((1.0 - researchEtaCycles) / percGold) + .9999).toInt()
+                        
                     if newProgress > 1.0
                         // only need part of this update, remove the overflow gold cost.
                         researchCapacity -= ((newProgress - 1.0) * totalCost).toInt()
@@ -269,6 +276,7 @@ public class EmpireInfo
                         if researchProgresses[currentResearchIndex] > 1.0
                             // finished!
                             print("research finished!")
+                            researchEtaCycles = 0
                             researchProgresses[currentResearchIndex] = 0
                             researchLevels[currentResearchIndex] += 1
                             AddPlayerTechResearched(p, ri.rid, 1)
@@ -278,15 +286,18 @@ public class EmpireInfo
                             ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-" + researchCapacity.toString(), 10.434)
                     else 
                         // Not enough gold
+                        researchEtaCycles = -1
                         standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-0")
                             ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-0", 10.434)
                 else 
                     // pop in science but no active research.
+                    researchEtaCycles = -1
                     standardTextTag(researchCenter.getPos(), kStrBlue + "No active research!")
                             ..center(researchCenter.getPos3Zero(),kStrBlue + "No active research!", 10.434)
             else 
                 if currentResearchIndex > -1
                     // research, but nobody in science
+                    researchEtaCycles = -1
                     standardTextTag(researchCenter.getPos(), kStrBlue + "No people in research!")
                             ..center(researchCenter.getPos3Zero(),kStrBlue + "No people in research!", 10.434)
 
@@ -301,7 +312,6 @@ public class EmpireInfo
     function toString() returns string
         return kStrGold + "===== Empire Report =====\n" +
             kStrBlue + "Owner:|r " + p.getName() + "\n" +
-            kStrBlue + "Hero:|r " + hiredHero.getName() + "\n" +
             kStrBlue + "Happiness:|r " + happiness.toString() + "(" + happyIncome.toString() + ")\n" +
             kStrBlue + "Population:|r " + population.toString() + " [" + houses.toString() + " houses |" + lastGrowthRate.toString(2) + " growth rate | " + lastGrowthSum.toString(2) + " total | " + (lastGrowthBonusAvg * 100.0).toString(2) + "% aura bonus avg]\n" +
             kStrBlue + "PopulationDist:|r " + popRelaxing.toString() + "/" + popCommerce.toString() + "/" + popIndustry.toString() + "/" + popScience.toString()  + "(rel/com/ind/sci)\n" +
@@ -310,7 +320,8 @@ public class EmpireInfo
             kStrBlue + "Food:|r " + food.toString() + "\n" +
             kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
             kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
-            kStrBlue + "Research:|r " + (currentResearchIndex > -1 ? getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" : "No Tech Selected") + "\n" 
+            kStrBlue + "Research:|r " + (currentResearchIndex > -1 ? getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" : "No Tech Selected") 
+                + " [ETA: " +   researchEtaCycles.toString() + " cycles]\n" 
     
     private function starvePeople(int starved)
         // what percent of the pop is left?
@@ -328,18 +339,47 @@ public class EmpireInfo
         if popRelaxing > 0
             popCommerce += 5
             popRelaxing -= 5
+        else if popCommerce < 100
+            if popIndustry > popScience
+                popIndustry -= 5
+            else 
+                popScience -= 5
+            popCommerce += 5
         fixTownHallItems()
 
     function increasePopIndustry()
         if popRelaxing > 0
             popIndustry += 5
             popRelaxing -= 5
+        else if popIndustry < 100
+            if popCommerce > popScience
+                popCommerce -= 5
+            else 
+                popScience -= 5
+            popIndustry += 5
         fixTownHallItems()
 
     function increasePopScience()
         if popRelaxing > 0
             popScience += 5
             popRelaxing -= 5
+        else if popScience < 100
+            if popCommerce > popIndustry
+                popCommerce -= 5
+            else 
+                popIndustry -= 5
+            popScience += 5
+        fixTownHallItems()
+
+    function increasePopRelaxing()
+        if popRelaxing < 100
+            if popIndustry > popScience and popIndustry > popCommerce
+                popIndustry -= 5
+            else if popCommerce > popScience
+                popCommerce -= 5
+            else 
+                popScience -= 5
+            popRelaxing += 5
         fixTownHallItems()
 
     function resetPopFocus()

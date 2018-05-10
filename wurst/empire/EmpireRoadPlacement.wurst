@@ -99,10 +99,13 @@ function unit.isRoadNearby() returns bool
         return true
     // Only actual roads can use the hall for placement
     if this.getTypeId() == kUID_Struct_Road
-        // TODO Add in other halls
         let grp = CreateGroup()
             ..enumUnitsInRange(this.getPos(), kHallDistance + kRoadFudge, 
-            Filter(() -> GetFilterUnit().getTypeId() == kUID_Struct_Hall1 and GetFilterUnit().isStructureFinished() ))
+                Filter(() -> (GetFilterUnit().getTypeId() == kUID_Struct_Hall1 
+                    or GetFilterUnit().getTypeId() == kUID_Struct_Hall2 
+                    or GetFilterUnit().getTypeId() == kUID_Struct_Hall3) 
+                    and GetFilterUnit().isStructureFinished()
+            ))
         tempHasRoad = grp.size() > 0
         grp.destr()
         return tempHasRoad
