@@ -5,31 +5,15 @@ import ObjectIds
 
 constant RSCH_ID_GEN = new IdGenerator('RM00')
 
-// ===== real constants ====== DO NOT CHANGE
-public constant kRoadRadius = 32.0
-public constant kDID_RoadPlatform = 'B000' // ID for the platform road
-public constant kHouseMaxLevel = 7
-public constant kAgeMax = 13
-public constant kAgeNames = [
-    "Stone Age",
-    "Bronze Age", //1
-    "Iron Age", 
-    "Dark Age", //2
-    "Middle Age", 
-    "Renaissance Age", // 3
-    "Age of Discovery",
-    "Enlightenment Age", // 4
-    "Industrial Age", 
-    "Machine Age", //5
-    "World War Age",
-    "Atomic Age", // 6
-    "Digital Age",
-    "Space Age" // 7
-]
-public constant kResearchCount = 5
-// ======================================
-
 // ===== BALANCE VALUES =====
+
+// Age costs
+public constant kAgeCostBaseGold = 25
+public constant kAgeCostBaseLumber = 125
+public constant kAgeCostConstantGold = 50
+public constant kAgeCostConstantLumber = 250
+public constant kAgeCostMultiplierGold = 1.8
+public constant kAgeCostMultiplierLumber = 1.8
 
 // ## Happiness ##
 // Max happiness
@@ -69,9 +53,13 @@ public constant kIncomeLumberBasic = 10
 
 // ## Research ##
 // The count of people that needs to be in science for 1 capacity
-public constant kResearchPopPerCapacity = 300
+public constant kResearchPopPerCapacity = 50
+// How what multipler on the previous cost will the new level cost?
+public constant kResearchCostMultiplier = 1.25
+
 
 // Population aura rates
+// Rate = % increase in growth | Range = aura range
 public constant kMarketAuraRate = 20
 public constant kMarketAuraRange = 500
 public constant kTavernAuraRate = 40
@@ -95,16 +83,9 @@ public constant kTreeKillRadius = 32.0 * 6.0
 // When do houses advance? Broze, Dark, Ren, Enlight, Machine, Atom, and Space. current just every other.
 public constant kHouseTierAges = [1, 3, 5, 7, 9, 11, 13]
 
-// Wall and tower ages
+// Wall and tower ages - ALSO USED FOR TOWERS
 public constant kWallTierAges = [0, 2, 5, 8, 11, 13]
-// constant wallAgeRequirements = [
-//     kRID_Age00_Stone,
-//     kRID_Age02_Iron,
-//     kRID_Age05_Renaissance,
-//     kRID_Age08_Industrial,
-//     kRID_Age11_Atomic,
-//     kRID_Age13_Space
-// ]
+
 
 // ## Building costs ##
 // power base of the houses gold cost
@@ -112,32 +93,67 @@ public constant kHouseCostGoldPowBase = 1.8
 public constant kHouseCostLumberPowBase = 2
 
 // ===== Unit & Building Balance Values ====
-// these are based on tech level.
+// ----- these are based on tech level. ----
+// Factor for how much HP a building should have from the initial, based on tech level.
 public constant kBuildingHpPower = 1.25
+// cost mulipliers for defense buildings
 public constant kBuildingDefenseCostPowerGold = 1.7
 public constant kBuildingDefenseCostPowerLumber = 1.7
+// Base costs for defene buildings
 public constant kWallCostBaseGold = 10
 public constant kWallCostBaseLumber = 50
+// Hp for walls
 public constant kWallHpBase = 200
 public constant kWallHpPower = 1.30
-
-
-// Tower costs - THESE ARE BASED ON TECH LEVEL, NOT TOWER LEVEL
+// Tower base costs
 public constant kTowerCostBaseGold = 20
 public constant kTowerCostBaseLumber = 150
+// Tower gold constant factor 
 public constant kTowerCostConstantGold = -5
 public constant kTowerCostConstantLumber = -25
-public constant kTowerCostPowerGold = 1.7
-public constant kTowerCostPowerLumber = 1.7
+// Tower base HP
 public constant kTowerHpBase = 100
 public constant kTowerHpPower = 1.25
+// Tower armor
 public constant kTowerArmorBase = 2
 public constant kTowerArmorPower = 1.25
+// Tower DPS calcs
 public constant kTowerDpsBase = 6.5
 public constant kTowerDpsPower = 1.4
 
 
 // ======= End of balance constants ========
+
+// ===== real constants ====== DO NOT CHANGE
+// needed for finding nearby roads.
+public constant kRoadRadius = 32.0
+// The doodad we replace roads with.
+public constant kDID_RoadPlatform = 'B000' // ID for the platform road
+// Number of house upgrade levels
+public constant kHouseLevelCount = 8
+// Age names and count
+public constant kAgeCount = 14
+public constant kAgeNames = [
+    "Stone Age",
+    "Bronze Age", //1
+    "Iron Age", 
+    "Dark Age", //2
+    "Middle Age", 
+    "Renaissance Age", // 3
+    "Age of Discovery",
+    "Enlightenment Age", // 4
+    "Industrial Age", 
+    "Machine Age", //5
+    "World War Age",
+    "Atomic Age", // 6
+    "Digital Age",
+    "Space Age" // 7
+]
+// Number of researches in the game.
+public constant kResearchCount = 5
+// ======================================
+
+// ======= Constant IDs for all buildings, units, etc ======= 
 
 // Unit
 public constant kUID_StartingCaravan = compiletime(UNIT_ID_GEN.next())
@@ -247,6 +263,7 @@ public constant integer array kUID_Struct_Gates_Lowered = [
     kUID_Struct_Gate4_Lowered,
     kUID_Struct_Gate5_Lowered
 ]
+
 // Abilties
 public constant kAID_TownHallInventory = compiletime(ABIL_ID_GEN.next())
 public constant kAID_RetireUnit = compiletime(ABIL_ID_GEN.next())
@@ -271,6 +288,7 @@ public constant kAID_PopFireLight = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopLaternLight = compiletime(ABIL_ID_GEN.next())
 public constant kAID_GateLower = compiletime(ABIL_ID_GEN.next())
 public constant kAID_GateRaise = compiletime(ABIL_ID_GEN.next())
+
 // Buffs
 public constant kBID_PopMarket = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopTavern = compiletime(BUFF_ID_GEN.next())
@@ -282,20 +300,34 @@ public constant kBID_PopFireLight = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopLaternLight = compiletime(BUFF_ID_GEN.next())
 
 // Researches
-public constant kRID_Age00_Stone            = 'R000' // w1
-public constant kRID_Age01_Bronze           = 'R001'
-public constant kRID_Age02_Iron             = 'R002' // w2
-public constant kRID_Age03_Dark             = 'R003' 
-public constant kRID_Age04_Middle           = 'R004'
-public constant kRID_Age05_Renaissance      = 'R005' // w3
-public constant kRID_Age06_Discovery        = 'R006' 
-public constant kRID_Age07_Enlightenment    = 'R007'
-public constant kRID_Age08_Industrial       = 'R008' // w4
-public constant kRID_Age09_Machine          = 'R009' 
-public constant kRID_Age10_WorldWar         = 'R00A'
-public constant kRID_Age11_Atomic           = 'R00B' // w5
-public constant kRID_Age12_Digital          = 'R00C'
-public constant kRID_Age13_Space            = 'R00D' //w6
+public constant kRID_Age00_Stone            = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age01_Bronze           = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age02_Iron             = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age03_Dark             = compiletime(RSCH_ID_GEN.next()) 
+public constant kRID_Age04_Middle           = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age05_Renaissance      = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age06_Discovery        = compiletime(RSCH_ID_GEN.next()) 
+public constant kRID_Age07_Enlightenment    = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age08_Industrial       = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age09_Machine          = compiletime(RSCH_ID_GEN.next()) 
+public constant kRID_Age10_WorldWar         = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age11_Atomic           = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age12_Digital          = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age13_Space            = compiletime(RSCH_ID_GEN.next())
+// public constant kRID_Age00_Stone            = 'R000' // w1
+// public constant kRID_Age01_Bronze           = 'R001'
+// public constant kRID_Age02_Iron             = 'R002' // w2
+// public constant kRID_Age03_Dark             = 'R003' 
+// public constant kRID_Age04_Middle           = 'R004'
+// public constant kRID_Age05_Renaissance      = 'R005' // w3
+// public constant kRID_Age06_Discovery        = 'R006' 
+// public constant kRID_Age07_Enlightenment    = 'R007'
+// public constant kRID_Age08_Industrial       = 'R008' // w4
+// public constant kRID_Age09_Machine          = 'R009' 
+// public constant kRID_Age10_WorldWar         = 'R00A'
+// public constant kRID_Age11_Atomic           = 'R00B' // w5
+// public constant kRID_Age12_Digital          = 'R00C'
+// public constant kRID_Age13_Space            = 'R00D' //w6
 public constant kRID_Ages = [kRID_Age00_Stone, kRID_Age01_Bronze, kRID_Age02_Iron, kRID_Age03_Dark,
     kRID_Age04_Middle, kRID_Age05_Renaissance, kRID_Age06_Discovery, kRID_Age07_Enlightenment, 
     kRID_Age08_Industrial, kRID_Age09_Machine, kRID_Age10_WorldWar, kRID_Age11_Atomic, 
@@ -368,15 +400,8 @@ public function GetFoundationUpgrades() returns string
 
 public function GetTownHallResearches() returns string
     var str = ""
-    for i = 0 to kAgeMax
+    for i = 0 to kAgeCount - 1
         str += int2fourchar(kRID_Ages[i])
-        if (i < kAgeMax)
+        if (i < kAgeCount - 1)
             str += ","
     return str
-
-public function kUID_Struct_ResearchCenter() returns string
-    return int2fourchar(kRID_CivilianBuildings)
-        + "," + int2fourchar(kRID_Farming)
-        + "," + int2fourchar(kRID_Housing)
-        + "," + int2fourchar(kRID_LumberHarvesting)
-        + "," + int2fourchar(kRID_DefenseStructures)

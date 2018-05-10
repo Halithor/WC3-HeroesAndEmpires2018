@@ -1,0 +1,123 @@
+package HotkeyUtil
+
+/** This retrives the x location of a hotkey, assuming a EN-US keyboard. Note:
+    does not consider the standard commands. */
+public function getHotkeyX(string hotkey) returns int
+    switch hotkey.toLowerCase()
+        case "q"
+            return 0
+        case "w"
+            return 1
+        case "e"
+            return 2
+        case "r"
+            return 3
+        case "a"
+            return 0
+        case "s"
+            return 1
+        case "d"
+            return 2
+        case "f"
+            return 3
+        case "z"
+            return 0
+        case "x"
+            return 1
+        case "c"
+            return 2
+        case "v"
+            return 3
+    return 0
+
+/** This retrives the Y location of a hotkey, assuming a EN-US keyboard. Note:
+    does not consider the standard commands. */
+public function getHotkeyY(string hotkey) returns int
+    switch hotkey.toLowerCase()
+        case "q"
+            return 0
+        case "w"
+            return 0
+        case "e"
+            return 0
+        case "r"
+            return 0
+        case "a"
+            return 1
+        case "s"
+            return 1
+        case "d"
+            return 1
+        case "f"
+            return 1
+        case "z"
+            return 2
+        case "x"
+            return 2
+        case "c"
+            return 2
+        case "v"
+            return 2
+    return 0
+
+/** This retrives the x location of a hotkey, assuming a EN-US keyboard. These 
+    are hotkeys you would use on a hero, so they are inverted QWER being the 
+    bottom row and DFG being the middle row (patrol occupies the leftmost).*/
+public function getHotkeyXCommands(string hotkey) returns int
+    switch hotkey.toLowerCase()
+        case "q"
+            return 0
+        case "w"
+            return 1
+        case "e"
+            return 2
+        case "r"
+            return 3
+        case "a"
+            return 0
+        case "s"
+            return 1
+        case "d"
+            return 2
+        case "f"
+            return 3
+        case "z"
+            return 0
+        case "x"
+            return 1
+        case "c"
+            return 2
+        case "v"
+            return 3
+    return 0
+
+/** This retrives the x location of a hotkey, assuming a EN-US keyboard. These 
+    are hotkeys you would use on a hero, so they are inverted QWER being the 
+    bottom row and DFG being the middle row (patrol occupies the leftmost).*/
+public function getHotkeyYCommands(string hotkey) returns int
+    switch hotkey.toLowerCase()
+        case "q"
+            return 0
+        case "w"
+            return 0
+        case "e"
+            return 0
+        case "r"
+            return 0
+        case "a"
+            return 1
+        case "s"
+            return 1
+        case "d"
+            return 1
+        case "f"
+            return 1
+        case "z"
+            return 2
+        case "x"
+            return 2
+        case "c"
+            return 2
+        case "v"
+            return 2
+    return 0

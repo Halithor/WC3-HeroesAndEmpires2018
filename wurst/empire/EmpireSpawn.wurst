@@ -70,7 +70,7 @@ public function BeginEmpireGameForPlayer(player p)
     // Create Empire info
     p.setEmpireInfo(new EmpireInfo(p))
     // Disable all the ages except stone
-    for i = 1 to kAgeMax
+    for i = 1 to kAgeCount - 1
         SetPlayerTechMaxAllowed(p, kRID_Ages[i], 0)
     // Limit constructions
     SetPlayerTechMaxAllowed(p, kUID_Struct_ResearchCenter, 1)

@@ -10,7 +10,7 @@ import Assets
 function genGrowthAura(int newId, int buffId, string name, string icon, int growth, int range) returns AbilityDefinition
     new BuffDefinition(buffId, 'BHab')
         ..setName(1, name + " Growth Bonus")
-        ..setTooltipNormal(1, name + "Growth Bonus")
+        ..setTooltipNormal(1, name + " Growth Bonus")
         ..setIcon(icon)
         ..setTooltipNormalExtended(1, "This unit is growing " + growth.toString() + "% faster due to the nearby " + name + ".")
     return new AbilityDefinitionAuraBrilliancecreep(newId)

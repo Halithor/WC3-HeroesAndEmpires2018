@@ -6,6 +6,8 @@ import ObjEditingNatives
 import Assets
 import ObjectIds
 import Globals
+import EmpireResearches
+import HotkeyUtil
 
 // Extensions to buildings.
 function BuildingDefinition.setCasterUpgradeTips(string data)
@@ -62,7 +64,7 @@ constant real array wallScales = [
     1.0,
     0.95,
     0.95,
-    0.75,
+    0.5,
     0.5,
     1.0
 ]
@@ -75,64 +77,6 @@ constant string array wallModels = [
     Buildings.powerGenerator1,
     Doodads.magicRunes2
 ]
-
-
-
-function getHotkeyX(string hotkey) returns int
-    switch hotkey.toLowerCase()
-        case "q"
-            return 0
-        case "w"
-            return 1
-        case "e"
-            return 2
-        case "r"
-            return 3
-        case "a"
-            return 0
-        case "s"
-            return 1
-        case "d"
-            return 2
-        case "f"
-            return 3
-        case "z"
-            return 0
-        case "x"
-            return 1
-        case "c"
-            return 2
-        case "v"
-            return 3
-    return 0
-
-function getHotkeyY(string hotkey) returns int
-    switch hotkey.toLowerCase()
-        case "q"
-            return 0
-        case "w"
-            return 0
-        case "e"
-            return 0
-        case "r"
-            return 0
-        case "a"
-            return 1
-        case "s"
-            return 1
-        case "d"
-            return 1
-        case "f"
-            return 1
-        case "z"
-            return 2
-        case "x"
-            return 2
-        case "c"
-            return 2
-        case "v"
-            return 2
-    return 0
 
 function Pow(int b, int e) returns int
     var result = 1
@@ -245,7 +189,7 @@ function createHut(int lvl) returns BuildingDefinition
     def.setCasterUpgradeTips(tips)
     
     // Set the upgrade to info
-    if lvl != kHouseMaxLevel
+    if lvl != kHouseLevelCount
         def.setUpgradesTo(int2fourchar(kUID_Struct_Huts[lvl + 1]))
     if lvl > 0
         def.setRequirements( int2fourchar(kRID_Ages[kHouseTierAges[lvl - 1]]))
@@ -266,7 +210,7 @@ function createWall(int lvl) returns BuildingDefinition
         ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
         ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
         ..setModelFile(wallModels[lvl])
-        ..setScalingValue(1.0)
+        ..setScalingValue(wallScales[lvl])
         ..setIconGameInterface(Icons.bTNStoneArchitecture)
         ..setPriority(1000)
         ..setUpgradesTo(lvl < 5 ? int2fourchar(kUID_Struct_Walls[lvl+1]) : "")
@@ -368,9 +312,9 @@ function createTower(int newId, int lvl, string name, string hotkey,
     real costLumber = kTowerCostBaseLumber.toReal()
     for i = 1 to kWallTierAges[lvl] // LAZY RECURRANCE RELATIONSHIP SOLVER
         costGold += kTowerCostConstantGold
-        costGold *= kTowerCostPowerGold
+        costGold *= kBuildingDefenseCostPowerGold
         costLumber += kTowerCostConstantLumber
-        costLumber *= kTowerCostPowerLumber
+        costLumber *= kBuildingDefenseCostPowerLumber
     // Add in the multipliers
     costGold *= costMulti
     costLumber *= costMulti
@@ -462,7 +406,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNArcaneSanctum)
         ..setTooltipExtended("Provides the ability to research upgrades. Requires population in science and available funds for research to progress.\n\n" + kStrHint + "Only 1 allowed")
-        ..setResearchesAvailable(kUID_Struct_ResearchCenter())
+        ..setNormalAbilities(getResearchCenterResearches())
     getCleanSmallBuilding(kUID_Struct_PopMarket, 
             "Market", 
             "Q", true, 
@@ -927,7 +871,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setTooltipExtended("Provides a return location for lumber.")
         ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + ",Argl")
         
-    for i = 0 to kHouseMaxLevel
+    for i = 0 to kHouseLevelCount - 1
         createHut(i)
     
     for i = 0 to 5

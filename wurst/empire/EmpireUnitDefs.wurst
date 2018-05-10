@@ -64,7 +64,7 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setAttack1DamageSidesperDie(3)
         ..setAttack1Range(40)
         ..setStructuresBuilt(GetWorkerStructuresBuilt())
-        ..setUpgradesUsed("")
+        ..setUpgradesUsed(int2fourchar(kRID_LumberHarvesting))
         ..setBuildTime(10)
         ..setGoldCost(10)
         ..setLumberCost(200)

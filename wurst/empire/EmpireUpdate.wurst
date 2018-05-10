@@ -7,7 +7,7 @@ import StructureFinished
 import Globals
 import TextUtilities
 import ObjectIds
-import initlater EmpireResearches
+import EmpireResearches
 
 player tempP
 
@@ -89,6 +89,7 @@ public class EmpireInfo
         this.p = p
         for i = 0 to kResearchCount - 1
             researchProgresses[i] = 0
+            researchLevels[i] = 0
 
     // Standard update function. Called every 6 seconds.
     function update()
@@ -188,7 +189,7 @@ public class EmpireInfo
             // Make sure that we don't get bigger than the max
             if hpop > hut.getMaxMana()
                 hpop = hut.getMaxMana()
-                if hut.getHouseLevel() < kHouseMaxLevel and (currentAge >= kHouseTierAges[hut.getHouseLevel()]) and autoHouseUpgrade
+                if hut.getHouseLevel() < kHouseLevelCount and (currentAge >= kHouseTierAges[hut.getHouseLevel()]) and autoHouseUpgrade
                     hut.issueImmediateOrderById(UnitId2OrderIdBJ(kUID_Struct_Huts[hut.getHouseLevel() + 1]))                    
                 
             hut.setMana(hpop)
@@ -208,7 +209,9 @@ public class EmpireInfo
                 Filter(() -> GetFilterUnit().getTypeId() == kUID_Struct_Farm and GetFilterUnit().getOwner() == tempP and GetFilterUnit().isStructureFinished()))   
         farms = fgrp.size()
         // Food income is the farms production minus pop consumption
-        foodIncome = farms * kFoodPerFarm - ((population * foodRate) div 100)
+        foodIncome = (farms * kFoodPerFarm * (1.0 + researchLevels[getResearchInfo(kRID_Farming).index].toReal() * 0.20)).round()
+        // Population consumption
+        foodIncome -= ((population * foodRate) div 100)
 
         food += foodIncome
 
@@ -249,7 +252,6 @@ public class EmpireInfo
     // Progresses the research you are currently conducting
     function updateResearch()
         if researchCenter != null and researchCenter.isAlive()
-            print("Found center")
             if popScience > 0
                 // we have science workers!
                 if currentResearchIndex > -1
@@ -267,9 +269,11 @@ public class EmpireInfo
                         if researchProgresses[currentResearchIndex] > 1.0
                             // finished!
                             print("research finished!")
-                            currentResearchIndex = -1
                             researchProgresses[currentResearchIndex] = 0
-                        
+                            researchLevels[currentResearchIndex] += 1
+                            AddPlayerTechResearched(p, ri.rid, 1)
+                            ri.onTechFinished(p, researchLevels[currentResearchIndex])
+                            currentResearchIndex = -1
                         standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-" + researchCapacity.toString())
                             ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-" + researchCapacity.toString(), 10.434)
                     else 
@@ -306,7 +310,7 @@ public class EmpireInfo
             kStrBlue + "Food:|r " + food.toString() + "\n" +
             kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
             kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
-            kStrBlue + "Research:|r " + currentResearchIndex.toString() + " @ " + (currentResearchIndex > -1 ? researchProgresses[currentResearchIndex].toString() : "NONE") + "%)\n" 
+            kStrBlue + "Research:|r " + (currentResearchIndex > -1 ? getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" : "No Tech Selected") + "\n" 
     
     private function starvePeople(int starved)
         // what percent of the pop is left?

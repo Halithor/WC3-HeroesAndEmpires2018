@@ -2,14 +2,43 @@ package EmpireResearches
 
 import EmpireGlobals
 import UpgradeObjEditing
-import PlayerInfo
+import ObjEditingNatives
+import ChannelAbilityPreset
+import initlater PlayerInfo
 import Globals
 import RegisterEvents
 import HashMap
+import ObjectIdGenerator
+import ObjectIds
+import Assets
+import HotkeyUtil
 
 int researchCount = 0
 ResearchInfo array researches = []
 HashMap<int, ResearchInfo> infoLookup = new HashMap<int, ResearchInfo>
+HashMap<int, ResearchInfo> infoLookupFromPlaceholder = new HashMap<int, ResearchInfo>
+
+constant kAID_rCancelResearch = compiletime(ABIL_ID_GEN.next())
+constant kAID_rFarming = compiletime(ABIL_ID_GEN.next())
+constant kAID_rHousing = compiletime(ABIL_ID_GEN.next())
+constant kAID_rCivilianBuildings = compiletime(ABIL_ID_GEN.next())
+constant kAID_rLumberHarvesting = compiletime(ABIL_ID_GEN.next())
+constant kAID_rDefensiveStructures = compiletime(ABIL_ID_GEN.next())
+constant kAID_r = [
+    kAID_rFarming,
+    kAID_rHousing,
+    kAID_rCivilianBuildings,
+    kAID_rLumberHarvesting,
+    kAID_rDefensiveStructures
+]
+
+public function getResearchCenterResearches() returns string
+    return int2fourchar(kAID_rCancelResearch)
+        + "," + int2fourchar(kAID_rHousing)
+        + "," + int2fourchar(kAID_rCivilianBuildings)
+        + "," + int2fourchar(kAID_rLumberHarvesting)
+        + "," + int2fourchar(kAID_rDefensiveStructures)
+        + "," + int2fourchar(kAID_rFarming)
 
 public function getResearchInfo(int rid) returns ResearchInfo
     return infoLookup.get(rid)
@@ -21,25 +50,40 @@ class ResearchInfo
     int rid
     int maxLvl
     int index
+    string name
 
     int costGoldBase = 0
     int costLumberBase = 0
 
-    construct(int rid, int maxLvl, int costGoldBase, int costLumberBase)
+    construct(string name, string tooltip, string icon, string hotkey, int rid, int aid, int maxLvl, int costGoldBase, int costLumberBase)
         this.rid = rid
         this.maxLvl = maxLvl
         this.costGoldBase = costGoldBase
         this.costLumberBase = costLumberBase
         this.index = researchCount
+        this.name = name
         researches[this.index] = this
         researchCount += 1
         infoLookup.put(rid, this)
+        infoLookupFromPlaceholder.put(aid, this)
+
+        if compiletime
+            var def = new ChannelAbilityPreset(aid, 1, true)
+                ..makeUnitSpell(0, 0)
+                ..setIconNormal(icon)
+                ..setTooltipNormal(1, "Research " + name + " [" + kStrGold + hotkey.toUpperCase() + "|r]")
+                ..setTooltipNormalExtended(1, tooltip)
+                ..setName(name)
+                ..setHotkeyNormal(hotkey)
+                ..setButtonPositionNormalX(getHotkeyX(hotkey))
+                ..setButtonPositionNormalY(getHotkeyY(hotkey))
+
     
     function getMaxLevel() returns int
         return maxLvl
 
     function onTechFinished(player p, int newLvl)
-        skip
+        enableResearchesForPlayer(p)
     
     function getTotalCostGold() returns int
         return costGoldBase
@@ -47,32 +91,108 @@ class ResearchInfo
     function getTotalCostLumber() returns int
         return costLumberBase
 
+function enableResearchesForPlayer(player p)
+    for i = 0 to kResearchCount - 1
+        SetPlayerAbilityAvailable(p, kAID_r[i], true)
+    SetPlayerAbilityAvailable(p, kAID_rCancelResearch, false)
+
+function disableResearchesForPlayer(player p)
+    for i = 0 to kResearchCount - 1
+        SetPlayerAbilityAvailable(p, kAID_r[i], false)
+        SetPlayerAbilityAvailable(p, kAID_rCancelResearch, true)
+
 function handleResearchFinished()
     let rid = GetResearched()
     let p = GetResearchingUnit().getOwner()
     // Needs to be an empire for this to care
-    if p.getRole() != PlayerRole.Empire
-        return
-
-    if isResearchAge(rid)
+    if isResearchAge(rid) and p.getRole() == PlayerRole.Empire
         int idx = getAgeIndex(rid)
         p.getEmpireInfo().setAge(idx)
-        if idx < kAgeMax
+        if idx < kAgeCount - 1
             SetPlayerTechMaxAllowed(p, kRID_Ages[idx + 1], 1)
-    else
-        // This is some other research, so this might not be required.
-        skip
         
+function handleSpellCast()
+    let center = GetSpellAbilityUnit()
+    if center.getTypeId() == kUID_Struct_ResearchCenter
+        let aid = GetSpellAbilityId()
+        if aid == kAID_rCancelResearch
+            // Cancel
+            enableResearchesForPlayer(center.getOwner())
+            center.getOwner().getEmpireInfo().setActiveResearchOff()
+        else 
+            // It's a normal research.
+            let resInfo = infoLookupFromPlaceholder.get(aid)
+            disableResearchesForPlayer(center.getOwner())
+            center.getOwner().getEmpireInfo().setActiveResearch(resInfo.rid)
+
 
 init
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_RESEARCH_FINISH, function handleResearchFinished)
     genResearches()
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_RESEARCH_FINISH, function handleResearchFinished)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SPELL_CAST, function handleSpellCast)
 
 @compiletime function genResearches()
-    new ResearchInfo(kRID_Farming, 50, 100, 0)
-    new ResearchInfo(kRID_Housing, 50, 100, 0)
-    new ResearchInfo(kRID_CivilianBuildings, 50, 100, 0)
-    new ResearchInfo(kRID_LumberHarvesting, 50, 100, 0)
-    new ResearchInfo(kRID_DefenseStructures, 50, 100, 0)
+    new ChannelAbilityPreset(kAID_rCancelResearch, 1, true)
+        ..makeUnitSpell(0, 0)
+        ..setIconNormal(Icons.bTNCancel)
+        ..setHotkeyNormal("V")
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(2)
+        ..setTooltipNormal(1, "Cancel Research [" + kStrGold +"V|r]")
+        ..setTooltipNormalExtended(1, "Hault the current research effort. Progress will be saved for when you resume this research in the future.")
+        ..setName("Cancel Research")
+    new ResearchInfo(
+        "Improved Farming", 
+        "Increases the amount of grain produced by farms by 20%.", 
+        Icons.bTNFarm,
+        "E", kRID_Farming, kAID_rFarming, 50, 50, 0)
+    new ResearchInfo(
+        "Improved Housing Capacity", 
+        "Increases the citizens that can live in a house by 5%.", 
+        Icons.bTNGenericHumanBuilding,
+        "Q", kRID_Housing, kAID_rHousing, 50, 60, 0)
+    new ResearchInfo(
+        "Improved Civil Structures", 
+        "Increases the hitpoints and armor of civil structures by 20%. Does not improve defense buildings.", 
+        Icons.bTNStoneArchitecture,
+        "W", kRID_CivilianBuildings, kAID_rCivilianBuildings, 50, 100, 0)
+    new ResearchInfo(
+        "Improved Lumber Harvesting", 
+        "Increases the amount of lumber a worker can carry by 10 and increases the amount of lumber harvested.", 
+        Icons.bTNHumanLumberUpgrade1,
+        "R", kRID_LumberHarvesting, kAID_rLumberHarvesting, 50, 40, 0)
+    new ResearchInfo(
+        "Improved Defense Structures", 
+        "Increases the hitpoints and armor of defense structures by 20%.", 
+        Icons.bTNArcaniteArchitecture,
+        "A", kRID_DefenseStructures, kAID_rDefensiveStructures, 50, 100, 0)
 
+
+
+@compiletime function genAgeResearches()
+    real goldCost = kAgeCostBaseGold.toReal()
+    real lumberCost = kAgeCostBaseLumber.toReal()
+    for i = 0 to kAgeCount - 1
+        let def = createObjectDefinition("w3q", kRID_Ages[i], 'Rhac')
+            ..setLvlString("gef1", 0, "")
+            ..setLvlString("gef2", 0, "")
+            ..setLvlString("gcls", 0, "")
+            ..setLvlInt("glvl", 0, 1) // max level
+            ..setLvlInt("gtib", 0, 30 + i * 5) // research time
+            ..setLvlInt("gtim", 0, 0) // time increase
+            ..setLvlString("ghkl", 1, "A") // hotkey
+            ..setLvlString("gnam", 1, kAgeNames[i]) // name 
+            ..setLvlString("gtp1", 1, "Advance to the " + kAgeNames[i] + " [" + kStrGold + "A|r]") // tooltip
+            ..setLvlString("gub1", 1, "Advancing new ages will unlock new technologies, units, and housing structures.") // ubertip
+            ..setLvlInt("gbpx", 0, 0) // button x
+            ..setLvlInt("gbpy", 0, 1) // button y
+            ..setLvlInt("gglb", 0, goldCost.round()) // cost gold
+            ..setLvlInt("gglm", 0, 0) // gold increment
+            ..setLvlInt("glmb", 0, lumberCost.round()) // cost lumber
+            ..setLvlInt("glmm", 0, 0) // lumber inc
+            ..setLvlString("gar1", 1, Icons.bTNWispSplode) // Icon
+        
+        goldCost = goldCost * kAgeCostMultiplierGold + kAgeCostConstantGold
+        lumberCost = lumberCost * kAgeCostMultiplierLumber + kAgeCostConstantLumber
+            
 
