@@ -101,9 +101,9 @@ init
     
     new AbilityDefinitionWarStompcreep(kAID_Found)
         ..setName("Found here")
-        ..setTooltipNormal(1, "Found Here [" + kStrGold + "Q|r]")
+        ..setTooltipNormal(1, "Found Here [" + kStrGold + "Z|r]")
         ..setTooltipNormalExtended(1, "Found your empire here. Using this ability will destory the caravan and create a small unit of builders and basic fighters.")
-        ..setHotkeyNormal("Q")
+        ..setHotkeyNormal("Z")
         ..setManaCost(1, 0)
         ..setAreaofEffect(1, 0)
         ..setDamage(1, 0)

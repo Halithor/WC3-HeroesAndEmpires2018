@@ -120,7 +120,7 @@ public constant kTowerArmorBase = 2
 public constant kTowerArmorPower = 1.25
 // Tower DPS calcs
 public constant kTowerDpsBase = 6.5
-public constant kTowerDpsPower = 1.4
+public constant kTowerDpsPower = 1.25
 
 
 // ======= End of balance constants ========
@@ -159,6 +159,8 @@ public constant kResearchCount = 5
 // Unit
 public constant kUID_StartingCaravan = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Worker = compiletime(UNIT_ID_GEN.next())
+public constant kUID_RepairBot = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Zepplin = compiletime(UNIT_ID_GEN.next())
 
 // Combat units
 public constant kUID_Clubman = compiletime(UNIT_ID_GEN.next())
@@ -271,8 +273,9 @@ public constant integer array kUID_Struct_Gates_Lowered = [
 public constant kAID_TownHallInventory = compiletime(ABIL_ID_GEN.next())
 public constant kAID_RetireUnit = compiletime(ABIL_ID_GEN.next())
 public constant kAID_DemolishBuilding = compiletime(ABIL_ID_GEN.next())
-public constant kAID_WorkerHarvest = 'AD00'
+public constant kAID_WorkerHarvest = compiletime(ABIL_ID_GEN.next()) //'AD00' not sure why this is here
 public constant kAID_WorkerRepair = compiletime(ABIL_ID_GEN.next())
+public constant kAID_BotRepair = compiletime(ABIL_ID_GEN.next())
 public constant kAID_DestroyRoad = compiletime(ABIL_ID_GEN.next())
 public constant kAID_KillTrees = compiletime(ABIL_ID_GEN.next())
 public constant kAID_GrowTrees = compiletime(ABIL_ID_GEN.next())
@@ -408,3 +411,8 @@ public function GetTownHallResearches() returns string
         if (i < kAgeCount - 1)
             str += ","
     return str
+
+public function GetTownHallUnitsTrained() returns string
+    return int2fourchar(kUID_Worker)
+        + "," + int2fourchar(kUID_RepairBot)
+        + "," + int2fourchar(kUID_Zepplin)
