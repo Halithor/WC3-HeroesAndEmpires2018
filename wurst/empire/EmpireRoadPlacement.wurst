@@ -102,8 +102,8 @@ function unit.isRoadNearby() returns bool
         let grp = CreateGroup()
             ..enumUnitsInRange(this.getPos(), kHallDistance + kRoadFudge, 
                 Filter(() -> (GetFilterUnit().getTypeId() == kUID_Struct_Hall1 
-                    or GetFilterUnit().getTypeId() == kUID_Struct_Hall1 
-                    or GetFilterUnit().getTypeId() == kUID_Struct_Hall1) 
+                    or GetFilterUnit().getTypeId() == kUID_Struct_Hall2 
+                    or GetFilterUnit().getTypeId() == kUID_Struct_Hall3) 
                     and GetFilterUnit().isStructureFinished()
             ))
         tempHasRoad = grp.size() > 0
