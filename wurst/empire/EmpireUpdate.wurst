@@ -266,7 +266,7 @@ public class EmpireInfo
                         researchEtaCycles = -1
                     else 
                         // calculate eta, the .999 is for ceiling calculation
-                        researchEtaCycles = (((1.0 - researchEtaCycles) / percGold) + .9999).toInt()
+                        researchEtaCycles = (((1.0 - newProgress) / percGold) + 0.9999).toInt()
                         
                     if newProgress > 1.0
                         // only need part of this update, remove the overflow gold cost.
