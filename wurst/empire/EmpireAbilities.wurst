@@ -7,11 +7,11 @@ import BuffObjEditing
 import ChannelAbilityPreset
 import Assets
 
-function genGrowthAura(int newId, int buffId, string name, string icon, int growth, int range) returns AbilityDefinition
+function genGrowthAura(int newId, int buffId, string name, string icon, string iconBuff, int growth, int range) returns AbilityDefinition
     new BuffDefinition(buffId, 'BHab')
         ..setName(1, name + " Growth Bonus")
         ..setTooltipNormal(1, name + " Growth Bonus")
-        ..setIcon(icon)
+        ..setIcon(iconBuff)
         ..setTooltipNormalExtended(1, "This unit is growing " + growth.toString() + "% faster due to the nearby " + name + ".")
     return new AbilityDefinitionAuraBrilliancecreep(newId)
         ..setTargetsAllowed(1, "friend,invulnerable,mechanical,structure,vulnerable")
@@ -177,13 +177,14 @@ function genGrowthAura(int newId, int buffId, string name, string icon, int grow
         ..setHotkeyNormal("Q")
 
 
-    genGrowthAura(kAID_PopMarket, kBID_PopMarket, "Market", Icons.bTNMarketPlace, kMarketAuraRate, kMarketAuraRange)
-    genGrowthAura(kAID_PopTavern, kBID_PopTavern, "Tavern", Icons.bTNTavern, kTavernAuraRate, kTavernAuraRange)
-    genGrowthAura(kAID_PopChurch, kBID_PopChurch, "Church", Icons.bTNCrypt, kChurchAuraRate, kChurchAuraRange)
-    genGrowthAura(kAID_PopTheatre, kBID_PopTheatre, "Theatre", Icons.bTNAltarOfKings, kTheatreAuraRate, kTheatreAuraRange)
-    genGrowthAura(kAID_PopShoppingMall, kBID_PopShoppingMall, "Shopping Mall", Icons.bTNHuntersHall, kShoppingMallAuraRate, kShoppingMallAuraRange)
-    genGrowthAura(kAID_PopSwimmingPool, kBID_PopSwimmingPool, "Swimming Pool", Icons.bTNSpawningGrounds, kSwimmingPoolAuraRate, kSwimmingPoolAuraRange)
-    genGrowthAura(kAID_PopFireLight, kBID_PopFireLight, "Fire Light", Icons.bTNFire, kFireLightAuraRate, kFireLightAuraRange)
-    genGrowthAura(kAID_PopLaternLight, kBID_PopLaternLight, "Latern Light", Icons.bTNLamp, kLaternLightAuraRate, kLaternLightAuraRange)
+    genGrowthAura(kAID_PopMarket, kBID_PopMarket, "Market", "ReplaceableTextures\\CommandButtons\\PASMarketplace.blp", Icons.bTNMarketPlace, kMarketAuraRate, kMarketAuraRange)
+    genGrowthAura(kAID_PopTavern, kBID_PopTavern, "Tavern", "ReplaceableTextures\\CommandButtons\\PASTavern.blp", Icons.bTNTavern, kTavernAuraRate, kTavernAuraRange)
+    genGrowthAura(kAID_PopChurch, kBID_PopChurch, "Church", "ReplaceableTextures\\CommandButtons\\PASCrypt.blp", Icons.bTNCrypt, kChurchAuraRate, kChurchAuraRange)
+    genGrowthAura(kAID_PopTheatre, kBID_PopTheatre, "Theatre", "ReplaceableTextures\\CommandButtons\\PASAltarOfKings.blp", Icons.bTNAltarOfKings, kTheatreAuraRate, kTheatreAuraRange)
+    genGrowthAura(kAID_PopShoppingMall, kBID_PopShoppingMall, "Shopping Mall", "ReplaceableTextures\\CommandButtons\\PASHuntersHall.blp", Icons.bTNHuntersHall, kShoppingMallAuraRate, kShoppingMallAuraRange)
+    genGrowthAura(kAID_PopSwimmingPool, kBID_PopSwimmingPool, "Swimming Pool", "ReplaceableTextures\\CommandButtons\\PASSpawningGrounds.blp", Icons.bTNSpawningGrounds, kSwimmingPoolAuraRate, kSwimmingPoolAuraRange)
+    genGrowthAura(kAID_PopFireLight, kBID_PopFireLight, "Fire Light", "ReplaceableTextures\\CommandButtons\\PASFire.blp", Icons.bTNFire, kFireLightAuraRate, kFireLightAuraRange)
+    genGrowthAura(kAID_PopLaternLight, kBID_PopLaternLight, "Latern Light", "ReplaceableTextures\\CommandButtons\\PASLamp.blp", Icons.bTNLamp, kLaternLightAuraRate, kLaternLightAuraRange)
+        
     
         
