@@ -7,12 +7,33 @@ import Globals
 
 init 
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH, () -> begin
-        if GetConstructedStructure().getTypeId() == kUID_Struct_Hall1
-            GetConstructedStructure().getOwner().getEmpireInfo().fixTownHallItems()
+        let const = GetConstructedStructure()
+        if const.getTypeId() == kUID_Struct_Hall1
+            const.getOwner().getEmpireInfo().addHall(const)
+            const.getOwner().getEmpireInfo().fixTownHallItems()
+        else if const.isHouse()
+            const.getOwner().getEmpireInfo().addHouse(const)
+        else if const.getTypeId() == kUID_Struct_Farm
+            const.getOwner().getEmpireInfo().addFarm(const)
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH, () -> begin
+        let dying = GetDyingUnit()
+        if dying.getTypeId() == kUID_Struct_Hall1 or dying.getTypeId() == kUID_Struct_Hall2 or dying.getTypeId() == kUID_Struct_Hall3
+            dying.getOwner().getEmpireInfo().removeHall(dying)
+        else if dying.isHouse()
+            dying.getOwner().getEmpireInfo().removeHouse(dying)
+        else if dying.getTypeId() == kUID_Struct_Farm
+            dying.getOwner().getEmpireInfo().removeFarm(dying)
     end)
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_FINISH, () -> begin
         if GetTriggerUnit().getTypeId() == kUID_Struct_ResearchCenter
             GetTriggerUnit().getOwner().getEmpireInfo().setResearchCenter(GetTriggerUnit())
+    end)
+    // Fix the mana of houses on upgrade
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START, () -> begin
+        let house = GetTriggerUnit()
+        if house.isHouse()
+            house.setMana(house.getMana() * 0.5)
     end)
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_RESEARCH_START, () -> begin
         let center = GetResearchingUnit()
