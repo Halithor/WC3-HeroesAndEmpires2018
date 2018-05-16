@@ -31,7 +31,7 @@ public constant kHappinessStarvationEffect = 100.0
 // Growth happiness divisor (how much happiness per base growth)
 public constant kPopulationHappinessGrowthFactor = 100.0
 // Growth relaxing divisor (divide relaxing pop by this for % bonus)
-public constant kPopulationRelaxingGrowthMultiplier = 200.0
+public constant kPopulationRelaxingGrowthMultiplier = 75.0
 // negative growth previous factor
 public constant kPopulationNegativeGrowthFactor = 0.1
 
@@ -53,7 +53,7 @@ public constant kIncomeLumberBasic = 10
 
 // ## Research ##
 // The count of people that needs to be in science for 1 capacity
-public constant kResearchPopPerCapacity = 50
+public constant kResearchPopPerCapacity = 25
 // What multipler on the previous cost will the new level cost?
 public constant kResearchCostMultiplier = 1.25
 //
@@ -77,6 +77,8 @@ public constant kFireLightAuraRate = 20
 public constant kFireLightAuraRange = 500
 public constant kLaternLightAuraRate = 40
 public constant kLaternLightAuraRange = 500
+public constant kPowerPlantAuraRate = -100
+public constant kPowerPlantAuraRange = 500
 
 // How big the AoE of kill/grow trees is
 public constant kTreeKillRadius = 32.0 * 6.0
@@ -144,7 +146,7 @@ public constant kAgeNames = [
     "Age of Discovery",
     "Enlightenment Age", // 4
     "Industrial Age", 
-    "Machine Age", //5
+    "Machine Age", //5 - ELECTRICITY
     "World War Age",
     "Atomic Age", // 6
     "Digital Age",
@@ -174,6 +176,8 @@ public constant kUID_Struct_Barracks1 = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_LumberMill = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Road = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Foundation = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PotionShop = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_Hospital = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_ResearchCenter = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_PopMarket = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_PopTavern = compiletime(UNIT_ID_GEN.next())
@@ -182,7 +186,14 @@ public constant kUID_Struct_PopTheatre = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_PopShoppingMall = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_PopSwimmingPool = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_PopPool = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PowerGenFoundation = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PowerGenCoal = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PowerGenGas = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PowerGenSolar = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PowerGenFission = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_PowerGenFusion = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Farm = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_FarmMechanized = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Campfire = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Firepit = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Latern = compiletime(UNIT_ID_GEN.next())
@@ -292,8 +303,11 @@ public constant kAID_PopShoppingMall = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopSwimmingPool = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopFireLight = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopLaternLight = compiletime(ABIL_ID_GEN.next())
+public constant kAID_PopPowerPlant = compiletime(ABIL_ID_GEN.next())
 public constant kAID_GateLower = compiletime(ABIL_ID_GEN.next())
 public constant kAID_GateRaise = compiletime(ABIL_ID_GEN.next())
+public constant kAID_HospitalHealAura_Life = compiletime(ABIL_ID_GEN.next())
+public constant kAID_HospitalHealAura_Mana = compiletime(ABIL_ID_GEN.next())
 
 // Buffs
 public constant kBID_PopMarket = compiletime(BUFF_ID_GEN.next())
@@ -304,6 +318,7 @@ public constant kBID_PopShoppingMall = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopSwimmingPool = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopFireLight = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopLaternLight = compiletime(BUFF_ID_GEN.next())
+public constant kBID_PopPowerPlant = compiletime(BUFF_ID_GEN.next())
 
 // Researches
 public constant kRID_Age00_Stone            = compiletime(RSCH_ID_GEN.next())
@@ -403,6 +418,19 @@ public function GetFoundationUpgrades() returns string
         + "," + int2fourchar(kUID_Struct_PopShoppingMall)
         + "," + int2fourchar(kUID_Struct_PopSwimmingPool)
         + "," + int2fourchar(kUID_Struct_ResearchCenter)
+        + "," + int2fourchar(kUID_Struct_Hospital)
+        + "," + int2fourchar(kUID_Struct_PotionShop)
+        + "," + int2fourchar(kUID_Struct_PowerGenFoundation)
+
+public function GetPowerGenFoundationUpgrades() returns string
+    return  int2fourchar(kUID_Struct_PowerGenCoal)
+        + "," + int2fourchar(kUID_Struct_PowerGenGas)
+        + "," + int2fourchar(kUID_Struct_PowerGenSolar)
+        + "," + int2fourchar(kUID_Struct_PowerGenFusion)
+        + "," + int2fourchar(kUID_Struct_PowerGenFission)
+
+public function GetItemFoundationUpgrades() returns string
+    return int2fourchar(kUID_Struct_Foundation)
 
 public function GetTownHallResearches() returns string
     var str = ""
@@ -416,3 +444,46 @@ public function GetTownHallUnitsTrained() returns string
     return int2fourchar(kUID_Worker)
         + "," + int2fourchar(kUID_RepairBot)
         + "," + int2fourchar(kUID_Zepplin)
+
+
+
+public function unit.getPowerRequirement() returns int
+    return getUnitPowerRequirement(this.getTypeId())
+
+public function getUnitPowerRequirement(int uid) returns int
+    var req = 0
+    if uid == kUID_Struct_StreetLight
+            or uid == kUID_Struct_Tower4_AntiAir
+            or uid == kUID_Struct_Tower4_AntiHero
+            or uid == kUID_Struct_Tower4_Artillery
+            or uid == kUID_Struct_Tower4_MachineGun
+        req = 1
+    else if uid == kUID_Struct_Tower4_Radar
+            or uid == kUID_Struct_FarmMechanized
+        req =2
+    else if uid == kUID_Struct_Tower5_AntiAir
+            or uid == kUID_Struct_Tower5_AntiHero
+            or uid == kUID_Struct_Tower5_Artillery
+            or uid == kUID_Struct_Tower5_MachineGun
+        req = 3
+    else if uid == kUID_Struct_Tower5_Radar
+        req = 5
+    return req
+
+public function unit.getPowerGeneration() returns int
+    return getUnitPowerGeneration(this.getTypeId())
+
+public function getUnitPowerGeneration(int uid) returns int
+    var result = 0
+    switch uid
+        case kUID_Struct_PowerGenCoal
+            result = 10
+        case kUID_Struct_PowerGenGas
+            result = 15
+        case kUID_Struct_PowerGenSolar
+            result = 8
+        case kUID_Struct_PowerGenFission
+            result = 20
+        case kUID_Struct_PowerGenFusion
+            result = 30
+    return result

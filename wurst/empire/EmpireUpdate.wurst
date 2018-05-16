@@ -8,6 +8,10 @@ import Globals
 import TextUtilities
 import ObjectIds
 import EmpireResearches
+import RegisterEvents
+import PlayerInfo
+import HashMap
+import HashSet
 
 player tempP
 
@@ -47,6 +51,14 @@ public class EmpireInfo
     // all of our halls
     group hallGroup
 
+    // Upgrading unit fixes. Can be static.
+    // This map stores the CURRENT id of a unit, set on upgrade finish or construction 
+    // finish. It's needed for upgrade stuff.
+    static HashMap<unit, int> upgradingIds = new HashMap<unit, int>()
+    // Currently upgrading units.
+    static HashSet<unit> upgradingUnits = new HashSet<unit>()
+    
+
     // Research stuff
     int currentAge = -1
     int currentResearchIndex = -1
@@ -79,6 +91,7 @@ public class EmpireInfo
     int food = 5000
     int foodRate = 10
     int farms = 0
+    int farmsMechanical = 0
     group farmGroup
     // Incomes
     int goldIncome = 0
@@ -90,12 +103,18 @@ public class EmpireInfo
     real happyIncome = 0.0
     real starvationReq = 0.0
 
+    // Power stuff
+    int powerGenerated
+    int powerRequired
+    bool powerDisabled = false
+    group groupPower
 
     construct(player p)
         this.p = p
         hallGroup = CreateGroup()
         farmGroup = CreateGroup()
         houseGroup = CreateGroup()
+        groupPower = CreateGroup()
         for i = 0 to kResearchCount - 1
             researchProgresses[i] = 0
             researchLevels[i] = 0
@@ -282,6 +301,13 @@ public class EmpireInfo
                             researchLevels[currentResearchIndex] += 1
                             AddPlayerTechResearched(p, ri.rid, 1)
                             ri.onTechFinished(p, researchLevels[currentResearchIndex])
+                            if ri.rid == kRID_Housing
+                                // Need to make sure that the housing research doesn't give pop.
+                                
+                                let ratio = (100.0 + (researchLevels[currentResearchIndex] - 1) * 5.0) / (100.0 + researchLevels[currentResearchIndex] * 5.0)
+                                for house in houseGroup
+                                    house.setMana(ratio * house.getMana())
+
                             currentResearchIndex = -1
                         standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-" + researchCapacity.toString())
                             ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-" + researchCapacity.toString(), 10.434)
@@ -321,6 +347,7 @@ public class EmpireInfo
             kStrBlue + "Food:|r " + food.toString() + "\n" +
             kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
             kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
+            kStrBlue + "Power:|r " + powerRequired.toString() + "/" + powerGenerated.toString() + "(disabled: " + powerDisabled.toString() +")\n" +
             kStrBlue + "Research:|r " + (currentResearchIndex > -1 ? getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" : "No Tech Selected") 
                 + " [ETA: " +   researchEtaCycles.toString() + " cycles]\n" 
     
@@ -451,17 +478,132 @@ public class EmpireInfo
     function removeHouse(unit u)
         houseGroup.removeUnit(u)
 
-    function addFarm(unit u)
-        houseGroup.addUnit(u)
-        farms++
-
-    function removeFarm(unit u)
-        houseGroup.removeUnit(u)
-        farms--
-
     function addHall(unit u)
         hallGroup.addUnit(u)
 
     function removeHall(unit u)
         hallGroup.removeUnit(u)
 
+    // Checks the current power needed vs generated and disables/enables stuff
+    function checkPowerState()
+        let surplus = powerGenerated - powerRequired
+        if surplus >= 0 and powerDisabled == true
+            powerDisabled = false
+            for u in groupPower
+                u.unpause()
+        else if surplus < 0 and powerDisabled == false
+            powerDisabled = true
+            for u in groupPower
+                u.pause()
+
+    function handleUnitConstructionFinish(unit u)
+        handleUnitAddition(u)
+    
+    function handleUnitConstructionStart(unit u)
+        // add to upgrading units to avoid improper removal calls.
+        upgradingUnits.add(u)
+
+    function handleUpgradeStart(unit u)
+        // remove the unit while upgrading. Use the old id.
+        handleUnitRemoval(u, upgradingIds.get(u))
+        // Houses need mana set
+        if u.isHouse()
+            u.setMana(u.getMana() * 0.5)
+        // add them to the upgrading units list
+        upgradingUnits.add(u)
+        
+    function handleUpgradeFinish(unit u)
+        // Log.debug("Upgrade Finished: " + u.getName())
+        // Remove them from the upgrading list
+        upgradingUnits.remove(u)
+        // Re-add them, to apply any new building effects.
+        handleUnitAddition(u)
+        // Research center finding
+        if u.getTypeId() == kUID_Struct_ResearchCenter
+            setResearchCenter(u)
+
+    function handleUpgradeCancel(unit u)
+        // Canceled, so just add the old unit to it.
+        upgradingIds.remove(u)
+        handleUnitAddition(u)
+        
+    function handleUnitDeath(unit u)
+        // Log.debug("Unit death: " + u.getName() + "(" + p.getId().toString() +")")
+        handleUnitRemoval(u, 0)
+
+    function applyUnitTypePower(int uid, bool adding)
+        powerGenerated += (adding ? 1 : -1) * getUnitPowerGeneration(uid)
+        powerRequired += (adding ? 1 : -1) * getUnitPowerRequirement(uid)
+        checkPowerState()
+
+    function handleUnitAddition(unit u)
+        upgradingIds.put(u, u.getTypeId())
+        applyUnitTypePower(u.getTypeId(), true)
+        if u.getPowerRequirement() > 0
+            groupPower.addUnit(u)
+            if powerDisabled // power is disabled, so disable this unit.
+                u.pause()
+        // Check to see if this is a special type
+        if u.getTypeId() == kUID_Struct_Hall1 or  u.getTypeId() == kUID_Struct_Hall2 or  u.getTypeId() == kUID_Struct_Hall3
+            addHall(u)
+            fixTownHallItems()
+        else if u.isHouse()
+            addHouse(u)
+        else if u.getTypeId() == kUID_Struct_Farm
+            farms++
+        else if u.getTypeId() == kUID_Struct_FarmMechanized
+            farmsMechanical++
+
+    // Handles the unit's removal. If a non-0 uid is passed, uses it instead of this.
+    function handleUnitRemoval(unit u, int uid)
+        let id = uid == 0 ? u.getTypeId() : uid
+        if not upgradingUnits.has(u)
+            // If units are upgrading/underconstruction, they don't count.
+            applyUnitTypePower(id, false)
+            if (u.getPowerRequirement() > 0)
+                groupPower.removeUnit(u)
+            // Remove houses, halls, and farms
+            if id == kUID_Struct_Hall1 or id == kUID_Struct_Hall2 or id == kUID_Struct_Hall3
+                removeHall(u)
+            else if u.isHouse()
+                removeHouse(u)
+            else if id == kUID_Struct_Farm and not upgradingUnits.has(u)
+                farms--
+            else if id == kUID_Struct_FarmMechanized and not upgradingUnits.has(u)
+                // if it's in the upgrade list, that means that it hasn't been counted yet
+                farmsMechanical--
+        
+        // Remove from the upgrading gimmicks.
+        if upgradingUnits.has(u)
+            upgradingUnits.remove(u)
+        upgradingIds.remove(u)
+    
+    
+
+init 
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH, () -> begin
+        if GetConstructedStructure().getOwner().getRole() == PlayerRole.Empire 
+            GetConstructedStructure().getOwner().getEmpireInfo().handleUnitConstructionFinish(GetConstructedStructure())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START, () -> begin
+        if GetConstructedStructure().getOwner().getRole() == PlayerRole.Empire 
+            GetConstructedStructure().getOwner().getEmpireInfo().handleUnitConstructionStart(GetConstructedStructure())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_FINISH, () -> begin
+        if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire 
+            GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeFinish(GetTriggerUnit())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH, () -> begin
+        if GetDyingUnit().getOwner().getRole() == PlayerRole.Empire 
+            GetDyingUnit().getOwner().getEmpireInfo().handleUnitDeath(GetDyingUnit())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START, () -> begin
+        if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
+            GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeStart(GetTriggerUnit())
+    end)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_CANCEL, () -> begin
+        if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
+            GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeCancel(GetTriggerUnit())
+    end)
+    
+    

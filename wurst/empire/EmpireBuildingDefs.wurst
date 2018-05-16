@@ -78,6 +78,13 @@ constant string array wallModels = [
     Doodads.magicRunes2
 ]
 
+function powerReqTT(int id) returns string
+    return kStrBlue + "Power Required: " + getUnitPowerRequirement(id).toString() + "|r\n"
+    
+function powerGenTT(int id) returns string
+    return kStrBlue + "Power Generated: " + getUnitPowerGeneration(id).toString() + "|r\n"
+
+
 function Pow(int b, int e) returns int
     var result = 1
     for i = 1 to e
@@ -181,7 +188,7 @@ function createHut(int lvl) returns BuildingDefinition
     var tips = ""
     for i = 0 to 50
         names += "Level " + I2S(i)
-        tips += "+" + I2S(i * 10) + "% capacity"
+        tips += "+" + I2S(i * 5) + "% capacity"
         if i != 50
             names += ","
             tips += ","
@@ -374,8 +381,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setUpgradesTo(int2fourchar(kUID_Struct_Hall2))
     new BuildingDefinition(kUID_Struct_Hall2, 'htow')
         ..setBuildTime(60)
-        ..setGoldCost(2500)
-        ..setLumberCost(25000)
+        ..setGoldCost(1000)
+        ..setLumberCost(8000)
         ..setDefenseBase(100)
         ..setHitPointsMaximumBase(5000)
         ..setRepairGoldCost(250)
@@ -404,8 +411,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setRequirements(int2fourchar(kRID_Age05_Renaissance))
     new BuildingDefinition(kUID_Struct_Hall3, 'htow')
         ..setBuildTime(60)
-        ..setGoldCost(12500)
-        ..setLumberCost(65000)
+        ..setGoldCost(10000)
+        ..setLumberCost(50000)
         ..setDefenseBase(200)
         ..setHitPointsMaximumBase(30000)
         ..setRepairGoldCost(1250)
@@ -458,6 +465,28 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNCrate)
         ..setTooltipExtended("Foundations upgrade into a variety of useful structures which are required for your empire to function.\n\n" + kStrHint + "Must be built adjacent to a road.")
         ..setUpgradesTo(GetFoundationUpgrades())
+    getCleanSmallBuilding(kUID_Struct_PotionShop, 
+            "Potion Shop", 
+            "D", true, 
+            50, 0, 10)
+        ..setHitPointsMaximumBase(150)
+        ..setUnitSoundSet("Merchant")
+        ..setModelFile(Buildings.merchant)
+        ..setScalingValue(0.5)
+        ..setIconGameInterface(Icons.bTNMerchant)
+        ..setTooltipExtended("A shop for potions. Very helpful for players trying to explore the world.")
+        ..setItemsMade("pclr,hslv")
+        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "Aall,Apit") // shop sharing stuff
+    getCleanSmallBuilding(kUID_Struct_Hospital, 
+            "Hospital", 
+            "C", true, 
+            500, 1000, 25)
+        ..setHitPointsMaximumBase(500)
+        ..setModelFile(Buildings.mageTower) // this is high elven barracks I swear.
+        ..setScalingValue(0.5)
+        ..setIconGameInterface(Icons.bTNMageTower)
+        ..setTooltipExtended("Provides an aura of regeneration to all nearby biological units. Also regenerates the HP of any heroes that visit your base.\n\n" + kStrHint + " Regenerates health and mana.")
+        ..setNormalAbilities(int2fourchar(kAID_HospitalHealAura_Life) + "," + int2fourchar(kAID_HospitalHealAura_Mana))
     getCleanSmallBuilding(kUID_Struct_ResearchCenter, 
             "Research Center", 
             "X", true, 
@@ -468,6 +497,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNArcaneSanctum)
         ..setTooltipExtended("Provides the ability to research upgrades. Requires population in science and available funds for research to progress.\n\n" + kStrHint + "Only 1 allowed")
         ..setNormalAbilities(getResearchCenterResearches())
+        ..setUnitSoundSet(Soundsets.arcaneSanctum)
     getCleanSmallBuilding(kUID_Struct_PopMarket, 
             "Market", 
             "Q", true, 
@@ -476,7 +506,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.marketPlace1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNMarketPlace)
-        ..setNormalAbilities(int2fourchar(kAID_PopMarket))
+        ..setNormalAbilities(int2fourchar(kAID_PopMarket) + "," + int2fourchar(kAID_DemolishBuilding))
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kMarketAuraRate.toString() + "%\n"
@@ -485,12 +515,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
     getCleanSmallBuilding(kUID_Struct_PopTavern, 
             "Tavern", 
             "W", true, 
-            150, 1000, 30)
+            300, 1000, 30)
         ..setHitPointsMaximumBase(500)
         ..setModelFile(Buildings.tavern1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNTavern)
-        ..setNormalAbilities(int2fourchar(kAID_PopTavern))
+        ..setNormalAbilities(int2fourchar(kAID_PopTavern) + "," + int2fourchar(kAID_DemolishBuilding))
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kTavernAuraRate.toString() + "%\n"
@@ -499,12 +529,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
     getCleanSmallBuilding(kUID_Struct_PopChurch, 
             "Church", 
             "E", true, 
-            250, 1000, 40)
+            750, 2000, 40)
         ..setHitPointsMaximumBase(1000)
         ..setModelFile(Buildings.crypt)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNCrypt)
-        ..setNormalAbilities(int2fourchar(kAID_PopChurch))
+        ..setNormalAbilities(int2fourchar(kAID_PopChurch) + "," + int2fourchar(kAID_DemolishBuilding))
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kChurchAuraRate.toString() + "%\n"
@@ -513,12 +543,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
     getCleanSmallBuilding(kUID_Struct_PopTheatre, 
             "Theatre", 
             "R", true, 
-            500, 2500, 60)
+            1500, 7500, 60)
         ..setHitPointsMaximumBase(2000)
         ..setModelFile(Buildings.altarOfKings1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNAltarOfKings)
-        ..setNormalAbilities(int2fourchar(kAID_PopTheatre))
+        ..setNormalAbilities(int2fourchar(kAID_PopTheatre) + "," + int2fourchar(kAID_DemolishBuilding))
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kTheatreAuraRate.toString() + "%\n"
@@ -527,12 +557,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
     getCleanSmallBuilding(kUID_Struct_PopShoppingMall, 
             "Shopping Mall", 
             "A", true, 
-            1000, 2000, 60)
+            2500, 10000, 60)
         ..setHitPointsMaximumBase(2000)
         ..setModelFile(Buildings.huntersHall1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNHuntersHall)
-        ..setNormalAbilities(int2fourchar(kAID_PopShoppingMall))
+        ..setNormalAbilities(int2fourchar(kAID_PopShoppingMall) + "," + int2fourchar(kAID_DemolishBuilding))
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kShoppingMallAuraRate.toString() + "%\n"
@@ -541,7 +571,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
     getCleanSmallBuilding(kUID_Struct_PopSwimmingPool, 
             "Swimming Pool", 
             "S", true, 
-            2500, 5000, 60)
+            10000, 25000, 60)
         ..setHitPointsMaximumBase(2000)
         ..setModelFile(Buildings.spawningGrounds1)
         ..setScalingValue(0.5)
@@ -552,6 +582,92 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kSwimmingPoolAuraRate.toString() + "%\n"
             + "Range: " + kSwimmingPoolAuraRange.toString() 
         )
+    getCleanSmallBuilding(kUID_Struct_PowerGenFoundation, 
+        "Power Generation Foundation", 
+        "F", true, 
+        0, 300, 5)
+        ..setHitPointsMaximumBase(250)
+        ..setModelFile(Doodads.grate1)
+        ..setIconGameInterface(Icons.bTNCrate)
+        ..setTooltipExtended("A foundation that upgrades into a variety of power generating structures.")
+        ..setUpgradesTo(GetPowerGenFoundationUpgrades())
+        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+    getCleanSmallBuilding(kUID_Struct_PowerGenCoal, 
+        "Coal Power Plant", 
+        "Q", true, 
+        1250, 2500, 30)
+        ..setHitPointsMaximumBase(500)
+        ..setModelFile(Buildings.graveyard1)
+        ..setIconGameInterface(Icons.bTNGraveYard)
+        ..setScalingValue(0.5)
+        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenCoal) + "A coal burning power production plant. People don't want to live nearby a power plant due to the polution."
+            + kStrGreen + "Nearby Growth:\n" 
+            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+            + "Range: " + kPowerPlantAuraRange.toString() 
+        )
+        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+    getCleanSmallBuilding(kUID_Struct_PowerGenGas, 
+        "Gas Power Plant", 
+        "A", true, 
+        2100, 5000, 30)
+        ..setHitPointsMaximumBase(600)
+        ..setModelFile(Buildings.tombOfRelics1)
+        ..setScalingValue(0.5)
+        ..setIconGameInterface(Icons.bTNTombOfRelics)
+        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenGas) + "A natural gas burning power production plant. People don't want to live nearby a power plant due to the polution."
+            + kStrGreen + "Nearby Growth:\n" 
+            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+            + "Range: " + kPowerPlantAuraRange.toString() 
+        )
+        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setRequirements(int2fourchar(kRID_Age10_WorldWar))
+    getCleanSmallBuilding(kUID_Struct_PowerGenFission, 
+        "Nuclear Fission Power Plant", 
+        "W", true, 
+        6000, 12000, 40)
+        ..setHitPointsMaximumBase(750)
+        ..setModelFile(Buildings.sacrificialPit)
+        ..setScalingValue(0.5)
+        ..setIconGameInterface(Icons.bTNSacrificialPit)
+        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFission) + "A power plant that produces energy from nuclear fission. If destroyed, nuclear plants explode terrifically. People don't want to live nearby a nuclear plant because of the risk."
+            + kStrGreen + "Nearby Growth:\n" 
+            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+            + "Range: " + kPowerPlantAuraRange.toString() 
+        )
+        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setRequirements(int2fourchar(kRID_Age11_Atomic))
+    getCleanSmallBuilding(kUID_Struct_PowerGenSolar, 
+        "Solar Power Plant", 
+        "E", true, 
+        3500, 7000, 40)
+        ..setHitPointsMaximumBase(750)
+        ..setModelFile(Buildings.moonWell1)
+        ..setScalingValue(0.5)
+        ..setIconGameInterface(Icons.bTNMoonWell)
+        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenSolar) + "A power plant that uses the sun as it's source of power. Does not pollute and does not explode, so people are fine with living close to it."
+            + kStrGreen + "Nearby Growth:\n" 
+            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+            + "Range: " + kPowerPlantAuraRange.toString() 
+        )
+        ..setRequirements(int2fourchar(kRID_Age12_Digital))
+    getCleanSmallBuilding(kUID_Struct_PowerGenFusion, 
+        "Fusion", 
+        "S", true, 
+        20000, 30000, 40)
+        ..setHitPointsMaximumBase(1000)
+        ..setModelFile(Buildings.nerubianZiggurat)
+        ..setScalingValue(0.5)
+        ..setIconGameInterface(Icons.bTNNerubianZiggurat)
+        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFusion) + "An advanced power plant that produces immense amounts of power from nuclear fusion. If destroyed, this plant will explode terrifically. People don't want to live near a nuclear plant because of the risk."
+            + kStrGreen + "Nearby Growth:\n" 
+            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+            + "Range: " + kPowerPlantAuraRange.toString() 
+        )
+        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setRequirements(int2fourchar(kRID_Age13_Space))
+
+
 
     let farmDef = getCleanSmallBuilding(kUID_Struct_Farm, 
             "Farm", 
@@ -565,6 +681,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setTooltipExtended("Farms provide food for your citizens. Each income a farm produces 100 food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
         ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings) + "," + int2fourchar(kRID_Farming))
+        ..setUpgradesTo(int2fourchar(kUID_Struct_FarmMechanized))
     // Caster names and tips
     var names = ""
     var tips = ""
@@ -576,6 +693,30 @@ function createTower(int newId, int lvl, string name, string hotkey,
             tips += ","
     farmDef.setCasterUpgradeNames(names)
     farmDef.setCasterUpgradeTips(tips)
+    let farmDefMech = getCleanSmallBuilding(kUID_Struct_FarmMechanized, 
+            "Mechanical Farm", 
+            "Z", true, 
+            1000, 5000, 35)
+        ..setHitPointsMaximumBase(2000)
+        ..setGroundTexture("OSMA")
+        ..setModelFile(Buildings.pigFarm)
+        ..setScalingValue(0.6)
+        ..setIconGameInterface(Icons.bTNPigFarm)
+        ..setTooltipExtended(powerReqTT(kUID_Struct_FarmMechanized) + "A mechanized farm that provides 250 food every cycle. Allows for larger populations with a smaller farming footprint.")
+        ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
+        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings) + "," + int2fourchar(kRID_Farming))
+        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+    // Caster names and tips
+    names = ""
+    tips = ""
+    for i = 0 to 50
+        names += "" + I2S(250 + i * 50) + " / cycle"
+        tips += "+" + I2S(i * 20) + "% from upgrades"
+        if i != 50
+            names += ","
+            tips += ","
+    farmDefMech.setCasterUpgradeNames(names)
+    farmDefMech.setCasterUpgradeTips(tips)
 
     createTower(kUID_Struct_Tower0, 0, 
         "Watch Tower", 
@@ -656,7 +797,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNArcaneTower)
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
         ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_AntiHero))
     createTower(kUID_Struct_Tower5_AntiHero, 5, 
         "Laser Anti-Hero Tower", 
@@ -668,7 +809,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNArcaneTower)
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
     createTower(kUID_Struct_Tower3_MachineGun, 3, 
         "Machine Gun Tower", 
         "Z", true,  
@@ -692,7 +833,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile("Models\\sentrygun.mdx")
         ..setAttack1AnimationDamagePoint(0.433)
         ..setAttack1AnimationBackswingPoint(0.666)
-        ..setTooltipExtended("Rapid firing short range defensive structure.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_MachineGun) + "Rapid firing short range defensive structure.")
         ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_MachineGun))
         ..setScalingValue(1)
         ..setAttack1ProjectileArt(Abilities.rifleImpact)
@@ -706,7 +847,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile("Models\\sentrygun.mdx")
         ..setAttack1AnimationDamagePoint(0.433)
         ..setAttack1AnimationBackswingPoint(0.666)
-        ..setTooltipExtended("Rapid firing short range defensive structure.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_MachineGun) + "Rapid firing short range defensive structure.")
         ..setScalingValue(1)
         ..setAttack1ProjectileArt(Abilities.rifleImpact)
         ..setAttack1ProjectileArc(0)
@@ -738,7 +879,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         1.3, 1.2)
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
         ..setModelFile("Models\\NavalBattery.mdx")
-        ..setTooltipExtended("Long range tower that deals damage in an area around its target. Can only attack ground units.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
         ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_Artillery))
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Siege)
@@ -759,7 +900,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         1.3, 1.2)
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
         ..setModelFile("Models\\NavalBattery.mdx")
-        ..setTooltipExtended("Long range tower that deals damage in an area around its target. Can only attack ground units.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Siege)
         ..setAttack1WeaponType(WeaponType.Artillery)
@@ -800,7 +941,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         1.3, 1.2)
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
         ..setModelFile("Models\\AntiAircraftGun.mdx")
-        ..setTooltipExtended("Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
         ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_AntiAir))
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Pierce)
@@ -821,7 +962,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         1.3, 1.2)
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
         ..setModelFile("Models\\AntiAircraftGun.mdx")
-        ..setTooltipExtended("Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Pierce)
         ..setAttack1WeaponType(WeaponType.MissileSplash)
@@ -841,7 +982,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         1.0, 1.4)
         ..setIconGameInterface(Icons.bTNZiggurat)
         ..setModelFile(Buildings.ziggurat1)
-        ..setTooltipExtended("Sensor tower that grants a large area of vision. Can see invisible units.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
         ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_Radar))
         ..setScalingValue(0.333)
         ..setAttacksEnabled(0)
@@ -855,7 +996,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         1.0, 1.4)
         ..setIconGameInterface(Icons.bTNZiggurat)
         ..setModelFile(Buildings.ziggurat1)
-        ..setTooltipExtended("Sensor tower that grants a large area of vision. Can see invisible units.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
         ..setScalingValue(0.333)
         ..setAttacksEnabled(0)
         ..setSightRadiusDay(3000)
@@ -920,7 +1061,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Doodads.lanternPost)
         ..setScalingValue(1.0)
         ..setIconGameInterface(Icons.bTNLamp)
-        ..setTooltipExtended("A street light that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
+        ..setTooltipExtended(powerReqTT(kUID_Struct_StreetLight) 
+            + "A street light that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kLaternLightAuraRate.toString() + "%\n"
             + "Range: " + kLaternLightAuraRange.toString())
         ..setUnitSoundSet("LavaSpawn")

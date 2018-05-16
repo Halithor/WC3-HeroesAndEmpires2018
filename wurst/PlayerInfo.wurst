@@ -1,7 +1,7 @@
 package PlayerInfo
 
 import Globals
-import EmpireUpdate
+import initlater EmpireUpdate
 import HeroInfo
 
 PlayerInfo array playerInfos

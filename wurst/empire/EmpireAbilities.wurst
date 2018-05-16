@@ -12,7 +12,7 @@ function genGrowthAura(int newId, int buffId, string name, string icon, string i
         ..setName(1, name + " Growth Bonus")
         ..setTooltipNormal(1, name + " Growth Bonus")
         ..setIcon(iconBuff)
-        ..setTooltipNormalExtended(1, "This unit is growing " + growth.toString() + "% faster due to the nearby " + name + ".")
+        ..setTooltipNormalExtended(1, "This house's population growth is modified by " + growth.toString() + "% due to the nearby " + name + ".")
     return new AbilityDefinitionAuraBrilliancecreep(newId)
         ..setTargetsAllowed(1, "friend,invulnerable,mechanical,structure,vulnerable")
         ..presetAreaofEffect((int lvl) -> range.toReal())
@@ -24,7 +24,7 @@ function genGrowthAura(int newId, int buffId, string name, string icon, string i
         ..setName(name + " Growth Aura")
         ..setTooltipNormal(1, name + " Growth Aura")
         ..setTooltipNormalExtended(1, 
-            "Increases nearby population growth.\n"
+            "Modifies nearby population growth rate.\n"
             + kStrBlue + "Growth|r: " + growth.toString() + "%\n"
             + kStrBlue + "Range|r: " + range.toString())
         ..setManaRegenerationIncrease(1, 0)
@@ -179,6 +179,14 @@ function genGrowthAura(int newId, int buffId, string name, string icon, string i
         ..setTooltipNormal(1, "Raise the Gate [" + kStrGold + "Q|r]")
         ..setTooltipNormalExtended(1, "Raises the gate, blocking passage through the gate. \n\n" + kStrHint + "No units or items can be nearby.")
         ..setHotkeyNormal("Q")
+    new AbilityDefinitionNeutralRegenhealthonly(kAID_HospitalHealAura_Life)
+        ..setTargetsAllowed(1, "ground,air,organic,vuln,invu,friend,neutral")
+        ..setAmountofHitPointsRegenerated(1, 0.05)
+        ..setPercentage(1, true)
+    new AbilityDefinitionNeutralRegenmanaonly(kAID_HospitalHealAura_Mana)
+        ..setTargetsAllowed(1, "ground,air,organic,vuln,invu,friend,neutral")
+        ..setAmountRegenerated(1, 0.05)
+        ..setPercentage(1, true)
 
 
     genGrowthAura(kAID_PopMarket, kBID_PopMarket, "Market", "ReplaceableTextures\\CommandButtons\\PASMarketplace.blp", Icons.bTNMarketPlace, kMarketAuraRate, kMarketAuraRange)
@@ -189,6 +197,10 @@ function genGrowthAura(int newId, int buffId, string name, string icon, string i
     genGrowthAura(kAID_PopSwimmingPool, kBID_PopSwimmingPool, "Swimming Pool", "ReplaceableTextures\\CommandButtons\\PASSpawningGrounds.blp", Icons.bTNSpawningGrounds, kSwimmingPoolAuraRate, kSwimmingPoolAuraRange)
     genGrowthAura(kAID_PopFireLight, kBID_PopFireLight, "Fire Light", "ReplaceableTextures\\CommandButtons\\PASFire.blp", Icons.bTNFire, kFireLightAuraRate, kFireLightAuraRange)
     genGrowthAura(kAID_PopLaternLight, kBID_PopLaternLight, "Latern Light", "ReplaceableTextures\\CommandButtons\\PASLamp.blp", Icons.bTNLamp, kLaternLightAuraRate, kLaternLightAuraRange)
+    genGrowthAura(kAID_PopPowerPlant, kBID_PopPowerPlant, 
+        "Power Plant", Icons.pASBTNShadeTrueSight, 
+        "ReplaceableTextures\\CommandButtons\\BTNShadeTrueSight.blp", 
+        kPowerPlantAuraRate, kPowerPlantAuraRange)
         
     
         
