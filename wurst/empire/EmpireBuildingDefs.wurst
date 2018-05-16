@@ -601,7 +601,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNGraveYard)
         ..setScalingValue(0.5)
         ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenCoal) + "A coal burning power production plant. People don't want to live nearby a power plant due to the polution."
-            + kStrGreen + "Nearby Growth:\n" 
+            + "\n" + kStrGreen + "Nearby Growth:\n" 
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
@@ -616,7 +616,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNTombOfRelics)
         ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenGas) + "A natural gas burning power production plant. People don't want to live nearby a power plant due to the polution."
-            + kStrGreen + "Nearby Growth:\n" 
+            + "\n" + kStrGreen + "Nearby Growth:\n" 
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
@@ -631,7 +631,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNSacrificialPit)
         ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFission) + "A power plant that produces energy from nuclear fission. If destroyed, nuclear plants explode terrifically. People don't want to live nearby a nuclear plant because of the risk."
-            + kStrGreen + "Nearby Growth:\n" 
+            + "\n" + kStrGreen + "Nearby Growth:\n" 
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
@@ -646,9 +646,6 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNMoonWell)
         ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenSolar) + "A power plant that uses the sun as it's source of power. Does not pollute and does not explode, so people are fine with living close to it."
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
-            + "Range: " + kPowerPlantAuraRange.toString() 
         )
         ..setRequirements(int2fourchar(kRID_Age12_Digital))
     getCleanSmallBuilding(kUID_Struct_PowerGenFusion, 
@@ -656,11 +653,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
         "S", true, 
         20000, 30000, 40)
         ..setHitPointsMaximumBase(1000)
-        ..setModelFile(Buildings.nerubianZiggurat)
+        ..setModelFile(Buildings.ziggurat1)
+        ..setRequiredAnimationNames("upgrade,second")
         ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNNerubianZiggurat)
+        ..setIconGameInterface(Icons.bTNFrostTower)
         ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFusion) + "An advanced power plant that produces immense amounts of power from nuclear fusion. If destroyed, this plant will explode terrifically. People don't want to live near a nuclear plant because of the risk."
-            + kStrGreen + "Nearby Growth:\n" 
+            + "\n" + kStrGreen + "Nearby Growth:\n" 
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )

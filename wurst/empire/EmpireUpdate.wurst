@@ -209,6 +209,8 @@ public class EmpireInfo
                 multiplier += kFireLightAuraRate
             if UnitHasBuffBJ(hut, kBID_PopLaternLight)
                 multiplier += kLaternLightAuraRate
+            if UnitHasBuffBJ(hut, kBID_PopPowerPlant)
+                multiplier += kPowerPlantAuraRate
             var m = (multiplier / 100.0)
             lastGrowthBonusAvg += (m - 1.0)
             hpop = hpop + m * growth
