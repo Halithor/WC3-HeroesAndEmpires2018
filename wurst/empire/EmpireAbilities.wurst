@@ -2,7 +2,6 @@ package EmpireAbilities
 
 import Globals
 import EmpireGlobals
-import AbilityObjEditing
 import BuffObjEditing
 import ChannelAbilityPreset
 import Assets
@@ -16,7 +15,7 @@ function genGrowthAura(int newId, int buffId, string name, string icon, string i
     return new AbilityDefinitionAuraBrilliancecreep(newId)
         ..setTargetsAllowed(1, "friend,invulnerable,mechanical,structure,vulnerable")
         ..presetAreaofEffect((int lvl) -> range.toReal())
-        ..setBuffs(1, int2fourchar(buffId))
+        ..setBuffs(1, buffId.toRawCode())
         ..setTargetAttachments(0)
         ..setArtTarget("")
         ..setButtonPositionNormalX(0)

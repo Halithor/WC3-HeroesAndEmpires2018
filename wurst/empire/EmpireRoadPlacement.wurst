@@ -4,7 +4,6 @@ import EmpireGlobals
 import RegisterEvents
 import TextUtilities
 import Orders
-import ObjectIds
 import TimerUtils
 import StructureFinished
 
@@ -138,7 +137,7 @@ function onRoadBuildStart()
     if not b.isRoadNearby()
         // print("no road nearby!")
         new IssueCancelOrder(b).start()
-        FakeErrorMessage(b.getOwner(), "Placement Invalid. Needs to be next to a road.")
+        fakeErrorMessage(b.getOwner(), "Placement Invalid. Needs to be next to a road.")
     else
         // print("road nearby all good")
 

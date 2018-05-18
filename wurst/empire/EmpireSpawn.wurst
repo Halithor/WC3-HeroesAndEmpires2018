@@ -1,7 +1,6 @@
 package EmpireSpawn
 
 import EmpireGlobals
-import UnitObjEditing
 import AbilityObjEditing
 import Assets
 import TerrainUtils
@@ -42,7 +41,7 @@ function turnOffCaravanTp()
             GetExpiredTimer()..release()
         end)
 
-public function BeginEmpireGameForPlayer(player p)
+public function beginEmpireGameForPlayer(player p)
     // Create the tp trigger
     if (caravanTp == null)
         caravanTp = CreateTrigger()
@@ -124,7 +123,7 @@ init
         ..setHitPointsMaximumBase(1000)
         ..setAttacksEnabled(0)
         ..setName("Founding Caravan")
-        ..setNormalAbilities(int2fourchar(kAID_Found))
+        ..setNormalAbilities(kAID_Found.toRawCode())
         ..setUpgradesUsed("")
 
 

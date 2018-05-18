@@ -1,7 +1,6 @@
 package HeroInfo
 
 import UnitObjEditing
-import Assets
 
 // This class is the global for a given player. The class the hero selects will 
 // implement individual methods in this class and add to it.

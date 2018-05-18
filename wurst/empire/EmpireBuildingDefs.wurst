@@ -85,7 +85,7 @@ function powerGenTT(int id) returns string
     return kStrBlue + "Power Generated: " + getUnitPowerGeneration(id).toString() + "|r\n"
 
 
-function Pow(int b, int e) returns int
+function pow(int b, int e) returns int
     var result = 1
     for i = 1 to e
         result *= b
@@ -116,12 +116,12 @@ function getCleanTinyBuilding(int newId, string name, string hotkey, bool isUpgr
         ..setButtonPositionY(getHotkeyY(hotkey))
         ..setButtonPositionX(getHotkeyX(hotkey))
         ..setUpgradesUsed("")
-        ..setRequirements(int2fourchar(kUID_Struct_Hall1))
+        ..setRequirements(kUID_Struct_Hall1.toRawCode())
         ..setPathingMap("PathTextures\\2x2Default.tga")
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding))
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode())
         ..setSightRadiusDay(0)
         ..setSightRadiusNight(0)
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
     if isUpgrade
         def..setTooltipBasic("Upgrade to " + name +" [" + kStrGold + hotkey + "|r]")
     return def
@@ -151,11 +151,11 @@ function getCleanSmallBuilding(int newId, string name, string hotkey, bool isUpg
         ..setButtonPositionY(getHotkeyY(hotkey))
         ..setButtonPositionX(getHotkeyX(hotkey))
         ..setUpgradesUsed("")
-        ..setRequirements(int2fourchar(kUID_Struct_Hall1))
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding))
+        ..setRequirements(kUID_Struct_Hall1.toRawCode())
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode())
         ..setSightRadiusDay(0)
         ..setSightRadiusNight(0)
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
     if isUpgrade
         def..setTooltipBasic("Upgrade to " + name +" [" + kStrGold + hotkey + "|r]")
     return def
@@ -168,7 +168,7 @@ function createHut(int lvl) returns BuildingDefinition
         lvl == 0 ? "S" : "Z", 
         lvl != 0,
         ((Pow(1.8, lvl.toReal()) - 1) * 10).round(),
-        Pow(2, lvl) * 250,
+        pow(2, lvl) * 250,
         lvl * 7 + 15
     )
         ..setHitPointsMaximumBase(25 + lvl * lvl * 25)
@@ -181,7 +181,7 @@ function createHut(int lvl) returns BuildingDefinition
         ..setManaMaximum(Pow(2, lvl * 1.0).round() * 20)
         ..setUnitSoundSet(Soundsets.townHall)
         ..setSelectionScale(1.8)
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings) + "," + int2fourchar(kRID_Housing))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Housing.toRawCode())
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGGenericHumanBuilding.blp")
     // Caster names and tips
     var names = ""
@@ -197,9 +197,9 @@ function createHut(int lvl) returns BuildingDefinition
     
     // Set the upgrade to info
     if lvl != kHouseLevelCount
-        def.setUpgradesTo(int2fourchar(kUID_Struct_Huts[lvl + 1]))
+        def.setUpgradesTo(kUID_Struct_Huts[lvl + 1].toRawCode())
     if lvl > 0
-        def.setRequirements( int2fourchar(kRID_Ages[kHouseTierAges[lvl - 1]]))
+        def.setRequirements( kRID_Ages[kHouseTierAges[lvl - 1]].toRawCode())
     return def
 
 function createWall(int lvl) returns BuildingDefinition
@@ -220,9 +220,9 @@ function createWall(int lvl) returns BuildingDefinition
         ..setScalingValue(wallScales[lvl])
         ..setIconGameInterface(Icons.bTNStoneArchitecture)
         ..setPriority(1000)
-        ..setUpgradesTo(lvl < 5 ? int2fourchar(kUID_Struct_Walls[lvl+1]) : "")
+        ..setUpgradesTo(lvl < 5 ? kUID_Struct_Walls[lvl+1].toRawCode() : "")
         ..setUnitSoundSet(Soundsets.watchTower)
-        ..setRequirements(int2fourchar(kUID_Struct_Hall1) + "," + int2fourchar(kRID_Ages[kWallTierAges[lvl]]))
+        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
         ..setAttacksEnabled(1)
         ..setAttack1CooldownTime(2.0)
         ..setAttack1DamageBase(1)
@@ -260,9 +260,9 @@ function createGate(int lvl) returns BuildingDefinition
         ..setTintingColorBlue(255 - 25 * lvl)
         ..setIconGameInterface(Icons.bTNArcaniteArchitecture)
         ..setPriority(1000)
-        ..setUpgradesTo(lvl < 5 ? int2fourchar(kUID_Struct_Gates[lvl+1]) : "")
+        ..setUpgradesTo(lvl < 5 ? kUID_Struct_Gates[lvl+1].toRawCode() : "")
         ..setUnitSoundSet(Soundsets.watchTower)
-        ..setRequirements(int2fourchar(kUID_Struct_Hall1) + "," + int2fourchar(kRID_Ages[kWallTierAges[lvl]]))
+        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
         ..setAttacksEnabled(1)
         ..setAttack1CooldownTime(2.0)
         ..setAttack1DamageBase(1)
@@ -272,14 +272,14 @@ function createGate(int lvl) returns BuildingDefinition
         ..setAttack1WeaponType(WeaponType.Instant)
         ..setAttack1AttackType(AttackType.Normal)
         ..setAttack1ShowUI(true)
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "," + int2fourchar(kAID_GateLower))
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_GateLower.toRawCode())
     if lvl != 0
         def.setTooltipExtended("An upgraded gate with more hitpoints and armor.")
     else
         def.setTooltipExtended("A simple gate that can be opened and closed to allow units through walls.")
     
     // Create the lowered gate!
-    let lowered = getCleanTinyBuilding(
+    let _lowered = getCleanTinyBuilding(
         kUID_Struct_Gates_Lowered[lvl],
         wallNames[lvl] + " Gate",
         lvl == 0 ? "X" : "Z",
@@ -299,10 +299,10 @@ function createGate(int lvl) returns BuildingDefinition
         ..setIconGameInterface(Icons.bTNArcaniteArchitecture)
         ..setPriority(1000)
         ..setUnitSoundSet(Soundsets.watchTower)
-        ..setRequirements(int2fourchar(kUID_Struct_Hall1) + "," + int2fourchar(kRID_Ages[kWallTierAges[lvl]]))
+        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
         ..setPathingMap("PathTextures\\2x2Unbuildable.tga")
         ..setUnitClassification("mechanical,standon")
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "," + int2fourchar(kAID_GateRaise))
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_GateRaise.toRawCode())
     
     return def
 
@@ -346,7 +346,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setUnitSoundSet(Soundsets.humanTower)
         ..setSightRadiusDay(1000)
         ..setSightRadiusNight(200)
-        ..setRequirements(int2fourchar(kUID_Struct_Hall1) + "," + int2fourchar(kRID_Ages[kWallTierAges[lvl]]))
+        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
     return def
 
 @compiletime function genStructures()
@@ -361,7 +361,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setRepairTime(60)
         ..setIconGameInterface(Icons.bTNGreatHall)
         ..setModelFile(Buildings.greatHall1)
-        ..setUnitsTrained(GetTownHallUnitsTrained())
+        ..setUnitsTrained(getTownHallUnitsTrained())
         ..setName("Wooden Town Hall")
         ..setTooltipBasic("Build Wooden Town Hall [" + kStrGold + "Q|r]")
         ..setTooltipExtended("The main structure for your empire. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
@@ -374,11 +374,11 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setShadowTextureBuilding(Textures.shadowGreatHall)
         ..setButtonPositionX(0)
         ..setButtonPositionY(0)
-        ..setResearchesAvailable(GetTownHallResearches())
-        ..setNormalAbilities(GetTownHallAbilities())
+        ..setResearchesAvailable(getTownHallResearches())
+        ..setNormalAbilities(getTownHallAbilities())
         ..setUnitClassification("TownHall,Mechanical")
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings))
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Hall2))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+        ..setUpgradesTo(kUID_Struct_Hall2.toRawCode())
     new BuildingDefinition(kUID_Struct_Hall2, 'htow')
         ..setBuildTime(60)
         ..setGoldCost(1000)
@@ -389,7 +389,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setRepairLumberCost(2500)
         ..setRepairTime(60)
         ..setModelFile(Buildings.townHall)
-        ..setUnitsTrained(GetTownHallUnitsTrained())
+        ..setUnitsTrained(getTownHallUnitsTrained())
         ..setIconGameInterface(Icons.bTNTownHall)
         ..setName("Stone Town Hall")
         ..setTooltipBasic("Upgrade to Stone Town Hall [" + kStrGold + "S|r]")
@@ -403,12 +403,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setShadowTextureBuilding(Textures.shadowTownhall)
         ..setButtonPositionX(1)
         ..setButtonPositionY(1)
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Hall3))
-        ..setResearchesAvailable(GetTownHallResearches())
-        ..setNormalAbilities(GetTownHallAbilities())
+        ..setUpgradesTo(kUID_Struct_Hall3.toRawCode())
+        ..setResearchesAvailable(getTownHallResearches())
+        ..setNormalAbilities(getTownHallAbilities())
         ..setUnitClassification("TownHall,Mechanical")
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings))
-        ..setRequirements(int2fourchar(kRID_Age05_Renaissance))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+        ..setRequirements(kRID_Age05_Renaissance.toRawCode())
     new BuildingDefinition(kUID_Struct_Hall3, 'htow')
         ..setBuildTime(60)
         ..setGoldCost(10000)
@@ -420,7 +420,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setRepairTime(60)
         ..setModelFile(Buildings.townHall)
         ..setRequiredAnimationNames("upgrade,first")
-        ..setUnitsTrained(GetTownHallUnitsTrained())
+        ..setUnitsTrained(getTownHallUnitsTrained())
         ..setIconGameInterface(Icons.bTNKeep)
         ..setName("Steel Town Hall")
         ..setTooltipBasic("Upgrade to Steel Town Hall [" + kStrGold + "S|r]")
@@ -435,11 +435,11 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setButtonPositionX(1)
         ..setButtonPositionY(1)
         ..setUpgradesTo("")
-        ..setResearchesAvailable(GetTownHallResearches())
-        ..setNormalAbilities(GetTownHallAbilities())
+        ..setResearchesAvailable(getTownHallResearches())
+        ..setNormalAbilities(getTownHallAbilities())
         ..setUnitClassification("TownHall,Mechanical")
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings))
-        ..setRequirements(int2fourchar(kRID_Age10_WorldWar))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+        ..setRequirements(kRID_Age10_WorldWar.toRawCode())
 
     getCleanTinyBuilding(kUID_Struct_Road, 
             "Road", 
@@ -464,7 +464,16 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Doodads.grate1)
         ..setIconGameInterface(Icons.bTNCrate)
         ..setTooltipExtended("Foundations upgrade into a variety of useful structures which are required for your empire to function.\n\n" + kStrHint + "Must be built adjacent to a road.")
-        ..setUpgradesTo(GetFoundationUpgrades())
+        ..setUpgradesTo(getFoundationUpgrades())
+    getCleanSmallBuilding(kUID_Struct_FireDept, 
+            "Fire Department", 
+            "Z", false, 
+            10, 250, 20)
+        ..setHitPointsMaximumBase(100)
+        ..setModelFile(Buildings.humanBarracks)
+        ..setIconGameInterface(Icons.bTNBarracks)
+        ..setScalingValue(0.5)
+        ..setTooltipExtended("Fire departments provide an import service for your citizens. When a fire starts, your fire departments will all send fire fighters to handle the fire. Not having a fire department will result in the death of your structures.")
     getCleanSmallBuilding(kUID_Struct_PotionShop, 
             "Potion Shop", 
             "D", true, 
@@ -476,7 +485,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNMerchant)
         ..setTooltipExtended("A shop for potions. Very helpful for players trying to explore the world.")
         ..setItemsMade("pclr,hslv")
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "Aall,Apit") // shop sharing stuff
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "Aall,Apit") // shop sharing stuff
     getCleanSmallBuilding(kUID_Struct_Hospital, 
             "Hospital", 
             "C", true, 
@@ -486,7 +495,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNMageTower)
         ..setTooltipExtended("Provides an aura of regeneration to all nearby biological units. Also regenerates the HP of any heroes that visit your base.\n\n" + kStrHint + " Regenerates health and mana.")
-        ..setNormalAbilities(int2fourchar(kAID_HospitalHealAura_Life) + "," + int2fourchar(kAID_HospitalHealAura_Mana))
+        ..setNormalAbilities(kAID_HospitalHealAura_Life.toRawCode() + "," + kAID_HospitalHealAura_Mana.toRawCode())
     getCleanSmallBuilding(kUID_Struct_ResearchCenter, 
             "Research Center", 
             "X", true, 
@@ -506,7 +515,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.marketPlace1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNMarketPlace)
-        ..setNormalAbilities(int2fourchar(kAID_PopMarket) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setNormalAbilities(kAID_PopMarket.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kMarketAuraRate.toString() + "%\n"
@@ -520,7 +529,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.tavern1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNTavern)
-        ..setNormalAbilities(int2fourchar(kAID_PopTavern) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setNormalAbilities(kAID_PopTavern.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kTavernAuraRate.toString() + "%\n"
@@ -534,7 +543,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.crypt)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNCrypt)
-        ..setNormalAbilities(int2fourchar(kAID_PopChurch) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setNormalAbilities(kAID_PopChurch.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kChurchAuraRate.toString() + "%\n"
@@ -548,7 +557,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.altarOfKings1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNAltarOfKings)
-        ..setNormalAbilities(int2fourchar(kAID_PopTheatre) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setNormalAbilities(kAID_PopTheatre.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kTheatreAuraRate.toString() + "%\n"
@@ -562,7 +571,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.huntersHall1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNHuntersHall)
-        ..setNormalAbilities(int2fourchar(kAID_PopShoppingMall) + "," + int2fourchar(kAID_DemolishBuilding))
+        ..setNormalAbilities(kAID_PopShoppingMall.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kShoppingMallAuraRate.toString() + "%\n"
@@ -576,7 +585,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.spawningGrounds1)
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNSpawningGrounds)
-        ..setNormalAbilities(int2fourchar(kAID_PopSwimmingPool))
+        ..setNormalAbilities(kAID_PopSwimmingPool.toRawCode())
         ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
             + kStrGreen + "Nearby Growth:\n" 
             + "Increase: " + kSwimmingPoolAuraRate.toString() + "%\n"
@@ -590,8 +599,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Doodads.grate1)
         ..setIconGameInterface(Icons.bTNCrate)
         ..setTooltipExtended("A foundation that upgrades into a variety of power generating structures.")
-        ..setUpgradesTo(GetPowerGenFoundationUpgrades())
-        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+        ..setUpgradesTo(getPowerGenFoundationUpgrades())
+        ..setRequirements(kRID_Age09_Machine.toRawCode())
     getCleanSmallBuilding(kUID_Struct_PowerGenCoal, 
         "Coal Power Plant", 
         "Q", true, 
@@ -605,8 +614,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
-        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
-        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+        ..setRequirements(kRID_Age09_Machine.toRawCode())
     getCleanSmallBuilding(kUID_Struct_PowerGenGas, 
         "Gas Power Plant", 
         "A", true, 
@@ -620,8 +629,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
-        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
-        ..setRequirements(int2fourchar(kRID_Age10_WorldWar))
+        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+        ..setRequirements(kRID_Age10_WorldWar.toRawCode())
     getCleanSmallBuilding(kUID_Struct_PowerGenFission, 
         "Nuclear Fission Power Plant", 
         "W", true, 
@@ -635,8 +644,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
-        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
-        ..setRequirements(int2fourchar(kRID_Age11_Atomic))
+        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+        ..setRequirements(kRID_Age11_Atomic.toRawCode())
     getCleanSmallBuilding(kUID_Struct_PowerGenSolar, 
         "Solar Power Plant", 
         "E", true, 
@@ -647,7 +656,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNMoonWell)
         ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenSolar) + "A power plant that uses the sun as it's source of power. Does not pollute and does not explode, so people are fine with living close to it."
         )
-        ..setRequirements(int2fourchar(kRID_Age12_Digital))
+        ..setRequirements(kRID_Age12_Digital.toRawCode())
     getCleanSmallBuilding(kUID_Struct_PowerGenFusion, 
         "Fusion", 
         "S", true, 
@@ -662,8 +671,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
             + "Range: " + kPowerPlantAuraRange.toString() 
         )
-        ..setNormalAbilities(int2fourchar(kAID_PopPowerPlant) + "," + int2fourchar(kAID_DemolishBuilding))
-        ..setRequirements(int2fourchar(kRID_Age13_Space))
+        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+        ..setRequirements(kRID_Age13_Space.toRawCode())
 
 
 
@@ -678,8 +687,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNFarm)
         ..setTooltipExtended("Farms provide food for your citizens. Each income a farm produces 100 food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings) + "," + int2fourchar(kRID_Farming))
-        ..setUpgradesTo(int2fourchar(kUID_Struct_FarmMechanized))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
+        ..setUpgradesTo(kUID_Struct_FarmMechanized.toRawCode())
     // Caster names and tips
     var names = ""
     var tips = ""
@@ -702,8 +711,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNPigFarm)
         ..setTooltipExtended(powerReqTT(kUID_Struct_FarmMechanized) + "A mechanized farm that provides 250 food every cycle. Allows for larger populations with a smaller farming footprint.")
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
-        ..setUpgradesUsed(int2fourchar(kRID_CivilianBuildings) + "," + int2fourchar(kRID_Farming))
-        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
+        ..setRequirements(kRID_Age09_Machine.toRawCode())
     // Caster names and tips
     names = ""
     tips = ""
@@ -722,12 +731,12 @@ function createTower(int newId, int lvl, string name, string hotkey,
         2, 400,
         1.0, 1.0)
         ..setUpgradesTo(
-            int2fourchar(kUID_Struct_Tower1_Guard)
-            + "," + int2fourchar(kUID_Struct_Tower1_AntiHero)
-            + "," + int2fourchar(kUID_Struct_Tower3_MachineGun)
-            + "," + int2fourchar(kUID_Struct_Tower3_Artillery)
-            + "," + int2fourchar(kUID_Struct_Tower3_AntiAir)
-            + "," + int2fourchar(kUID_Struct_Tower4_Radar)
+            kUID_Struct_Tower1_Guard.toRawCode()
+            + "," + kUID_Struct_Tower1_AntiHero.toRawCode()
+            + "," + kUID_Struct_Tower3_MachineGun.toRawCode()
+            + "," + kUID_Struct_Tower3_Artillery.toRawCode()
+            + "," + kUID_Struct_Tower3_AntiAir.toRawCode()
+            + "," + kUID_Struct_Tower4_Radar.toRawCode()
         )
     createTower(kUID_Struct_Tower1_Guard, 1, 
         "Guard Tower", 
@@ -738,7 +747,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,first")
         ..setTooltipExtended("An upgraded arrow shooting tower.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower2_Guard))
+        ..setUpgradesTo(kUID_Struct_Tower2_Guard.toRawCode())
     createTower(kUID_Struct_Tower2_Guard, 2, 
         "Guard Tower", 
         "Z", true,  
@@ -748,7 +757,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,first")
         ..setTooltipExtended("An upgraded arrow shooting tower.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower3_MachineGun))
+        ..setUpgradesTo(kUID_Struct_Tower3_MachineGun.toRawCode())
     createTower(kUID_Struct_Tower1_AntiHero, 1, 
         "Simple Anti-Hero Tower", 
         "S", true,  
@@ -760,7 +769,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,third")
         ..setTooltipExtended("A tower only capable of attacking enemy heroes. Attacks slow their target.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower2_AntiHero))
+        ..setUpgradesTo(kUID_Struct_Tower2_AntiHero.toRawCode())
     createTower(kUID_Struct_Tower2_AntiHero, 2, 
         "Anti-Hero Tower", 
         "Z", true, 
@@ -772,7 +781,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,third")
         ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower3_AntiHero))
+        ..setUpgradesTo(kUID_Struct_Tower3_AntiHero.toRawCode())
     createTower(kUID_Struct_Tower3_AntiHero, 3, 
         "Advanced Anti-Hero Tower", 
         "Z", true,  
@@ -784,7 +793,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,third")
         ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower4_AntiHero))
+        ..setUpgradesTo(kUID_Struct_Tower4_AntiHero.toRawCode())
     createTower(kUID_Struct_Tower4_AntiHero, 4, 
         "Electric Anti-Hero Tower", 
         "Z", true, 
@@ -796,7 +805,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.humanTower1)
         ..setRequiredAnimationNames("upgrade,third")
         ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_AntiHero))
+        ..setUpgradesTo(kUID_Struct_Tower5_AntiHero.toRawCode())
     createTower(kUID_Struct_Tower5_AntiHero, 5, 
         "Laser Anti-Hero Tower", 
         "Z", true, 
@@ -818,7 +827,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setAttack1AnimationDamagePoint(0.433)
         ..setAttack1AnimationBackswingPoint(0.666)
         ..setTooltipExtended("Rapid firing short range defensive structure.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower4_MachineGun))
+        ..setUpgradesTo(kUID_Struct_Tower4_MachineGun.toRawCode())
         ..setScalingValue(1)
         ..setAttack1ProjectileArt(Abilities.rifleImpact)
         ..setAttack1ProjectileArc(0)
@@ -832,7 +841,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setAttack1AnimationDamagePoint(0.433)
         ..setAttack1AnimationBackswingPoint(0.666)
         ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_MachineGun) + "Rapid firing short range defensive structure.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_MachineGun))
+        ..setUpgradesTo(kUID_Struct_Tower5_MachineGun.toRawCode())
         ..setScalingValue(1)
         ..setAttack1ProjectileArt(Abilities.rifleImpact)
         ..setAttack1ProjectileArc(0)
@@ -857,7 +866,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
         ..setModelFile("Models\\NavalBattery.mdx")
         ..setTooltipExtended("Long range tower that deals damage in an area around its target. Can only attack ground units.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower4_Artillery))
+        ..setUpgradesTo(kUID_Struct_Tower4_Artillery.toRawCode())
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Siege)
         ..setAttack1WeaponType(WeaponType.Artillery)
@@ -878,7 +887,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
         ..setModelFile("Models\\NavalBattery.mdx")
         ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_Artillery))
+        ..setUpgradesTo(kUID_Struct_Tower5_Artillery.toRawCode())
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Siege)
         ..setAttack1WeaponType(WeaponType.Artillery)
@@ -919,7 +928,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
         ..setModelFile("Models\\AntiAircraftGun.mdx")
         ..setTooltipExtended("Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower4_AntiAir))
+        ..setUpgradesTo(kUID_Struct_Tower4_AntiAir.toRawCode())
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Pierce)
         ..setAttack1WeaponType(WeaponType.MissileSplash)
@@ -940,7 +949,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
         ..setModelFile("Models\\AntiAircraftGun.mdx")
         ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_AntiAir))
+        ..setUpgradesTo(kUID_Struct_Tower5_AntiAir.toRawCode())
         ..setScalingValue(0.5)
         ..setAttack1AttackType(AttackType.Pierce)
         ..setAttack1WeaponType(WeaponType.MissileSplash)
@@ -981,7 +990,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNZiggurat)
         ..setModelFile(Buildings.ziggurat1)
         ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Tower5_Radar))
+        ..setUpgradesTo(kUID_Struct_Tower5_Radar.toRawCode())
         ..setScalingValue(0.333)
         ..setAttacksEnabled(0)
         ..setSightRadiusDay(2400)
@@ -1015,8 +1024,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setUnitSoundSet("LavaSpawn")
         ..setSightRadiusDay(1000)
         ..setSightRadiusNight(1000)
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "," + int2fourchar(kAID_PopFireLight))
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Firepit))
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopFireLight.toRawCode())
+        ..setUpgradesTo(kUID_Struct_Firepit.toRawCode())
     getCleanTinyBuilding(kUID_Struct_Firepit, 
         "Firepit", 
         "Z", true, 
@@ -1031,9 +1040,9 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setUnitSoundSet("LavaSpawn")
         ..setSightRadiusDay(1250)
         ..setSightRadiusNight(1250)
-        ..setRequirements(int2fourchar(kRID_Age03_Dark))
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "," + int2fourchar(kAID_PopFireLight))
-        ..setUpgradesTo(int2fourchar(kUID_Struct_Latern))
+        ..setRequirements(kRID_Age03_Dark.toRawCode())
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopFireLight.toRawCode())
+        ..setUpgradesTo(kUID_Struct_Latern.toRawCode())
     getCleanTinyBuilding(kUID_Struct_Latern, 
         "Latern", 
         "Z", true, 
@@ -1048,9 +1057,9 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setUnitSoundSet("LavaSpawn")
         ..setSightRadiusDay(1500)
         ..setSightRadiusNight(1500)
-        ..setRequirements(int2fourchar(kRID_Age07_Enlightenment))
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "," + int2fourchar(kAID_PopLaternLight))
-        ..setUpgradesTo(int2fourchar(kUID_Struct_StreetLight))
+        ..setRequirements(kRID_Age07_Enlightenment.toRawCode())
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopLaternLight.toRawCode())
+        ..setUpgradesTo(kUID_Struct_StreetLight.toRawCode())
     getCleanTinyBuilding(kUID_Struct_StreetLight, 
         "Street Light", 
         "Z", true, 
@@ -1066,8 +1075,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setUnitSoundSet("LavaSpawn")
         ..setSightRadiusDay(2000)
         ..setSightRadiusNight(2000)
-        ..setRequirements(int2fourchar(kRID_Age11_Atomic))
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + "," + int2fourchar(kAID_PopLaternLight))
+        ..setRequirements(kRID_Age11_Atomic.toRawCode())
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopLaternLight.toRawCode())
     getCleanSmallBuilding(kUID_Struct_Barracks1, 
         "Wooden Barracks", "E", false, 50, 400, 25)
         ..setHitPointsMaximumBase(100)
@@ -1084,7 +1093,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.5)
         ..setIconGameInterface(Icons.bTNDranaiHut)
         ..setTooltipExtended("Provides a return location for lumber.")
-        ..setNormalAbilities(int2fourchar(kAID_DemolishBuilding) + ",Argl")
+        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + ",Argl")
         
     for i = 0 to kHouseLevelCount - 1
         createHut(i)

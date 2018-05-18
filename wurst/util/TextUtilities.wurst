@@ -6,7 +6,7 @@ sound errorSound
 public function printWarningMessage(player whichPlayer, string msg)
     printTimedToPlayer(kStrWarning + "WARNING:|r " + msg, 4, whichPlayer)
 
-public function FakeErrorMessage(player whichPlayer, string msg)
+public function fakeErrorMessage(player whichPlayer, string msg)
     if errorSound == null
         errorSound = CreateSoundFromLabel("InterfaceError", false, false, false, 10, 10)
     let txt = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n|cffffcc00" + msg + "|r"

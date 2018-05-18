@@ -63,7 +63,7 @@ init
         ..forEach(() -> begin
             playerInfos[GetEnumPlayer().getId()] = new PlayerInfo()
             if GetEnumPlayer().isIngame()
-                PlayersInGame += 1
+                playersInGame += 1
                 playerInfos[GetEnumPlayer().getId()].isActive = true
             else 
                 playerInfos[GetEnumPlayer().getId()].isActive = false

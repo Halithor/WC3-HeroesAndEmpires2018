@@ -16,7 +16,7 @@ public constant kStringIntColor = "|cff6060ff"
 constant kMaxPlayerNumber = 22
 constant kPlayerId_Evil = 23
 
-public int PlayersInGame = 0
+public int playersInGame = 0
 
 
 public enum PlayerRole

@@ -3,10 +3,8 @@ package EmpireUpdate
 import EmpireGlobals
 import StandardTextTags
 import StringUtils
-import StructureFinished
 import Globals
 import TextUtilities
-import ObjectIds
 import EmpireResearches
 import RegisterEvents
 import PlayerInfo
@@ -146,7 +144,7 @@ public class EmpireInfo
             prod += part - (part * part) * (0.5 / (kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect))
         
         
-        real ratio = req != 0 ? prod/req : 2.5 
+        real _ratio = req != 0 ? prod/req : 2.5 
         if prod > req
             happyIncome = (req != 0 ? prod/req : 3.0) - 1.0
         else 

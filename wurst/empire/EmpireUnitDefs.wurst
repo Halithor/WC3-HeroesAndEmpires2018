@@ -1,12 +1,8 @@
 package EmpireUnitDefs
 
-import UnitObjEditing
-import AbilityObjEditing
 import Assets
 import EmpireGlobals
-import ObjectIdGenerator
 import Globals
-import ObjectIds
 import ChannelAbilityPreset
 
 
@@ -18,7 +14,7 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setHitPointsRegenerationRate(0.5)
         ..setManaMaximum(0)
         ..setSpeedBase(260)
-        ..setNormalAbilities(int2fourchar(kAID_RetireUnit))
+        ..setNormalAbilities(kAID_RetireUnit.toRawCode())
         ..setAttack1DamageBase(dmgBase)
         ..setAttack1DamageNumberofDice(dmgDice)
         ..setAttack1DamageSidesperDie(dmgDiceSides)
@@ -62,19 +58,19 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setAttack1DamageNumberofDice(1)
         ..setAttack1DamageSidesperDie(3)
         ..setAttack1Range(40)
-        ..setStructuresBuilt(GetWorkerStructuresBuilt())
-        ..setUpgradesUsed(int2fourchar(kRID_LumberHarvesting))
+        ..setStructuresBuilt(getWorkerStructuresBuilt())
+        ..setUpgradesUsed(kRID_LumberHarvesting.toRawCode())
         ..setBuildTime(10)
         ..setGoldCost(10)
         ..setLumberCost(200)
         ..setFoodCost(1)
         ..setNormalAbilities(
-            int2fourchar(kAID_WorkerHarvest) 
-            + "," + int2fourchar(kAID_WorkerRepair)
-            + "," + int2fourchar(kAID_RetireUnit)
-            + "," + int2fourchar(kAID_KillTrees)
-            + "," + int2fourchar(kAID_GrowTrees)
-            + "," + int2fourchar(kAID_DestroyRoad)
+            kAID_WorkerHarvest.toRawCode() 
+            + "," + kAID_WorkerRepair.toRawCode()
+            + "," + kAID_RetireUnit.toRawCode()
+            + "," + kAID_KillTrees.toRawCode()
+            + "," + kAID_GrowTrees.toRawCode()
+            + "," + kAID_DestroyRoad.toRawCode()
         )
         ..setSelectionScale(0.5)
         ..setScalingValue(0.5)
@@ -108,8 +104,8 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setRepairGoldCost(100)
         ..setRepairLumberCost(200)
         ..setFoodCost(1)
-        ..setNormalAbilities(int2fourchar(kAID_BotRepair)
-            + "," + int2fourchar(kAID_RetireUnit)
+        ..setNormalAbilities(kAID_BotRepair.toRawCode()
+            + "," + kAID_RetireUnit.toRawCode()
         )
         ..setSelectionScale(0.5)
         ..setCollisionSize(7.0)
@@ -124,7 +120,7 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setTooltipExtended("Advanced mechanical repair bot. Able to repair buildings faster than workers. Can also repair other repair bots. Much more durable than workers. Benefits from ground vehicle upgrades.")
         ..setHotkey("X")
         ..setUnitClassification("mechanical")
-        ..setRequirements(int2fourchar(kRID_Age09_Machine))
+        ..setRequirements(kRID_Age09_Machine.toRawCode())
     // Zepplin
     new UnitDefinition(kUID_Zepplin, 'nzep')
         ..setHitPointsMaximumBase(1000)
@@ -138,7 +134,7 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setGoldCost(1000)
         ..setLumberCost(2500)
         ..setFoodCost(1)
-        ..setRequirements(int2fourchar(kRID_Age07_Enlightenment))
+        ..setRequirements(kRID_Age07_Enlightenment.toRawCode())
 
     genCombatUnit(kUID_Clubman, 2, 1, 3, 2.0, 80, 30, 3, ArmorType.Large, 20, 100, 15, 0, 0)
         ..setName("Clubman")

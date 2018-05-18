@@ -176,6 +176,7 @@ public constant kUID_Struct_Barracks1 = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_LumberMill = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Road = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Foundation = compiletime(UNIT_ID_GEN.next())
+public constant kUID_Struct_FireDept = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_PotionShop = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Hospital = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_ResearchCenter = compiletime(UNIT_ID_GEN.next())
@@ -389,61 +390,61 @@ public function getAgeIndex(int rid) returns int
 public function isResearchAge(int rid) returns bool
     return getAgeIndex(rid) > -1
 
-public function GetWorkerStructuresBuilt() returns string
-    return int2fourchar(kUID_Struct_Hall1) 
-        + "," + int2fourchar(kUID_Struct_Road)
-        + "," + int2fourchar(kUID_Struct_Hut0)
-        + "," + int2fourchar(kUID_Struct_Foundation)
-        + "," + int2fourchar(kUID_Struct_Farm)
-        + "," + int2fourchar(kUID_Struct_Campfire)
-        + "," + int2fourchar(kUID_Struct_Wall0)
-        + "," + int2fourchar(kUID_Struct_Gate0)
-        + "," + int2fourchar(kUID_Struct_Tower0)
-        + "," + int2fourchar(kUID_Struct_Barracks1)
-        + "," + int2fourchar(kUID_Struct_LumberMill)
+public function getWorkerStructuresBuilt() returns string
+    return kUID_Struct_Hall1.toRawCode() 
+        + "," + kUID_Struct_Road.toRawCode()
+        + "," + kUID_Struct_Hut0.toRawCode()
+        + "," + kUID_Struct_Foundation.toRawCode()
+        + "," + kUID_Struct_Farm.toRawCode()
+        + "," + kUID_Struct_Campfire.toRawCode()
+        + "," + kUID_Struct_Wall0.toRawCode()
+        + "," + kUID_Struct_Gate0.toRawCode()
+        + "," + kUID_Struct_Tower0.toRawCode()
+        + "," + kUID_Struct_Barracks1.toRawCode()
+        + "," + kUID_Struct_LumberMill.toRawCode()
 
-public function GetTownHallAbilities() returns string
+public function getTownHallAbilities() returns string
     return "Argl"
-        + "," + int2fourchar(kAID_TownHallInventory)
-        + "," + int2fourchar(kAID_TaxIncrease)
-        + "," + int2fourchar(kAID_TaxDecrease)
-        + "," + int2fourchar(kAID_RationDecrease)
-        + "," + int2fourchar(kAID_RationIncrease)
+        + "," + kAID_TownHallInventory.toRawCode()
+        + "," + kAID_TaxIncrease.toRawCode()
+        + "," + kAID_TaxDecrease.toRawCode()
+        + "," + kAID_RationDecrease.toRawCode()
+        + "," + kAID_RationIncrease.toRawCode()
 
-public function GetFoundationUpgrades() returns string
-    return  int2fourchar(kUID_Struct_PopMarket)
-        + "," + int2fourchar(kUID_Struct_PopTavern)
-        + "," + int2fourchar(kUID_Struct_PopChurch)
-        + "," + int2fourchar(kUID_Struct_PopTheatre)
-        + "," + int2fourchar(kUID_Struct_PopShoppingMall)
-        + "," + int2fourchar(kUID_Struct_PopSwimmingPool)
-        + "," + int2fourchar(kUID_Struct_ResearchCenter)
-        + "," + int2fourchar(kUID_Struct_Hospital)
-        + "," + int2fourchar(kUID_Struct_PotionShop)
-        + "," + int2fourchar(kUID_Struct_PowerGenFoundation)
+public function getFoundationUpgrades() returns string
+    return  kUID_Struct_PopMarket.toRawCode()
+        + "," + kUID_Struct_PopTavern.toRawCode()
+        + "," + kUID_Struct_PopChurch.toRawCode()
+        + "," + kUID_Struct_PopTheatre.toRawCode()
+        + "," + kUID_Struct_PopShoppingMall.toRawCode()
+        + "," + kUID_Struct_PopSwimmingPool.toRawCode()
+        + "," + kUID_Struct_ResearchCenter.toRawCode()
+        + "," + kUID_Struct_Hospital.toRawCode()
+        + "," + kUID_Struct_PotionShop.toRawCode()
+        + "," + kUID_Struct_PowerGenFoundation.toRawCode()
 
-public function GetPowerGenFoundationUpgrades() returns string
-    return  int2fourchar(kUID_Struct_PowerGenCoal)
-        + "," + int2fourchar(kUID_Struct_PowerGenGas)
-        + "," + int2fourchar(kUID_Struct_PowerGenSolar)
-        + "," + int2fourchar(kUID_Struct_PowerGenFusion)
-        + "," + int2fourchar(kUID_Struct_PowerGenFission)
+public function getPowerGenFoundationUpgrades() returns string
+    return  kUID_Struct_PowerGenCoal.toRawCode()
+        + "," + kUID_Struct_PowerGenGas.toRawCode()
+        + "," + kUID_Struct_PowerGenSolar.toRawCode()
+        + "," + kUID_Struct_PowerGenFusion.toRawCode()
+        + "," + kUID_Struct_PowerGenFission.toRawCode()
 
-public function GetItemFoundationUpgrades() returns string
-    return int2fourchar(kUID_Struct_Foundation)
+public function getItemFoundationUpgrades() returns string
+    return kUID_Struct_Foundation.toRawCode()
 
-public function GetTownHallResearches() returns string
+public function getTownHallResearches() returns string
     var str = ""
     for i = 0 to kAgeCount - 1
-        str += int2fourchar(kRID_Ages[i])
+        str += kRID_Ages[i].toRawCode()
         if (i < kAgeCount - 1)
             str += ","
     return str
 
-public function GetTownHallUnitsTrained() returns string
-    return int2fourchar(kUID_Worker)
-        + "," + int2fourchar(kUID_RepairBot)
-        + "," + int2fourchar(kUID_Zepplin)
+public function getTownHallUnitsTrained() returns string
+    return kUID_Worker.toRawCode()
+        + "," + kUID_RepairBot.toRawCode()
+        + "," + kUID_Zepplin.toRawCode()
 
 
 

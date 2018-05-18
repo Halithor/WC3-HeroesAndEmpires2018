@@ -3,7 +3,6 @@ package EmpireStartGame
 import TimerUtils
 import Globals
 import PlayerInfo
-import RegisterEvents
 
 
 constant kEmpireUpdateCycleDuration = 6.0
@@ -33,6 +32,7 @@ function updateResearch()
         end)
 
 public function startEmpires()
+    
     getTimer()
         ..startPeriodic(kEmpireUpdateCycleDuration, function updateHappiness)
     getTimer()

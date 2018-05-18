@@ -49,7 +49,7 @@ function spawnStartingUnits()
         ..enumPlayers(Filter(()-> GetFilterPlayer().isActive()))
         ..forEach(() -> begin
             if GetEnumPlayer().getRole() == PlayerRole.Empire
-                BeginEmpireGameForPlayer(GetEnumPlayer())
+                beginEmpireGameForPlayer(GetEnumPlayer())
             else
                 BeginHeroGameForPlayer(GetEnumPlayer())
         end)
@@ -112,7 +112,7 @@ function finishSelectionForPlayer(player p)
     grp.destr()
     // Count finished players
     playersFinishedCount += 1
-    if (playersFinishedCount >= PlayersInGame)
+    if (playersFinishedCount >= playersInGame)
         finishSelection()
 
 function finishSelection()
@@ -298,7 +298,7 @@ function createTavern(int id, string name, string sold) returns BuildingDefiniti
         ..setHotkey("Q")
         ..setIconGameInterface(Icons.bTNDivineIntervention)
         ..setUnitSoundSet(Soundsets.heroPaladin)
-    createTavern(kUID_RoleTavern, "Role Selection", int2fourchar(kUID_RoleEmpire) + "," + int2fourchar(kUID_RoleHero))
+    createTavern(kUID_RoleTavern, "Role Selection", kUID_RoleEmpire.toRawCode() + "," + kUID_RoleHero.toRawCode())
     // Hero class selection
     getPurchasableOption(kUID_ClassFighter)
         ..setName("Select Fighter Class")
@@ -331,7 +331,7 @@ function createTavern(int id, string name, string sold) returns BuildingDefiniti
         ..setButtonPositionY(2)
         ..setIconGameInterface(Icons.bTNSelectHeroOn)
         ..setUnitSoundSet(Soundsets.albatross)
-    createTavern(kUID_ClassTavern, "Hero Class Selection", int2fourchar(kUID_ClassFighter) + "," + int2fourchar(kUID_ClassRanger) + "," + int2fourchar(kUID_ClassWizard) + "," + int2fourchar(kUID_ClassRandom))
+    createTavern(kUID_ClassTavern, "Hero Class Selection", kUID_ClassFighter.toRawCode() + "," + kUID_ClassRanger.toRawCode() + "," + kUID_ClassWizard.toRawCode() + "," + kUID_ClassRandom.toRawCode())
 
 
         

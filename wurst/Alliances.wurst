@@ -1,7 +1,5 @@
 package Alliances
 
-import RegisterEvents
-import Colors
 import Globals
 import PlayerInfo
 
@@ -32,13 +30,13 @@ constant playerColorNames = [
     "peanut"
 ]
 
-constant playercolors = [color(255,2,2), color(0,65,255), color(27,229,184), color(83,0,128), 
-    color(255,252,0), color(254,137,13), color(31,191,0), color(228,90,175), 
-    color(148,149,150), color(125,190,241),	color(15,97,69), color(77,41,3),
-    color(155,0,0), color(0, 0, 195), color(0, 234, 255), color(190, 0, 254), 
-    color(235, 205, 135), color(248, 164, 139), color(191, 255, 128), color(220, 185, 235), 
-    color(40, 40, 40), color(235, 240, 255), color(0, 120, 30), color(164, 11, 51)
-    ]
+// constant playercolors = [color(255,2,2), color(0,65,255), color(27,229,184), color(83,0,128), 
+//     color(255,252,0), color(254,137,13), color(31,191,0), color(228,90,175), 
+//     color(148,149,150), color(125,190,241),	color(15,97,69), color(77,41,3),
+//     color(155,0,0), color(0, 0, 195), color(0, 234, 255), color(190, 0, 254), 
+//     color(235, 205, 135), color(248, 164, 139), color(191, 255, 128), color(220, 185, 235), 
+//     color(40, 40, 40), color(235, 240, 255), color(0, 120, 30), color(164, 11, 51)
+//     ]
 
 function getPlayerFromName(string name) returns player
     for i = 0 to bj_MAX_PLAYER_SLOTS
@@ -80,8 +78,8 @@ function handleChat()
     else if msg.startsWith("-colors") or msg.startsWith("-players") or msg.startsWith("-numbers")
         printTimedToPlayer(kStrGold + "===== Players in Game =====", 25, p)
         for i = 0 to bj_MAX_PLAYERS
-            if Player(i).isIngame()
-                printTimedToPlayer(kStrBlue + "Player " +I2S(i+1) + ":|r " + playercolors[i].toColorString() + Player(i).getName() + "|r is " + playercolors[i].toColorString() + playerColorNames[i] + "|r.", 15, p)
+            if players[i].isIngame()
+                printTimedToPlayer(kStrBlue + "Player " +I2S(i+1) + ":|r " + players[i].getColor().toColor().toColorString() + Player(i).getName() + "|r is " + players[i].getColor().toColor().toColorString() + playerColorNames[i] + "|r.", 15, p)
     else if msg.startsWith("-ally")
         var name = msg.substring(6)
         let target = getPlayerFromAnything(name)
@@ -92,7 +90,7 @@ function handleChat()
                     SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_ALLIED_VISION)
                     // TODO make this a reciprical decision
                 else
-                    printTimedToPlayer("Player " + playercolors[target.getId()].toColorString() + target.getName() + "|r is not a valid target for alliance.", 5, p)
+                    printTimedToPlayer("Player " + target.getColor().toColor().toColorString() + target.getName() + "|r is not a valid target for alliance.", 5, p)
             else
                 printTimedToPlayer("You can't ally yourself!", 5, p)
         else 
@@ -119,7 +117,7 @@ function handleChat()
                     SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_ALLIED)
                     // TODO make this a reciprical decision
                 else
-                    printTimedToPlayer("Player " + playercolors[target.getId()].toColorString() + target.getName() + "|r is not a valid target for a truce.", 5, p)
+                    printTimedToPlayer("Player " + target.getColor().toColor().toColorString() + target.getName() + "|r is not a valid target for a truce.", 5, p)
             else
                 printTimedToPlayer("You can't truce yourself!", 5, p)
         else 

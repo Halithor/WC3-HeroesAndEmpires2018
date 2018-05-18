@@ -1,15 +1,11 @@
 package EmpireResearches
 
 import EmpireGlobals
-import UpgradeObjEditing
-import ObjEditingNatives
 import ChannelAbilityPreset
 import initlater PlayerInfo
 import Globals
 import RegisterEvents
 import HashMap
-import ObjectIdGenerator
-import ObjectIds
 import Assets
 import HotkeyUtil
 
@@ -34,12 +30,12 @@ constant kAID_r = [
 ]
 
 public function getResearchCenterResearches() returns string
-    return int2fourchar(kAID_rCancelResearch)
-        + "," + int2fourchar(kAID_rHousing)
-        + "," + int2fourchar(kAID_rCivilianBuildings)
-        + "," + int2fourchar(kAID_rLumberHarvesting)
-        + "," + int2fourchar(kAID_rDefensiveStructures)
-        + "," + int2fourchar(kAID_rFarming)
+    return kAID_rCancelResearch.toRawCode()
+        + "," + kAID_rHousing.toRawCode()
+        + "," + kAID_rCivilianBuildings.toRawCode()
+        + "," + kAID_rLumberHarvesting.toRawCode()
+        + "," + kAID_rDefensiveStructures.toRawCode()
+        + "," + kAID_rFarming.toRawCode()
 
 public function getResearchInfo(int rid) returns ResearchInfo
     return infoLookup.get(rid)
@@ -69,7 +65,7 @@ class ResearchInfo
         infoLookupFromPlaceholder.put(aid, this)
 
         if compiletime
-            var def = new ChannelAbilityPreset(aid, 1, true)
+            var _def = new ChannelAbilityPreset(aid, 1, true)
                 ..makeUnitSpell(0, 0)
                 ..setIconNormal(icon)
                 ..setTooltipNormal(1, "Research " + name + " [" + kStrGold + hotkey.toUpperCase() + "|r]")
@@ -83,7 +79,7 @@ class ResearchInfo
     function getMaxLevel() returns int
         return maxLvl
 
-    function onTechFinished(player p, int newLvl)
+    function onTechFinished(player p, int _newLvl)
         enableResearchesForPlayer(p)
     
     function getTotalCostGold(int lvl) returns int
@@ -184,7 +180,7 @@ init
     real goldCost = kAgeCostBaseGold.toReal()
     real lumberCost = kAgeCostBaseLumber.toReal()
     for i = 0 to kAgeCount - 1
-        let def = createObjectDefinition("w3q", kRID_Ages[i], 'Rhac')
+        let _def = createObjectDefinition("w3q", kRID_Ages[i], 'Rhac')
             ..setLvlString("gef1", 0, "")
             ..setLvlString("gef2", 0, "")
             ..setLvlString("gcls", 0, "")

@@ -9,7 +9,6 @@ public function unit.isStructureFinished() returns bool
         return true
     let s = this.getLife()
     var r = s
-    bool b
     // Make sure we have enough life
     if s < kLifeRequirement
         r = s + kLifeRequirement
