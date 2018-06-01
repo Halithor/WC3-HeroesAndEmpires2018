@@ -10,8 +10,19 @@ import RegisterEvents
 import PlayerInfo
 import HashMap
 import HashSet
+import UnitIndexer
+import Assets
+import SoundUtils
 
 player tempP
+FireEvent array fireEvents
+
+// Sounds
+SoundDefinition soundFire = new SoundDefinition("Sounds\\Fire_Warning.mp3", false)
+SoundDefinition soundDisease = new SoundDefinition("Sounds\\Disease_Warning.mp3", false)
+SoundDefinition soundFoodFalling = new SoundDefinition("Sounds\\Food_Falling.mp3", false)
+SoundDefinition soundFoodRising = new SoundDefinition("Sounds\\Food_Growing.mp3", false)
+SoundDefinition soundFoodEmpty = new SoundDefinition("Sounds\\Food_Empty.mp3", false)
 
 function log( real py, real pbase ) returns real
     real y = py
@@ -42,6 +53,44 @@ function log( real py, real pbase ) returns real
 //             ..enumUnitsInRect(GetPlayableMapRect(), 
 //                 Filter(() -> GetFilterUnit().isHouse() and GetFilterUnit().getOwner() == tempP and GetFilterUnit().isStructureFinished()))
 
+
+class FireEvent
+    unit fire
+    group fighters
+    trigger onDeath
+    trigger onDamage
+
+    construct(unit fire)
+        this.fire = fire
+        fighters = CreateGroup()
+        onDeath = CreateTrigger()
+            ..addAction(function handleDeath)
+            ..registerUnitEvent(fire, EVENT_UNIT_DEATH)
+        onDamage = CreateTrigger()
+            ..addAction(function handleDamage)
+            ..registerUnitEvent(fire, EVENT_UNIT_DAMAGED)
+        // add to array
+        fireEvents[fire.getIndex()] = this
+    
+    ondestroy
+        fireEvents[fire.getIndex()] = null
+        onDeath.destr()
+        onDamage.destr()
+        fighters.destr()
+
+    static function handleDeath()
+        let data = fireEvents[GetDyingUnit().getIndex()]
+        // remove the units
+        for fighter in data.fighters
+            flashEffect(Abilities.blinkCaster, fighter.getPos())
+            fighter.remove()
+        // destroy the object, cleaning up triggers etc
+        destroy data
+    
+    static function handleDamage()
+        let data = fireEvents[GetTriggerUnit().getIndex()]
+        data.fire.addHP(-kEventFireFighterDamage.toReal())
+
 public class EmpireInfo
     // Player who owns this empire.
     player p
@@ -71,6 +120,7 @@ public class EmpireInfo
 
     // Population related variables
     group houseGroup
+    group groupFireDepts
     int population = 0
     int popRelaxing = 100
     int popIndustry = 0
@@ -91,6 +141,7 @@ public class EmpireInfo
     int farms = 0
     int farmsMechanical = 0
     group farmGroup
+    bool foodFallingFast = false
     // Incomes
     int goldIncome = 0
     int lumberIncome = 0
@@ -113,18 +164,19 @@ public class EmpireInfo
         farmGroup = CreateGroup()
         houseGroup = CreateGroup()
         groupPower = CreateGroup()
+        groupFireDepts = CreateGroup()
         for i = 0 to kResearchCount - 1
             researchProgresses[i] = 0
             researchLevels[i] = 0
 
-    // Standard update function. Called every 6 seconds.
+    // big update function, not used in lieu of stepwise updates (reduces chance of big
+    // lag spike when empires update).
     function update()
         updateHappiness()
         updatePopulation()
         updateIncome()
         updateResearch()
         updateEvents()
-        updateElectricity()
     
     function updateHappiness()
         // First calculate required happiness
@@ -189,30 +241,37 @@ public class EmpireInfo
             houses += 1
             real hpop = hut.getMana()
             real hpop_old = hpop
-            // Add in aura bonus. Yes this is ugly.
-            var multiplier = 100.0
-            if UnitHasBuffBJ(hut, kBID_PopMarket)
-                multiplier += kMarketAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopTavern)
-                multiplier += kTavernAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopChurch)
-                multiplier += kChurchAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopTheatre)
-                multiplier += kTheatreAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopShoppingMall)
-                multiplier += kShoppingMallAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopSwimmingPool)
-                multiplier += kSwimmingPoolAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopFireLight)
-                multiplier += kFireLightAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopLaternLight)
-                multiplier += kLaternLightAuraRate
-            if UnitHasBuffBJ(hut, kBID_PopPowerPlant)
-                multiplier += kPowerPlantAuraRate
-            var m = (multiplier / 100.0)
-            lastGrowthBonusAvg += (m - 1.0)
-            hpop = hpop + m * growth
-            
+            if growth > 0
+                // Add in aura bonus. Yes this is ugly.
+                var multiplier = 100.0
+                if UnitHasBuffBJ(hut, kBID_PopMarket)
+                    multiplier += kMarketAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopTavern)
+                    multiplier += kTavernAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopChurch)
+                    multiplier += kChurchAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopTheatre)
+                    multiplier += kTheatreAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopShoppingMall)
+                    multiplier += kShoppingMallAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopSwimmingPool)
+                    multiplier += kSwimmingPoolAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopFireLight)
+                    multiplier += kFireLightAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopLaternLight)
+                    multiplier += kLaternLightAuraRate
+                if UnitHasBuffBJ(hut, kBID_PopPowerPlant)
+                    multiplier += kPowerPlantAuraRate
+                var m = (multiplier / 100.0)
+                lastGrowthBonusAvg += (m - 1.0)
+                hpop = hpop + m * growth
+            else
+                // growth is negative, so no auras
+                hpop = hpop + growth
+                if hpop < 0
+                    // going negative!, reset to 0
+                    hpop = 0
+                    
             // Make sure that we don't get bigger than the max
             if hpop > hut.getMaxMana()
                 hpop = hut.getMaxMana()
@@ -227,26 +286,36 @@ public class EmpireInfo
             population += hpop.round()
         
         lastGrowthBonusAvg = houses > 0 ? lastGrowthBonusAvg  / houses.toReal() : 0
+        // Happiness reset to positive value if everyone dies
+        if population == 0
+            happiness = 60
 
     // Calculates income and gives it to the empire.
     function updateIncome()      
         tempP = p
         // Food income is the farms production minus pop consumption
-        foodIncome = (farms * kFoodPerFarm * (1.0 + researchLevels[getResearchInfo(kRID_Farming).index].toReal() * 0.20)).round()
+        foodIncome = (farms * kFoodPerFarm) + (farmsMechanical * kFoodPerMechanicalFarm)
+        foodIncome = (foodIncome * (1.0 + researchLevels[getResearchInfo(kRID_Farming).index].toReal() * kFoodUpgradeBonus)).round()
         // Population consumption
         foodIncome -= ((population * foodRate) div 100)
 
         food += foodIncome
 
         // Check to see if the food is dropping fast
-        if (food + foodIncome * 15) < 0
+        if (food + foodIncome * 15) < 0 and food > 0
             printWarningMessage(this.p, "Food stocks are dropping quickly!")
+            soundFoodFalling.playForPlayer(p)
+            foodFallingFast = true
+        else if foodFallingFast and foodIncome > 0 and food > 0
+            foodFallingFast = false
+            soundFoodRising.playForPlayer(p)
 
         // Starve the peoples if we went negative
         if food < 0
             let starved = (food.abs() * foodRate)
             food = 0
             starvePeople(starved)
+            soundFoodEmpty.playForPlayer(p)
         // Now calculate gold and lumber income
         goldIncome = (((population * taxRate).toReal() / kIncomeGoldTaxPopDivisor) 
             * (1. + popCommerce.toReal() * kIncomeGoldCommerceMultiplier)).round() 
@@ -329,12 +398,40 @@ public class EmpireInfo
                             ..center(researchCenter.getPos3Zero(),kStrBlue + "No people in research!", 10.434)
 
     // Generate random empire specific events such as fires
-    private function updateEvents()
-        skip
+    function updateEvents()
+        // Check for fire
+        
+        if (GetRandomReal(0, 100) < kEventFireSpawnRate and houses > 5)
+            eventHouseFire()
     
-    // Check the status of the power grid.
-    private function updateElectricity()
-        skip
+
+    // This causes a fire to occur
+    private function eventHouseFire()
+        // pick a random house, create the fire
+        let victim = houseGroup.getRandomUnit()
+        let fire = CreateUnit(p, kUID_FireEntity, victim.getPos().x, victim.getPos().y, 0)
+            ..setHP(kEventFireFireInitHp)
+            ..setTimedLife(25) // can kill buildings
+        // reduce the mana and HP of the nearby structures so that the auras take effect
+        let nearby = CreateGroup()
+            ..enumUnitsInRange(victim.getPos(), 128.0 + 92, Filter(() -> GetFilterUnit().isHouse()))
+        for u from nearby
+            if u.getMaxHP() == u.getHP()
+                u.addHP(-1.0)
+            if u.getMaxMana() == u.getMana()
+                u.addMana(-1.0)
+        nearby.destr()
+        // Create the fire event
+        let fireEvent = new FireEvent(fire)
+        // Send out the firefighters!
+        for fireDept in groupFireDepts
+            let fighter = CreateUnit(p, kUID_FireFighter, fireDept.getPos().x, fireDept.getPos().y, 0)
+            fighter.issueTargetOrder("attack", fire)
+            fighter.setTimedLife(25) // no reason to live longer than this.
+            // add to the event
+            fireEvent.fighters.addUnit(fighter)
+        // Play sound!
+        soundFire.playForPlayer(p)
 
     function toString() returns string
         return kStrGold + "===== Empire Report =====\n" +
@@ -553,6 +650,8 @@ public class EmpireInfo
             farms++
         else if u.getTypeId() == kUID_Struct_FarmMechanized
             farmsMechanical++
+        else if u.getTypeId() == kUID_Struct_FireDept
+            groupFireDepts.addUnit(u)
 
     // Handles the unit's removal. If a non-0 uid is passed, uses it instead of this.
     function handleUnitRemoval(unit u, int uid)
@@ -572,6 +671,9 @@ public class EmpireInfo
             else if id == kUID_Struct_FarmMechanized and not upgradingUnits.has(u)
                 // if it's in the upgrade list, that means that it hasn't been counted yet
                 farmsMechanical--
+            else if id == kUID_Struct_FireDept // Fire dept
+                groupFireDepts.removeUnit(u)
+        
         
         // Remove from the upgrading gimmicks.
         if upgradingUnits.has(u)
@@ -597,13 +699,13 @@ init
         if GetDyingUnit().getOwner().getRole() == PlayerRole.Empire 
             GetDyingUnit().getOwner().getEmpireInfo().handleUnitDeath(GetDyingUnit())
     end)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START, () -> begin
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START) -> 
         if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
             GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeStart(GetTriggerUnit())
-    end)
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_CANCEL, () -> begin
         if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
             GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeCancel(GetTriggerUnit())
     end)
+    
     
     

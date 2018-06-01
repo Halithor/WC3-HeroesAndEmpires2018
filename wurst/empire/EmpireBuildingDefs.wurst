@@ -183,6 +183,7 @@ function createHut(int lvl) returns BuildingDefinition
         ..setSelectionScale(1.8)
         ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Housing.toRawCode())
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGGenericHumanBuilding.blp")
+        ..setTargetedAs("structure,ward")
     // Caster names and tips
     var names = ""
     var tips = ""
@@ -471,7 +472,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             10, 250, 20)
         ..setHitPointsMaximumBase(100)
         ..setModelFile(Buildings.humanBarracks)
-        ..setIconGameInterface(Icons.bTNBarracks)
+        ..setIconGameInterface(Icons.bTNHumanBarracks)
         ..setScalingValue(0.5)
         ..setTooltipExtended("Fire departments provide an import service for your citizens. When a fire starts, your fire departments will all send fire fighters to handle the fire. Not having a fire department will result in the death of your structures.")
     getCleanSmallBuilding(kUID_Struct_PotionShop, 
@@ -685,7 +686,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Doodads.barn)
         ..setScalingValue(0.4)
         ..setIconGameInterface(Icons.bTNFarm)
-        ..setTooltipExtended("Farms provide food for your citizens. Each income a farm produces 100 food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
+        ..setTooltipExtended("Farms provide food for your citizens. Each cycle a farm produces " + kFoodPerFarm.toString() + " food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
         ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
         ..setUpgradesTo(kUID_Struct_FarmMechanized.toRawCode())
@@ -693,8 +694,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
     var names = ""
     var tips = ""
     for i = 0 to 50
-        names += "" + I2S(100 + i * 20) + " / cycle"
-        tips += "+" + I2S(i * 20) + "% from upgrades"
+        names += "" + (kFoodPerFarm * (1 + (i * kFoodUpgradeBonus))).toInt().toString() + " / cycle"
+        tips += "+" + (i * kFoodUpgradeBonus * 100.0).toInt().toString() + "% from upgrades"
         if i != 50
             names += ","
             tips += ","
@@ -709,7 +710,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setModelFile(Buildings.pigFarm)
         ..setScalingValue(0.6)
         ..setIconGameInterface(Icons.bTNPigFarm)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_FarmMechanized) + "A mechanized farm that provides 250 food every cycle. Allows for larger populations with a smaller farming footprint.")
+        ..setTooltipExtended(powerReqTT(kUID_Struct_FarmMechanized) + "A mechanized farm that provides " + kFoodPerMechanicalFarm.toString() + " food every cycle. Allows for larger populations with a smaller farming footprint.")
         ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
         ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
         ..setRequirements(kRID_Age09_Machine.toRawCode())
@@ -717,8 +718,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
     names = ""
     tips = ""
     for i = 0 to 50
-        names += "" + I2S(250 + i * 50) + " / cycle"
-        tips += "+" + I2S(i * 20) + "% from upgrades"
+        names += "" + (kFoodPerMechanicalFarm * (1 + (i * kFoodUpgradeBonus))).toInt().toString() + " / cycle"
+        tips += "+" + (i * kFoodUpgradeBonus * 100.0).toInt().toString() + "% from upgrades"
         if i != 50
             names += ","
             tips += ","

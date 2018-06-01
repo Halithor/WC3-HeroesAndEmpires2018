@@ -38,6 +38,10 @@ public constant kPopulationNegativeGrowthFactor = 0.1
 // ## Food & Income ##
 // Food produced per farm
 public constant kFoodPerFarm = 100
+// Food per mech farm
+public constant kFoodPerMechanicalFarm = 250
+// Food upgrade bonus, in percent
+public constant kFoodUpgradeBonus = 0.20
 // Pop * taxRate divisor. 100 = 1% of population in income per cycle.
 public constant kIncomeGoldTaxPopDivisor = 200.0
 // Increase per pop in commerce
@@ -56,7 +60,16 @@ public constant kIncomeLumberBasic = 10
 public constant kResearchPopPerCapacity = 25
 // What multipler on the previous cost will the new level cost?
 public constant kResearchCostMultiplier = 1.25
-//
+
+
+// ## Events ##
+// Rate of fires happening (percent per cycle)
+public constant kEventFireSpawnRate = 1.0
+public constant kEventFireHealthDegen = -0.05
+public constant kEventFireManaDegen = -0.01
+public constant kEventFireFighterDamage = 8
+public constant kEventFireFireRegen = 2.0
+public constant kEventFireFireInitHp = 15.0
 
 
 // Population aura rates
@@ -161,6 +174,8 @@ public constant kResearchCount = 5
 // Unit
 public constant kUID_StartingCaravan = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Worker = compiletime(UNIT_ID_GEN.next())
+public constant kUID_FireFighter = compiletime(UNIT_ID_GEN.next())
+public constant kUID_FireEntity = compiletime(UNIT_ID_GEN.next())
 public constant kUID_RepairBot = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Zepplin = compiletime(UNIT_ID_GEN.next())
 
@@ -296,6 +311,8 @@ public constant kAID_TaxDecrease = compiletime(ABIL_ID_GEN.next())
 public constant kAID_RationIncrease = compiletime(ABIL_ID_GEN.next())
 public constant kAID_RationDecrease = compiletime(ABIL_ID_GEN.next())
 public constant kAID_UselessItemAbility = compiletime(ABIL_ID_GEN.next())
+public constant kAID_FireLifeDegenAura = compiletime(ABIL_ID_GEN.next())
+public constant kAID_FireManaDegenAura = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopMarket = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopTavern = compiletime(ABIL_ID_GEN.next())
 public constant kAID_PopChurch = compiletime(ABIL_ID_GEN.next())
@@ -311,6 +328,7 @@ public constant kAID_HospitalHealAura_Life = compiletime(ABIL_ID_GEN.next())
 public constant kAID_HospitalHealAura_Mana = compiletime(ABIL_ID_GEN.next())
 
 // Buffs
+public constant kBID_FireBurning = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopMarket = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopTavern = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopChurch = compiletime(BUFF_ID_GEN.next())
@@ -422,6 +440,7 @@ public function getFoundationUpgrades() returns string
         + "," + kUID_Struct_Hospital.toRawCode()
         + "," + kUID_Struct_PotionShop.toRawCode()
         + "," + kUID_Struct_PowerGenFoundation.toRawCode()
+        + "," + kUID_Struct_FireDept.toRawCode()
 
 public function getPowerGenFoundationUpgrades() returns string
     return  kUID_Struct_PowerGenCoal.toRawCode()
