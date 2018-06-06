@@ -23,6 +23,7 @@ SoundDefinition soundDisease = new SoundDefinition("Sounds\\Disease_Warning.mp3"
 SoundDefinition soundFoodFalling = new SoundDefinition("Sounds\\Food_Falling.mp3", false)
 SoundDefinition soundFoodRising = new SoundDefinition("Sounds\\Food_Growing.mp3", false)
 SoundDefinition soundFoodEmpty = new SoundDefinition("Sounds\\Food_Empty.mp3", false)
+SoundDefinition soundResearchComplete = new SoundDefinition(Sounds.genericWarningUpgradeComplete1, false)
 
 function log( real py, real pbase ) returns real
     real y = py
@@ -94,6 +95,10 @@ class FireEvent
 public class EmpireInfo
     // Player who owns this empire.
     player p
+    
+    // multiboard stuff
+    multiboard board
+    bool boardInitialized = false
 
     // all of our halls
     group hallGroup
@@ -147,7 +152,7 @@ public class EmpireInfo
     int lumberIncome = 0
     int foodIncome = 0
     // Happiness ranges from -100 to 100
-    real happiness = 75.0
+    real happiness = 60.0
     real happinessRatio = 1.0
     real happyIncome = 0.0
     real starvationReq = 0.0
@@ -289,6 +294,7 @@ public class EmpireInfo
         // Happiness reset to positive value if everyone dies
         if population == 0
             happiness = 60
+            starvationReq = 0
 
     // Calculates income and gives it to the empire.
     function updateIncome()      
@@ -365,6 +371,7 @@ public class EmpireInfo
                         if researchProgresses[currentResearchIndex] > 1.0
                             // finished!
                             printTimedToPlayer(kStrBlue + "Research Completed!", 5.0, p)
+                            soundResearchComplete.playForPlayer(p)
                             researchEtaCycles = 0
                             researchProgresses[currentResearchIndex] = 0
                             researchLevels[currentResearchIndex] += 1

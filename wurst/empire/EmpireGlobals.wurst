@@ -3,7 +3,7 @@ package EmpireGlobals
 import ObjectIdGenerator
 import ObjectIds
 
-constant RSCH_ID_GEN = new IdGenerator('RM00')
+// constant RSCH_ID_GEN = new IdGenerator('RM00')
 
 // ===== BALANCE VALUES =====
 
@@ -64,7 +64,7 @@ public constant kResearchCostMultiplier = 1.25
 
 // ## Events ##
 // Rate of fires happening (percent per cycle)
-public constant kEventFireSpawnRate = 1.0
+public constant kEventFireSpawnRate = 2.5
 public constant kEventFireHealthDegen = -0.05
 public constant kEventFireManaDegen = -0.01
 public constant kEventFireFighterDamage = 8
@@ -340,20 +340,20 @@ public constant kBID_PopLaternLight = compiletime(BUFF_ID_GEN.next())
 public constant kBID_PopPowerPlant = compiletime(BUFF_ID_GEN.next())
 
 // Researches
-public constant kRID_Age00_Stone            = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age01_Bronze           = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age02_Iron             = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age03_Dark             = compiletime(RSCH_ID_GEN.next()) 
-public constant kRID_Age04_Middle           = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age05_Renaissance      = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age06_Discovery        = compiletime(RSCH_ID_GEN.next()) 
-public constant kRID_Age07_Enlightenment    = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age08_Industrial       = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age09_Machine          = compiletime(RSCH_ID_GEN.next()) 
-public constant kRID_Age10_WorldWar         = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age11_Atomic           = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age12_Digital          = compiletime(RSCH_ID_GEN.next())
-public constant kRID_Age13_Space            = compiletime(RSCH_ID_GEN.next())
+public constant kRID_Age00_Stone            = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age01_Bronze           = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age02_Iron             = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age03_Dark             = compiletime(UPGD_ID_GEN.next()) 
+public constant kRID_Age04_Middle           = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age05_Renaissance      = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age06_Discovery        = compiletime(UPGD_ID_GEN.next()) 
+public constant kRID_Age07_Enlightenment    = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age08_Industrial       = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age09_Machine          = compiletime(UPGD_ID_GEN.next()) 
+public constant kRID_Age10_WorldWar         = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age11_Atomic           = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age12_Digital          = compiletime(UPGD_ID_GEN.next())
+public constant kRID_Age13_Space            = compiletime(UPGD_ID_GEN.next())
 // public constant kRID_Age00_Stone            = 'R000' // w1
 // public constant kRID_Age01_Bronze           = 'R001'
 // public constant kRID_Age02_Iron             = 'R002' // w2
@@ -376,7 +376,7 @@ public constant kRID_Ages = [kRID_Age00_Stone, kRID_Age01_Bronze, kRID_Age02_Iro
 public constant kRID_Farming = 'R00I'
 public constant kRID_Housing = 'R00H'
 public constant kRID_CivilianBuildings = 'R00F'
-public constant kRID_LumberHarvesting = 'R00J'
+public constant kRID_LumberHarvesting = compiletime(UPGD_ID_GEN.next())//'R00J'
 // Military Upgrades
 public constant kRID_DefenseStructures = 'R00G'
 

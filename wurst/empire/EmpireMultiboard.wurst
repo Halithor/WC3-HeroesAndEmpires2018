@@ -1,0 +1,153 @@
+package EmpireMultiboard
+
+import Globals
+import EmpireUpdate
+import ClosureTimers
+import EmpireResearches
+
+// Happiness
+// Population
+// Taxes
+// Income
+// Food
+// Power
+// Research Stuffs (3)
+
+function real.toHappinessName() returns string
+    string val
+    if this > 90
+        val = "|cff00dd00Ecstatic"
+    else if this > 75
+        val = "|cff25dd00Merry"
+    else if this > 50
+        val = "|cff5cdd00Happy"
+    else if this > 25
+        val = "|cff81dd00Satisfied"
+    else if this > 10
+        val = "|cffb8dd00Fine"
+    else if this > -10
+        val = "|cffdddd00Indifferent"
+    else if this > -25
+        val = "|cffddb800Gloomy"
+    else if this > -50
+        val = "|cffdd8100Sad"
+    else if this > -75
+        val = "|cffdd5c00Unhappy"
+    else if this > -90
+        val = "|cffdd2500Bleak"
+    else 
+        val = "|cffdd0000Abyssmal"
+        
+    return val + "|r"
+
+function real.toHappinessTrend() returns string
+    string val
+    if this > 0.9
+        val = "|cff00dd00+++"
+    else if this > 0.75
+        val = "|cff25dd00++"
+    else if this > 0.50
+        val = "|cff5cdd00++"
+    else if this > 0.25
+        val = "|cff81dd00+"
+    else if this > 0.10
+        val = "|cffb8dd00+"
+    else if this > -0.10
+        val = "|cffdddd00="
+    else if this > -0.25
+        val = "|cffddb800-"
+    else if this > -0.50
+        val = "|cffdd8100-"
+    else if this > -0.75
+        val = "|cffdd5c00--"
+    else if this > -0.90
+        val = "|cffdd2500--"
+    else 
+        val = "|cffdd0000---"
+        
+    return val + "|r"
+
+constant kBoardRowCount = 10
+
+public function EmpireInfo.updateMultiboard()
+    if not this.boardInitialized
+        this.board = CreateMultiboard()
+            ..setTitle("Empire Report ["+ this.p.getNameColored() +"]")
+            ..setRowCount(kBoardRowCount)
+            ..setColumnCount(3)
+            ..setItemsStyle(true, false)
+        doAfter(0.01) ->
+            this.board.display(this.p, true)
+        for i = 0 to kBoardRowCount - 1
+            // titles
+            this.board.getItem(i, 0).setWidth(0.08)
+            // values
+            this.board.getItem(i, 1).setWidth(0.08)
+            // trend
+            this.board.getItem(i, 2).setWidth(0.04)
+    // Happiness
+    this.board.getItem(0, 0)
+        .setValue(kStrBlue + "Happiness|r")
+    this.board.getItem(0, 1)
+        .setValue(this.happiness.toHappinessName())
+    this.board.getItem(0, 2)
+        .setValue(this.happyIncome.toHappinessTrend())
+    // Population
+    this.board.getItem(1, 0)
+        .setValue(kStrBlue + "Population|r")
+    this.board.getItem(1, 1)
+        .setValue(this.population.toString() + " [" + this.houses.toString() + "]")
+    this.board.getItem(1, 2)
+        .setValue(this.lastGrowthSum.toString(2)) //+ " growth rate | " + this.lastGrowthSum.toString(2) + " growth total | " + (this.lastGrowthBonusAvg * 100.0).toString(2) + "% aura bonus avg]")
+    // Taxes
+    this.board.getItem(2, 0)
+        .setValue(kStrBlue + "Tax Rate|r ")
+    this.board.getItem(2, 1)
+        .setValue(this.taxRate.toString())
+    // Income
+    this.board.getItem(3, 0)
+        .setValue(kStrBlue + "Income|r")
+    this.board.getItem(3, 1)
+        ..setWidth(0.12)
+        .setValue(kStrGoldIncome + "+" + this.goldIncome.toString() + "|r / " + "+" + kStrLumberIncome + this.lumberIncome.toString() + "|r")
+    // Food
+    this.board.getItem(4, 0)
+        .setValue(kStrBlue + "Food|r")
+    this.board.getItem(4, 1)
+        .setValue(this.food.toString())
+    this.board.getItem(4, 2)
+        .setValue((this.foodIncome < 0 ? "|cffff0000" : "") + this.foodIncome.toString())
+    this.board.getItem(5, 1)
+        .setValue("Rations")
+    this.board.getItem(5, 2)
+        .setValue(this.foodRate.toString())
+    // Power
+    this.board.getItem(6,0)
+        .setValue(kStrBlue + "Power")
+    this.board.getItem(6, 1)
+        .setValue((this.powerDisabled ? "|cffffcc" : "") + this.powerRequired.toString() + " / " + this.powerGenerated.toString())
+    this.board.getItem(6,2)
+        .setValue(this.powerDisabled ? "|cffff0000DOWN|r" : "|cff00ff00OK|r")
+    // Research Stuffs (3)
+    this.board.getItem(7, 0)
+        .setValue(kStrBlue + "Research")
+    this.board.getItem(8, 1)
+        .setValue("Progress")
+    this.board.getItem(9, 1)
+        .setValue("ETA")
+    if this.currentResearchIndex < 0
+        this.board.getItem(7, 1)
+            .setValue("No Research")
+        this.board.getItem(8, 2)
+            .setValue("0%")
+        this.board.getItem(9, 2)
+            .setValue("N/A")
+    else 
+        this.board.getItem(7, 1)
+            ..setWidth(0.12)    
+            .setValue(getResearchInfoFromIndex(this.currentResearchIndex).name)
+        this.board.getItem(8, 2)
+            .setValue((this.researchProgresses[this.currentResearchIndex] * 100.0).toString(0) + "%")
+        this.board.getItem(9, 2)
+            .setValue(this.researchEtaCycles.toString())
+        

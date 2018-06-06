@@ -152,12 +152,14 @@ function genCombatUnit(int newId, int dmgBase, int dmgDice, int dmgDiceSides,
         ..setAttack1DamageSidesperDie(1)
         ..setAttack1AttackType(AttackType.Normal)
         ..setAttack1TargetsAllowed("ground,invulnerable")
+        ..setAttack1WeaponSound(WeaponSound.Nothing)
         ..setName("Fire Truck")
         ..setTooltipExtended("Fire trucks rush to fires in the city and attempt to put them out.")
         ..setDeathType(0)
         ..setCollisionSize(7.0)
         ..setHitPointsMaximumBase(100)
         ..setSpeedBase(150)
+        
 
     new UnitDefinition(kUID_FireEntity, 'hfoo')
         ..setMovementType(MovementType.Fly)

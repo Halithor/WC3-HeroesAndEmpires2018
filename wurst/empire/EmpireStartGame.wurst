@@ -3,6 +3,7 @@ package EmpireStartGame
 import Globals
 import PlayerInfo
 import ClosureTimers
+import EmpireMultiboard
 
 
 constant kEmpireUpdateCycleDuration = 6.0
@@ -27,6 +28,7 @@ function updateIncome()
         .forEach() ->
             if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
                 GetEnumPlayer().getEmpireInfo().updateIncome()
+                GetEnumPlayer().getEmpireInfo().updateMultiboard()
                 printTimedToPlayer(GetEnumPlayer().getEmpireInfo().toString(), 4, GetEnumPlayer())
 
 function updateResearch()

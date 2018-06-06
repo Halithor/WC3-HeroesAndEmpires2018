@@ -148,9 +148,12 @@ init
         ..setTooltipNormal(1, "Cancel Research [" + kStrGold +"V|r]")
         ..setTooltipNormalExtended(1, "Hault the current research effort. Progress will be saved for when you resume this research in the future.")
         ..setName("Cancel Research")
+    // Research info involves the tooltips for the research, followed by the RID and AID that correspond
+    // to the given research. The ability will be generated here, but the research should be defined elsewhere
+    // After the ids, max level and cost follow.
     new ResearchInfo(
         "Improved Farming", 
-        "Increases the amount of grain produced by farms by 20%.", 
+        "Increases the amount of grain produced by farms by " + (kFoodUpgradeBonus * 100).toInt().toString() + "%.", 
         "ReplaceableTextures\\CommandButtons\\BTNINV_Misc_Food_Wheat_01.blp",
         "E", kRID_Farming, kAID_rFarming, 50, 50, 0)
     new ResearchInfo(

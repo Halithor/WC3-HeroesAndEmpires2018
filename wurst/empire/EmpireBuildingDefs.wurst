@@ -466,6 +466,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNCrate)
         ..setTooltipExtended("Foundations upgrade into a variety of useful structures which are required for your empire to function.\n\n" + kStrHint + "Must be built adjacent to a road.")
         ..setUpgradesTo(getFoundationUpgrades())
+        ..setUnitSoundSet(Soundsets.humanLumberMill)
     getCleanSmallBuilding(kUID_Struct_FireDept, 
             "Fire Department", 
             "Z", false, 
@@ -475,6 +476,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNHumanBarracks)
         ..setScalingValue(0.5)
         ..setTooltipExtended("Fire departments provide an import service for your citizens. When a fire starts, your fire departments will all send fire fighters to handle the fire. Not having a fire department will result in the death of your structures.")
+        ..setUnitSoundSet(Soundsets.humanBarracks)
     getCleanSmallBuilding(kUID_Struct_PotionShop, 
             "Potion Shop", 
             "D", true, 
@@ -497,6 +499,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNMageTower)
         ..setTooltipExtended("Provides an aura of regeneration to all nearby biological units. Also regenerates the HP of any heroes that visit your base.\n\n" + kStrHint + " Regenerates health and mana.")
         ..setNormalAbilities(kAID_HospitalHealAura_Life.toRawCode() + "," + kAID_HospitalHealAura_Mana.toRawCode())
+        ..setUnitSoundSet(Soundsets.moonWell)
     getCleanSmallBuilding(kUID_Struct_ResearchCenter, 
             "Research Center", 
             "X", true, 
@@ -522,6 +525,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kMarketAuraRate.toString() + "%\n"
             + "Range: " + kMarketAuraRange.toString() 
         )
+        ..setUnitSoundSet(Soundsets.marketPlace)
     getCleanSmallBuilding(kUID_Struct_PopTavern, 
             "Tavern", 
             "W", true, 
@@ -536,6 +540,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kTavernAuraRate.toString() + "%\n"
             + "Range: " + kTavernAuraRange.toString() 
         )
+        ..setUnitSoundSet(Soundsets.tavern)
     getCleanSmallBuilding(kUID_Struct_PopChurch, 
             "Church", 
             "E", true, 
@@ -550,6 +555,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kChurchAuraRate.toString() + "%\n"
             + "Range: " + kChurchAuraRange.toString() 
         )
+        ..setUnitSoundSet(Soundsets.crypt)
     getCleanSmallBuilding(kUID_Struct_PopTheatre, 
             "Theatre", 
             "R", true, 
@@ -564,6 +570,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kTheatreAuraRate.toString() + "%\n"
             + "Range: " + kTheatreAuraRange.toString() 
         )
+        ..setUnitSoundSet(Soundsets.altarOfKings)
     getCleanSmallBuilding(kUID_Struct_PopShoppingMall, 
             "Shopping Mall", 
             "A", true, 
@@ -578,6 +585,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kShoppingMallAuraRate.toString() + "%\n"
             + "Range: " + kShoppingMallAuraRange.toString() 
         )
+        ..setUnitSoundSet(Soundsets.townHall)
     getCleanSmallBuilding(kUID_Struct_PopSwimmingPool, 
             "Swimming Pool", 
             "S", true, 
@@ -592,6 +600,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
             + "Increase: " + kSwimmingPoolAuraRate.toString() + "%\n"
             + "Range: " + kSwimmingPoolAuraRange.toString() 
         )
+        ..setUnitSoundSet(Soundsets.spawningGrounds)
     getCleanSmallBuilding(kUID_Struct_PowerGenFoundation, 
         "Power Generation Foundation", 
         "F", true, 
@@ -1086,6 +1095,7 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setScalingValue(0.45)
         ..setIconGameInterface(Icons.bTNBarracks)
         ..setTooltipExtended("Trains combat units.\n\n" + kStrHint + "Can be upgraded into more advanced unit production buildings.")
+        ..setUnitSoundSet(Soundsets.orcBarracks)
     getCleanSmallBuilding(kUID_Struct_LumberMill, 
         "Woodsmens Hut", "W", false, 15, 150, 20)
         ..setHitPointsMaximumBase(50)
@@ -1095,7 +1105,8 @@ function createTower(int newId, int lvl, string name, string hotkey,
         ..setIconGameInterface(Icons.bTNDranaiHut)
         ..setTooltipExtended("Provides a return location for lumber.")
         ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + ",Argl")
-        
+        ..setUnitSoundSet(Soundsets.warMill)
+
     for i = 0 to kHouseLevelCount - 1
         createHut(i)
     

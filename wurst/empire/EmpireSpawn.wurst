@@ -10,6 +10,7 @@ import ObjectIds
 import Globals
 import PlayerInfo
 import EmpireUpdate
+import EmpireMultiboard
 
 constant kAID_Found = compiletime(ABIL_ID_GEN.next())
 
@@ -88,6 +89,7 @@ public function foundEmpire()
         CreateNUnitsAtLoc(5, kUID_Clubman, p, Location(pos.x, pos.y), 0)
         p.setGold(800)
         p.setLumber(10000)
+        p.getEmpireInfo().updateMultiboard()
 
 init
     // Founding trigger
