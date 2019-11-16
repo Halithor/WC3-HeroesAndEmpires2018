@@ -8,40 +8,34 @@ import EmpireMultiboard
 
 constant kEmpireUpdateCycleDuration = 6.0
 
-// TODO some optimization on the player group of empires. Lots of wasted checks for
-// empire-ness (though not a big deal).
+// TODO some optimization on the player group of empires. 
 
 function updateHappiness()
-    bj_FORCE_ALL_PLAYERS
-        .forEach() ->
-            if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-                GetEnumPlayer().getEmpireInfo().updateHappiness()
+    bj_FORCE_ALL_PLAYERS.forEach() ->
+        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+            GetEnumPlayer().getEmpireInfo().updateHappiness()
 
 function updatePopulation()
-    bj_FORCE_ALL_PLAYERS
-        .forEach() ->
-            if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-                GetEnumPlayer().getEmpireInfo().updatePopulation()
+    bj_FORCE_ALL_PLAYERS.forEach() ->
+        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+            GetEnumPlayer().getEmpireInfo().updatePopulation()
     
 function updateIncome()
-    bj_FORCE_ALL_PLAYERS
-        .forEach() ->
-            if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-                GetEnumPlayer().getEmpireInfo().updateIncome()
-                GetEnumPlayer().getEmpireInfo().updateMultiboard()
-                printTimedToPlayer(GetEnumPlayer().getEmpireInfo().toString(), 4, GetEnumPlayer())
+    bj_FORCE_ALL_PLAYERS.forEach() ->
+        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+            GetEnumPlayer().getEmpireInfo().updateIncome()
+            GetEnumPlayer().getEmpireInfo().updateMultiboard()
+            printTimedToPlayer(GetEnumPlayer().getEmpireInfo().toString(), 4, GetEnumPlayer())
 
 function updateResearch()
-    bj_FORCE_ALL_PLAYERS
-        .forEach() ->
-            if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-                GetEnumPlayer().getEmpireInfo().updateResearch()
+    bj_FORCE_ALL_PLAYERS.forEach() ->
+        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+            GetEnumPlayer().getEmpireInfo().updateResearch()
 
 function updateEvents()
-    bj_FORCE_ALL_PLAYERS
-        .forEach() ->
-            if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-                GetEnumPlayer().getEmpireInfo().updateEvents()
+    bj_FORCE_ALL_PLAYERS.forEach() ->
+        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+            GetEnumPlayer().getEmpireInfo().updateEvents()
 
 public function startEmpires()
     doPeriodically(kEmpireUpdateCycleDuration) cb ->

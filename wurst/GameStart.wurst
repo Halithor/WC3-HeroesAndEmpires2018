@@ -51,7 +51,7 @@ function spawnStartingUnits()
             if GetEnumPlayer().getRole() == PlayerRole.Empire
                 beginEmpireGameForPlayer(GetEnumPlayer())
             else
-                BeginHeroGameForPlayer(GetEnumPlayer())
+                beginHeroGameForPlayer(GetEnumPlayer())
         end)
         ..destr()
     startEmpires()

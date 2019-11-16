@@ -7,11 +7,10 @@ import PlayerInfo
 import HeroClass_Fighter
 import HeroClass_Ranger
 import HeroClass_Wizard
-import ObjectIds
 
-public function BeginHeroGameForPlayer(player p)
+public function beginHeroGameForPlayer(player p)
     let spwn = getRandomHeroSpawn()
-    int typeid = kUID_HeroFighter
+    int typeid
     switch p.getHeroClass()
         case NONE
             // This shouldn't happen tbh, but in case some weirdness happens.

@@ -40,4 +40,3 @@ public function HeroClass.getName() returns string
             return "Ranger"
         case Wizard
             return "Wizard"
-    return "NO CLASS"

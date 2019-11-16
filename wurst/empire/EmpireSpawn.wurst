@@ -49,7 +49,7 @@ public function beginEmpireGameForPlayer(player p)
         caravanTp.addAction(() -> begin
             let orderPos = vec2(GetOrderPointX(), GetOrderPointY())
             if orderPos.distanceTo(vec2(GetOrderedUnit().getX(), GetOrderedUnit().getY())) > 1200 
-                    and isTerrainWalkable(GetOrderPointX(), GetOrderPointY())
+                    and orderPos.isTerrainWalkable()
                 flashEffect(Abilities.blinkCaster, GetSpellAbilityUnit().getPos())
                 flashEffect(Abilities.blinkTarget, orderPos)
                 GetOrderedUnit().setXY(orderPos)

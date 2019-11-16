@@ -68,7 +68,7 @@ function handleChat()
     let msg = GetEventPlayerChatString()
     
     let p = GetTriggerPlayer()
-    if msg.startsWith("-commands")
+    if msg.startsWith("-commands") or msg.startsWith("-help")
         printTimedToPlayer(kStrGold + "===== Commands =====", 20, p)
         printTimedToPlayer(kStrBlue + "-colors|r - display all player names, numbers, and color names.", 20, p)
         printTimedToPlayer(kStrBlue + "-players|r - display all player names, numbers, and color names.", 20, p)

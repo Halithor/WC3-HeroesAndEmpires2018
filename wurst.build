@@ -1,8 +1,6 @@
 ---
-projectName: "HeroesAndEmpires"
-dependencies:
-- "https://github.com/wurstscript/wurstStdlib2"
+projectName: HeroesAndEmpires
 buildMapData:
-  name: "Heroes and Empires 2018.TEST003"
-  fileName: "Heroes and Empires 2018.TEST003"
-  author: "Halithor"
+  name: Heroes and Empires 2019 v0.04
+  fileName: HeroesAndEmps2019v0.04
+  author: Halithor
