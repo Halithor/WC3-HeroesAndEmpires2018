@@ -150,20 +150,20 @@ public constant kHouseLevelCount = 8
 // Age names and count
 public constant kAgeCount = 14
 public constant kAgeNames = [
-    "Stone Age",
-    "Bronze Age", //1
-    "Iron Age", 
-    "Dark Age", //2
-    "Middle Age", 
-    "Renaissance Age", // 3
-    "Age of Discovery",
-    "Enlightenment Age", // 4
-    "Industrial Age", 
-    "Machine Age", //5 - ELECTRICITY
-    "World War Age",
-    "Atomic Age", // 6
-    "Digital Age",
-    "Space Age" // 7
+  "Stone Age",
+  "Bronze Age", //1
+  "Iron Age", 
+  "Dark Age", //2
+  "Middle Age", 
+  "Renaissance Age", // 3
+  "Age of Discovery",
+  "Enlightenment Age", // 4
+  "Industrial Age", 
+  "Machine Age", //5 - ELECTRICITY
+  "World War Age",
+  "Atomic Age", // 6
+  "Digital Age",
+  "Space Age" // 7
 ]
 // Number of researches in the game.
 public constant kResearchCount = 5
@@ -262,38 +262,38 @@ public constant kUID_Struct_Hut5 = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Hut6 = compiletime(UNIT_ID_GEN.next())
 public constant kUID_Struct_Hut7 = compiletime(UNIT_ID_GEN.next())
 public constant integer array kUID_Struct_Huts = [
-    kUID_Struct_Hut0,
-    kUID_Struct_Hut1,
-    kUID_Struct_Hut2,
-    kUID_Struct_Hut3,
-    kUID_Struct_Hut4,
-    kUID_Struct_Hut5,
-    kUID_Struct_Hut6,
-    kUID_Struct_Hut7
+  kUID_Struct_Hut0,
+  kUID_Struct_Hut1,
+  kUID_Struct_Hut2,
+  kUID_Struct_Hut3,
+  kUID_Struct_Hut4,
+  kUID_Struct_Hut5,
+  kUID_Struct_Hut6,
+  kUID_Struct_Hut7
 ]
 public constant integer array kUID_Struct_Walls = [
-    kUID_Struct_Wall0,
-    kUID_Struct_Wall1,
-    kUID_Struct_Wall2,
-    kUID_Struct_Wall3,
-    kUID_Struct_Wall4,
-    kUID_Struct_Wall5
+  kUID_Struct_Wall0,
+  kUID_Struct_Wall1,
+  kUID_Struct_Wall2,
+  kUID_Struct_Wall3,
+  kUID_Struct_Wall4,
+  kUID_Struct_Wall5
 ]
 public constant integer array kUID_Struct_Gates = [
-    kUID_Struct_Gate0,
-    kUID_Struct_Gate1,
-    kUID_Struct_Gate2,
-    kUID_Struct_Gate3,
-    kUID_Struct_Gate4,
-    kUID_Struct_Gate5
+  kUID_Struct_Gate0,
+  kUID_Struct_Gate1,
+  kUID_Struct_Gate2,
+  kUID_Struct_Gate3,
+  kUID_Struct_Gate4,
+  kUID_Struct_Gate5
 ]
 public constant integer array kUID_Struct_Gates_Lowered = [
-    kUID_Struct_Gate0_Lowered,
-    kUID_Struct_Gate1_Lowered,
-    kUID_Struct_Gate2_Lowered,
-    kUID_Struct_Gate3_Lowered,
-    kUID_Struct_Gate4_Lowered,
-    kUID_Struct_Gate5_Lowered
+  kUID_Struct_Gate0_Lowered,
+  kUID_Struct_Gate1_Lowered,
+  kUID_Struct_Gate2_Lowered,
+  kUID_Struct_Gate3_Lowered,
+  kUID_Struct_Gate4_Lowered,
+  kUID_Struct_Gate5_Lowered
 ]
 
 // Abilties
@@ -369,9 +369,9 @@ public constant kRID_Age13_Space            = compiletime(UPGD_ID_GEN.next())
 // public constant kRID_Age12_Digital          = 'R00C'
 // public constant kRID_Age13_Space            = 'R00D' //w6
 public constant kRID_Ages = [kRID_Age00_Stone, kRID_Age01_Bronze, kRID_Age02_Iron, kRID_Age03_Dark,
-    kRID_Age04_Middle, kRID_Age05_Renaissance, kRID_Age06_Discovery, kRID_Age07_Enlightenment, 
-    kRID_Age08_Industrial, kRID_Age09_Machine, kRID_Age10_WorldWar, kRID_Age11_Atomic, 
-    kRID_Age12_Digital,kRID_Age13_Space]
+  kRID_Age04_Middle, kRID_Age05_Renaissance, kRID_Age06_Discovery, kRID_Age07_Enlightenment, 
+  kRID_Age08_Industrial, kRID_Age09_Machine, kRID_Age10_WorldWar, kRID_Age11_Atomic, 
+  kRID_Age12_Digital,kRID_Age13_Space]
 // Civilian upgrades
 public constant kRID_Farming = 'R00I'
 public constant kRID_Housing = 'R00H'
@@ -388,122 +388,122 @@ public constant kIID_PopScience = compiletime(ITEM_ID_GEN.next())
 public constant kIID_PopReset = compiletime(ITEM_ID_GEN.next())
 
 public function unit.isHouse() returns bool
-    for i = 0 to 6
-        if this.getTypeId() == kUID_Struct_Huts[i]
-            return true
-    return false
+  for i = 0 to 6
+    if this.getTypeId() == kUID_Struct_Huts[i]
+      return true
+  return false
 
 public function unit.getHouseLevel() returns int
-    for i = 0 to 6
-        if this.getTypeId() == kUID_Struct_Huts[i]
-            return i
-    return -1
+  for i = 0 to 6
+    if this.getTypeId() == kUID_Struct_Huts[i]
+      return i
+  return -1
 
 public function getAgeIndex(int rid) returns int
-    for i = 0 to 13
-        if kRID_Ages[i] == rid
-            return i
-    return -1
+  for i = 0 to 13
+    if kRID_Ages[i] == rid
+      return i
+  return -1
 
 public function isResearchAge(int rid) returns bool
-    return getAgeIndex(rid) > -1
+  return getAgeIndex(rid) > -1
 
 public function getWorkerStructuresBuilt() returns string
-    return kUID_Struct_Hall1.toRawCode() 
-        + "," + kUID_Struct_Road.toRawCode()
-        + "," + kUID_Struct_Hut0.toRawCode()
-        + "," + kUID_Struct_Foundation.toRawCode()
-        + "," + kUID_Struct_Farm.toRawCode()
-        + "," + kUID_Struct_Campfire.toRawCode()
-        + "," + kUID_Struct_Wall0.toRawCode()
-        + "," + kUID_Struct_Gate0.toRawCode()
-        + "," + kUID_Struct_Tower0.toRawCode()
-        + "," + kUID_Struct_Barracks1.toRawCode()
-        + "," + kUID_Struct_LumberMill.toRawCode()
+  return kUID_Struct_Hall1.toRawCode() 
+    + "," + kUID_Struct_Road.toRawCode()
+    + "," + kUID_Struct_Hut0.toRawCode()
+    + "," + kUID_Struct_Foundation.toRawCode()
+    + "," + kUID_Struct_Farm.toRawCode()
+    + "," + kUID_Struct_Campfire.toRawCode()
+    + "," + kUID_Struct_Wall0.toRawCode()
+    + "," + kUID_Struct_Gate0.toRawCode()
+    + "," + kUID_Struct_Tower0.toRawCode()
+    + "," + kUID_Struct_Barracks1.toRawCode()
+    + "," + kUID_Struct_LumberMill.toRawCode()
 
 public function getTownHallAbilities() returns string
-    return "Argl"
-        + "," + kAID_TownHallInventory.toRawCode()
-        + "," + kAID_TaxIncrease.toRawCode()
-        + "," + kAID_TaxDecrease.toRawCode()
-        + "," + kAID_RationDecrease.toRawCode()
-        + "," + kAID_RationIncrease.toRawCode()
+  return "Argl"
+    + "," + kAID_TownHallInventory.toRawCode()
+    + "," + kAID_TaxIncrease.toRawCode()
+    + "," + kAID_TaxDecrease.toRawCode()
+    + "," + kAID_RationDecrease.toRawCode()
+    + "," + kAID_RationIncrease.toRawCode()
 
 public function getFoundationUpgrades() returns string
-    return  kUID_Struct_PopMarket.toRawCode()
-        + "," + kUID_Struct_PopTavern.toRawCode()
-        + "," + kUID_Struct_PopChurch.toRawCode()
-        + "," + kUID_Struct_PopTheatre.toRawCode()
-        + "," + kUID_Struct_PopShoppingMall.toRawCode()
-        + "," + kUID_Struct_PopSwimmingPool.toRawCode()
-        + "," + kUID_Struct_ResearchCenter.toRawCode()
-        + "," + kUID_Struct_Hospital.toRawCode()
-        + "," + kUID_Struct_PotionShop.toRawCode()
-        + "," + kUID_Struct_PowerGenFoundation.toRawCode()
-        + "," + kUID_Struct_FireDept.toRawCode()
+  return  kUID_Struct_PopMarket.toRawCode()
+    + "," + kUID_Struct_PopTavern.toRawCode()
+    + "," + kUID_Struct_PopChurch.toRawCode()
+    + "," + kUID_Struct_PopTheatre.toRawCode()
+    + "," + kUID_Struct_PopShoppingMall.toRawCode()
+    + "," + kUID_Struct_PopSwimmingPool.toRawCode()
+    + "," + kUID_Struct_ResearchCenter.toRawCode()
+    + "," + kUID_Struct_Hospital.toRawCode()
+    + "," + kUID_Struct_PotionShop.toRawCode()
+    + "," + kUID_Struct_PowerGenFoundation.toRawCode()
+    + "," + kUID_Struct_FireDept.toRawCode()
 
 public function getPowerGenFoundationUpgrades() returns string
-    return  kUID_Struct_PowerGenCoal.toRawCode()
-        + "," + kUID_Struct_PowerGenGas.toRawCode()
-        + "," + kUID_Struct_PowerGenSolar.toRawCode()
-        + "," + kUID_Struct_PowerGenFusion.toRawCode()
-        + "," + kUID_Struct_PowerGenFission.toRawCode()
+  return  kUID_Struct_PowerGenCoal.toRawCode()
+    + "," + kUID_Struct_PowerGenGas.toRawCode()
+    + "," + kUID_Struct_PowerGenSolar.toRawCode()
+    + "," + kUID_Struct_PowerGenFusion.toRawCode()
+    + "," + kUID_Struct_PowerGenFission.toRawCode()
 
 public function getItemFoundationUpgrades() returns string
-    return kUID_Struct_Foundation.toRawCode()
+  return kUID_Struct_Foundation.toRawCode()
 
 public function getTownHallResearches() returns string
-    var str = ""
-    for i = 0 to kAgeCount - 1
-        str += kRID_Ages[i].toRawCode()
-        if (i < kAgeCount - 1)
-            str += ","
-    return str
+  var str = ""
+  for i = 0 to kAgeCount - 1
+    str += kRID_Ages[i].toRawCode()
+    if (i < kAgeCount - 1)
+      str += ","
+  return str
 
 public function getTownHallUnitsTrained() returns string
-    return kUID_Worker.toRawCode()
-        + "," + kUID_RepairBot.toRawCode()
-        + "," + kUID_Zepplin.toRawCode()
+  return kUID_Worker.toRawCode()
+    + "," + kUID_RepairBot.toRawCode()
+    + "," + kUID_Zepplin.toRawCode()
 
 
 
 public function unit.getPowerRequirement() returns int
-    return getUnitPowerRequirement(this.getTypeId())
+  return getUnitPowerRequirement(this.getTypeId())
 
 public function getUnitPowerRequirement(int uid) returns int
-    var req = 0
-    if uid == kUID_Struct_StreetLight
-            or uid == kUID_Struct_Tower4_AntiAir
-            or uid == kUID_Struct_Tower4_AntiHero
-            or uid == kUID_Struct_Tower4_Artillery
-            or uid == kUID_Struct_Tower4_MachineGun
-        req = 1
-    else if uid == kUID_Struct_Tower4_Radar
-            or uid == kUID_Struct_FarmMechanized
-        req =2
-    else if uid == kUID_Struct_Tower5_AntiAir
-            or uid == kUID_Struct_Tower5_AntiHero
-            or uid == kUID_Struct_Tower5_Artillery
-            or uid == kUID_Struct_Tower5_MachineGun
-        req = 3
-    else if uid == kUID_Struct_Tower5_Radar
-        req = 5
-    return req
+  var req = 0
+  if uid == kUID_Struct_StreetLight
+      or uid == kUID_Struct_Tower4_AntiAir
+      or uid == kUID_Struct_Tower4_AntiHero
+      or uid == kUID_Struct_Tower4_Artillery
+      or uid == kUID_Struct_Tower4_MachineGun
+    req = 1
+  else if uid == kUID_Struct_Tower4_Radar
+      or uid == kUID_Struct_FarmMechanized
+    req =2
+  else if uid == kUID_Struct_Tower5_AntiAir
+      or uid == kUID_Struct_Tower5_AntiHero
+      or uid == kUID_Struct_Tower5_Artillery
+      or uid == kUID_Struct_Tower5_MachineGun
+    req = 3
+  else if uid == kUID_Struct_Tower5_Radar
+    req = 5
+  return req
 
 public function unit.getPowerGeneration() returns int
-    return getUnitPowerGeneration(this.getTypeId())
+  return getUnitPowerGeneration(this.getTypeId())
 
 public function getUnitPowerGeneration(int uid) returns int
-    var result = 0
-    switch uid
-        case kUID_Struct_PowerGenCoal
-            result = 10
-        case kUID_Struct_PowerGenGas
-            result = 15
-        case kUID_Struct_PowerGenSolar
-            result = 8
-        case kUID_Struct_PowerGenFission
-            result = 20
-        case kUID_Struct_PowerGenFusion
-            result = 30
-    return result
+  var result = 0
+  switch uid
+    case kUID_Struct_PowerGenCoal
+      result = 10
+    case kUID_Struct_PowerGenGas
+      result = 15
+    case kUID_Struct_PowerGenSolar
+      result = 8
+    case kUID_Struct_PowerGenFission
+      result = 20
+    case kUID_Struct_PowerGenFusion
+      result = 30
+  return result

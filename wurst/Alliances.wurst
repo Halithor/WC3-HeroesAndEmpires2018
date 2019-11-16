@@ -4,30 +4,30 @@ import Globals
 import PlayerInfo
 
 constant playerColorNames = [
-    "red",
-    "blue",
-    "teal",
-    "purple",
-    "yellow",
-    "orange",
-    "green",
-    "pink",
-    "gray",
-    "light blue",
-    "dark green",
-    "brown",
-    "maroon",
-    "navy",
-    "turquoise",
-    "violet",
-    "wheat",
-    "peach",
-    "mint",
-    "lavender",
-    "coal",
-    "snow",
-    "emerald",
-    "peanut"
+  "red",
+  "blue",
+  "teal",
+  "purple",
+  "yellow",
+  "orange",
+  "green",
+  "pink",
+  "gray",
+  "light blue",
+  "dark green",
+  "brown",
+  "maroon",
+  "navy",
+  "turquoise",
+  "violet",
+  "wheat",
+  "peach",
+  "mint",
+  "lavender",
+  "coal",
+  "snow",
+  "emerald",
+  "peanut"
 ]
 
 // constant playercolors = [color(255,2,2), color(0,65,255), color(27,229,184), color(83,0,128), 
@@ -39,95 +39,95 @@ constant playerColorNames = [
 //     ]
 
 function getPlayerFromName(string name) returns player
-    for i = 0 to bj_MAX_PLAYER_SLOTS
-        if Player(i).getName() == name
-            return Player(i)
-    return null
+  for i = 0 to bj_MAX_PLAYER_SLOTS
+    if Player(i).getName() == name
+      return Player(i)
+  return null
 
 function getPlayerFromColor(string color) returns player
-    for i = 0 to bj_MAX_PLAYER_SLOTS
-        if playerColorNames[i] == color.toLowerCase()
-            return Player(i)
-    return null
+  for i = 0 to bj_MAX_PLAYER_SLOTS
+    if playerColorNames[i] == color.toLowerCase()
+      return Player(i)
+  return null
 
 function getPlayerFromNumber(string num) returns player
-    if num.toInt() < bj_MAX_PLAYERS
-        return Player(num.toInt() - 1)
-    return null
+  if num.toInt() < bj_MAX_PLAYERS
+    return Player(num.toInt() - 1)
+  return null
 
 function getPlayerFromAnything(string str) returns player
-    var p = getPlayerFromName(str)
-    if p == null
-        p = getPlayerFromColor(str)
-    if p == null
-        p = getPlayerFromNumber(str)
-    return p
+  var p = getPlayerFromName(str)
+  if p == null
+    p = getPlayerFromColor(str)
+  if p == null
+    p = getPlayerFromNumber(str)
+  return p
 
 
 function handleChat()
-    let msg = GetEventPlayerChatString()
+  let msg = GetEventPlayerChatString()
+  
+  let p = GetTriggerPlayer()
+  if msg.startsWith("-commands") or msg.startsWith("-help")
+    printTimedToPlayer(kStrGold + "===== Commands =====", 20, p)
+    printTimedToPlayer(kStrBlue + "-colors|r - display all player names, numbers, and color names.", 20, p)
+    printTimedToPlayer(kStrBlue + "-players|r - display all player names, numbers, and color names.", 20, p)
+    printTimedToPlayer(kStrBlue + "-ally <NAME/NUMBER/COLOR>|r - form an alliance with the given player using their name, number, or color.", 20, p)
+    printTimedToPlayer(kStrBlue + "-truce <NAME/NUMBER/COLOR>|r - form a truce with the given player using their name, number, or color.", 20, p)
+    printTimedToPlayer(kStrBlue + "-war <NAME/NUMBER/COLOR>|r - declare war on the given player using their name, number, or color.", 20, p)
+  else if msg.startsWith("-colors") or msg.startsWith("-players") or msg.startsWith("-numbers")
+    printTimedToPlayer(kStrGold + "===== Players in Game =====", 25, p)
+    for i = 0 to bj_MAX_PLAYERS
+      if players[i].isIngame()
+        printTimedToPlayer(kStrBlue + "Player " +I2S(i+1) + ":|r " + players[i].getColor().toColor().toColorString() + Player(i).getName() + "|r is " + players[i].getColor().toColor().toColorString() + playerColorNames[i] + "|r.", 15, p)
+  else if msg.startsWith("-ally")
+    var name = msg.substring(6)
+    let target = getPlayerFromAnything(name)
     
-    let p = GetTriggerPlayer()
-    if msg.startsWith("-commands") or msg.startsWith("-help")
-        printTimedToPlayer(kStrGold + "===== Commands =====", 20, p)
-        printTimedToPlayer(kStrBlue + "-colors|r - display all player names, numbers, and color names.", 20, p)
-        printTimedToPlayer(kStrBlue + "-players|r - display all player names, numbers, and color names.", 20, p)
-        printTimedToPlayer(kStrBlue + "-ally <NAME/NUMBER/COLOR>|r - form an alliance with the given player using their name, number, or color.", 20, p)
-        printTimedToPlayer(kStrBlue + "-truce <NAME/NUMBER/COLOR>|r - form a truce with the given player using their name, number, or color.", 20, p)
-        printTimedToPlayer(kStrBlue + "-war <NAME/NUMBER/COLOR>|r - declare war on the given player using their name, number, or color.", 20, p)
-    else if msg.startsWith("-colors") or msg.startsWith("-players") or msg.startsWith("-numbers")
-        printTimedToPlayer(kStrGold + "===== Players in Game =====", 25, p)
-        for i = 0 to bj_MAX_PLAYERS
-            if players[i].isIngame()
-                printTimedToPlayer(kStrBlue + "Player " +I2S(i+1) + ":|r " + players[i].getColor().toColor().toColorString() + Player(i).getName() + "|r is " + players[i].getColor().toColor().toColorString() + playerColorNames[i] + "|r.", 15, p)
-    else if msg.startsWith("-ally")
-        var name = msg.substring(6)
-        let target = getPlayerFromAnything(name)
-        
-        if target != null
-            if target != p
-                if target.isActive()
-                    SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_ALLIED_VISION)
-                    // TODO make this a reciprical decision
-                else
-                    printTimedToPlayer("Player " + target.getColor().toColor().toColorString() + target.getName() + "|r is not a valid target for alliance.", 5, p)
-            else
-                printTimedToPlayer("You can't ally yourself!", 5, p)
-        else 
-            printTimedToPlayer("Could not find any player from \"" + name + "\".", 5, p)
-    else if msg.startsWith("-war")
-        var name = msg.substring(5)
-        let target = getPlayerFromAnything(name)
-        if target != null
-            if target != p
-                // TODO verify that the players are not in each other's bases/ heroes aren't near each other.
-                SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_UNALLIED)
-                SetPlayerAllianceStateBJ(target, p, bj_ALLIANCE_UNALLIED) // make sure that both are the status
-            else
-                printTimedToPlayer("You can't declare war on yourself!", 5, p)
-        else 
-            printTimedToPlayer("Could not find any player from \"" + name + "\".", 5, p)
-    else if msg.startsWith("-truce")
-        var name = msg.substring(7)
-        let target = getPlayerFromAnything(name)
+    if target != null
+      if target != p
+        if target.isActive()
+          SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_ALLIED_VISION)
+          // TODO make this a reciprical decision
+        else
+          printTimedToPlayer("Player " + target.getColor().toColor().toColorString() + target.getName() + "|r is not a valid target for alliance.", 5, p)
+      else
+        printTimedToPlayer("You can't ally yourself!", 5, p)
+    else 
+      printTimedToPlayer("Could not find any player from \"" + name + "\".", 5, p)
+  else if msg.startsWith("-war")
+    var name = msg.substring(5)
+    let target = getPlayerFromAnything(name)
+    if target != null
+      if target != p
+        // TODO verify that the players are not in each other's bases/ heroes aren't near each other.
+        SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_UNALLIED)
+        SetPlayerAllianceStateBJ(target, p, bj_ALLIANCE_UNALLIED) // make sure that both are the status
+      else
+        printTimedToPlayer("You can't declare war on yourself!", 5, p)
+    else 
+      printTimedToPlayer("Could not find any player from \"" + name + "\".", 5, p)
+  else if msg.startsWith("-truce")
+    var name = msg.substring(7)
+    let target = getPlayerFromAnything(name)
 
-        if target != null
-            if target != p
-                if target.isActive()
-                    SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_ALLIED)
-                    // TODO make this a reciprical decision
-                else
-                    printTimedToPlayer("Player " + target.getColor().toColor().toColorString() + target.getName() + "|r is not a valid target for a truce.", 5, p)
-            else
-                printTimedToPlayer("You can't truce yourself!", 5, p)
-        else 
-            printTimedToPlayer("Could not find any player from \"" + name + "\".", 5, p)
+    if target != null
+      if target != p
+        if target.isActive()
+          SetPlayerAllianceStateBJ(p, target, bj_ALLIANCE_ALLIED)
+          // TODO make this a reciprical decision
+        else
+          printTimedToPlayer("Player " + target.getColor().toColor().toColorString() + target.getName() + "|r is not a valid target for a truce.", 5, p)
+      else
+        printTimedToPlayer("You can't truce yourself!", 5, p)
+    else 
+      printTimedToPlayer("Could not find any player from \"" + name + "\".", 5, p)
 
 
 
 init 
-    var trg = CreateTrigger()
-            ..addAction(function handleChat)
-    for i = 0 to bj_MAX_PLAYERS
-        trg.registerPlayerChatEvent(Player(i), "", false)
-        Player(i).setName("[" + I2S(i+1) + "] " + Player(i).getName())
+  var trg = CreateTrigger()
+      ..addAction(function handleChat)
+  for i = 0 to bj_MAX_PLAYERS
+    trg.registerPlayerChatEvent(Player(i), "", false)
+    Player(i).setName("[" + I2S(i+1) + "] " + Player(i).getName())

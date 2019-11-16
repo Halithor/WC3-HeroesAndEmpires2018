@@ -7,7 +7,7 @@ import ObjectIds
 // DEFINE ALL RESEARCHES HERE
 
 @compiletime function genResearchDefs()
-    new UpgradeDefinition(kRID_LumberHarvesting)
-        ..addEffectAbilityLevelBonus(1, 1, kAID_WorkerHarvest.toRawCode())
-        ..setLevels(30)
-        ..setClass(UpgradeClass.Armor)
+  new UpgradeDefinition(kRID_LumberHarvesting)
+    ..addEffectAbilityLevelBonus(1, 1, kAID_WorkerHarvest.toRawCode())
+    ..setLevels(30)
+    ..setClass(UpgradeClass.Armor)

@@ -11,1105 +11,1105 @@ import HotkeyUtil
 
 // Extensions to buildings.
 function BuildingDefinition.setCasterUpgradeTips(string data)
-    this.def.setString("ucut", data)
+  this.def.setString("ucut", data)
 
 function BuildingDefinition.setCasterUpgradeNames(string data)
-    this.def.setString("ucun", data)
+  this.def.setString("ucun", data)
 
 function BuildingDefinition.setCasterUpgradeArt(string data)
-    this.def.setString("ucua", data)
+  this.def.setString("ucua", data)
 
 constant string array hutNames = [
-    "Hut",
-    "Small House",
-    "House",
-    "Large House",
-    "Small Apartment Building",
-    "Apartment Building",
-    "Highrise Apartment Building",
-    "Integrated Living Community"
+  "Hut",
+  "Small House",
+  "House",
+  "Large House",
+  "Small Apartment Building",
+  "Apartment Building",
+  "Highrise Apartment Building",
+  "Integrated Living Community"
 ]
 
 constant string array hutModels = [
-    Buildings.tent,
-    Buildings.elvenFishVillageBuilding2,
-    Buildings.farm,
-    Buildings.elvenVillageBuilding0,
-    Buildings.elvenVillageBuilding1,
-    Buildings.humanTower1,
-    Buildings.elvenGuardTower1,
-    Buildings.arcaneObservatory1
+  Buildings.tent,
+  Buildings.elvenFishVillageBuilding2,
+  Buildings.farm,
+  Buildings.elvenVillageBuilding0,
+  Buildings.elvenVillageBuilding1,
+  Buildings.humanTower1,
+  Buildings.elvenGuardTower1,
+  Buildings.arcaneObservatory1
 ]
 constant real array hutScales = [
-    0.7,
-    0.8,
-    0.85,
-    0.5,
-    0.5,
-    1.0,
-    1.0,
-    0.35
+  0.7,
+  0.8,
+  0.85,
+  0.5,
+  0.5,
+  1.0,
+  1.0,
+  0.35
 ]
 
 constant string array wallNames = [
-    "Wooden",
-    "Stone",
-    "Iron",
-    "Steel",
-    "Laser",
-    "Energy"
+  "Wooden",
+  "Stone",
+  "Iron",
+  "Steel",
+  "Laser",
+  "Energy"
 ]
 
 constant real array wallScales = [
-    1.0,
-    0.95,
-    0.95,
-    0.5,
-    0.5,
-    1.0
+  1.0,
+  0.95,
+  0.95,
+  0.5,
+  0.5,
+  1.0
 ]
 
 constant string array wallModels = [
-    Doodads.totem2,
-    Doodads.city_LowWall_ShortEndCap,
-    Doodads.city_LowWall_TallEndCap,
-    Doodads.obstacle1,
-    Buildings.powerGenerator1,
-    Doodads.magicRunes2
+  Doodads.totem2,
+  Doodads.city_LowWall_ShortEndCap,
+  Doodads.city_LowWall_TallEndCap,
+  Doodads.obstacle1,
+  Buildings.powerGenerator1,
+  Doodads.magicRunes2
 ]
 
 function powerReqTT(int id) returns string
-    return kStrBlue + "Power Required: " + getUnitPowerRequirement(id).toString() + "|r\n"
-    
+  return kStrBlue + "Power Required: " + getUnitPowerRequirement(id).toString() + "|r\n"
+  
 function powerGenTT(int id) returns string
-    return kStrBlue + "Power Generated: " + getUnitPowerGeneration(id).toString() + "|r\n"
+  return kStrBlue + "Power Generated: " + getUnitPowerGeneration(id).toString() + "|r\n"
 
 
 function pow(int b, int e) returns int
-    var result = 1
-    for i = 1 to e
-        result *= b
-    return result
+  var result = 1
+  for i = 1 to e
+    result *= b
+  return result
 
 /** Gets a farm sized (1x1) basic building. */
 function getCleanTinyBuilding(int newId, string name, string hotkey, bool isUpgrade, 
-        int costGold, int costLumber, int buildTime) returns BuildingDefinition
-    let def = new BuildingDefinition(newId, 'hhou')
-        ..setBuildTime(buildTime)
-        ..setGoldCost(costGold)
-        ..setLumberCost(costLumber)
-        ..setRepairTime(buildTime)
-        ..setRepairGoldCost(costGold div 10)
-        ..setRepairLumberCost(costLumber div 10)
-        ..setHitPointsMaximumBase(100)
-        ..setFoodProduced(0)
-        ..setGroundTexture("")
-        ..setModelFile(Doodads.totem1)
-        ..setScalingValue(1.0)
-        ..setSelectionScale(1.0)
-        ..setShadowTextureBuilding("")
-        ..setName(name)
-        ..setIconGameInterface(Icons.bTNCrate)
-        ..setTooltipBasic("Build " + name +" [" + kStrGold + hotkey.toUpperCase() + "|r]")
-        ..setTooltipExtended("")
-        ..setHotkey(hotkey)
-        ..setButtonPositionY(getHotkeyY(hotkey))
-        ..setButtonPositionX(getHotkeyX(hotkey))
-        ..setUpgradesUsed("")
-        ..setRequirements(kUID_Struct_Hall1.toRawCode())
-        ..setPathingMap("PathTextures\\2x2Default.tga")
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode())
-        ..setSightRadiusDay(0)
-        ..setSightRadiusNight(0)
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
-    if isUpgrade
-        def..setTooltipBasic("Upgrade to " + name +" [" + kStrGold + hotkey + "|r]")
-    return def
+    int costGold, int costLumber, int buildTime) returns BuildingDefinition
+  let def = new BuildingDefinition(newId, 'hhou')
+    ..setBuildTime(buildTime)
+    ..setGoldCost(costGold)
+    ..setLumberCost(costLumber)
+    ..setRepairTime(buildTime)
+    ..setRepairGoldCost(costGold div 10)
+    ..setRepairLumberCost(costLumber div 10)
+    ..setHitPointsMaximumBase(100)
+    ..setFoodProduced(0)
+    ..setGroundTexture("")
+    ..setModelFile(Doodads.totem1)
+    ..setScalingValue(1.0)
+    ..setSelectionScale(1.0)
+    ..setShadowTextureBuilding("")
+    ..setName(name)
+    ..setIconGameInterface(Icons.bTNCrate)
+    ..setTooltipBasic("Build " + name +" [" + kStrGold + hotkey.toUpperCase() + "|r]")
+    ..setTooltipExtended("")
+    ..setHotkey(hotkey)
+    ..setButtonPositionY(getHotkeyY(hotkey))
+    ..setButtonPositionX(getHotkeyX(hotkey))
+    ..setUpgradesUsed("")
+    ..setRequirements(kUID_Struct_Hall1.toRawCode())
+    ..setPathingMap("PathTextures\\2x2Default.tga")
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode())
+    ..setSightRadiusDay(0)
+    ..setSightRadiusNight(0)
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+  if isUpgrade
+    def..setTooltipBasic("Upgrade to " + name +" [" + kStrGold + hotkey + "|r]")
+  return def
 
 /** Gets a farm sized (2x2) basic building. */
 function getCleanSmallBuilding(int newId, string name, string hotkey, bool isUpgrade, 
-        int costGold, int costLumber, int buildTime) returns BuildingDefinition
-    let def = new BuildingDefinition(newId, 'hhou')
-        ..setBuildTime(buildTime)
-        ..setGoldCost(costGold)
-        ..setLumberCost(costLumber)
-        ..setRepairTime(buildTime)
-        ..setRepairGoldCost(costGold div 10)
-        ..setRepairLumberCost(costLumber div 10)
-        ..setHitPointsMaximumBase(100)
-        ..setFoodProduced(0)
-        // ..setGroundTexture("")
-        ..setModelFile(Buildings.farm)
-        ..setScalingValue(1.0)
-        ..setSelectionScale(2.2)
-        ..setShadowTextureBuilding("")
-        ..setName(name)
-        ..setIconGameInterface(Icons.bTNCrate)
-        ..setTooltipBasic("Build " + name +" [" + kStrGold + hotkey.toUpperCase() + "|r]")
-        ..setTooltipExtended("")
-        ..setHotkey(hotkey)
-        ..setButtonPositionY(getHotkeyY(hotkey))
-        ..setButtonPositionX(getHotkeyX(hotkey))
-        ..setUpgradesUsed("")
-        ..setRequirements(kUID_Struct_Hall1.toRawCode())
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode())
-        ..setSightRadiusDay(0)
-        ..setSightRadiusNight(0)
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
-    if isUpgrade
-        def..setTooltipBasic("Upgrade to " + name +" [" + kStrGold + hotkey + "|r]")
-    return def
+    int costGold, int costLumber, int buildTime) returns BuildingDefinition
+  let def = new BuildingDefinition(newId, 'hhou')
+    ..setBuildTime(buildTime)
+    ..setGoldCost(costGold)
+    ..setLumberCost(costLumber)
+    ..setRepairTime(buildTime)
+    ..setRepairGoldCost(costGold div 10)
+    ..setRepairLumberCost(costLumber div 10)
+    ..setHitPointsMaximumBase(100)
+    ..setFoodProduced(0)
+    // ..setGroundTexture("")
+    ..setModelFile(Buildings.farm)
+    ..setScalingValue(1.0)
+    ..setSelectionScale(2.2)
+    ..setShadowTextureBuilding("")
+    ..setName(name)
+    ..setIconGameInterface(Icons.bTNCrate)
+    ..setTooltipBasic("Build " + name +" [" + kStrGold + hotkey.toUpperCase() + "|r]")
+    ..setTooltipExtended("")
+    ..setHotkey(hotkey)
+    ..setButtonPositionY(getHotkeyY(hotkey))
+    ..setButtonPositionX(getHotkeyX(hotkey))
+    ..setUpgradesUsed("")
+    ..setRequirements(kUID_Struct_Hall1.toRawCode())
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode())
+    ..setSightRadiusDay(0)
+    ..setSightRadiusNight(0)
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+  if isUpgrade
+    def..setTooltipBasic("Upgrade to " + name +" [" + kStrGold + hotkey + "|r]")
+  return def
 
 
 function createHut(int lvl) returns BuildingDefinition
-    let def = getCleanSmallBuilding(
-        kUID_Struct_Huts[lvl], 
-        hutNames[lvl], 
-        lvl == 0 ? "S" : "Z", 
-        lvl != 0,
-        ((Pow(1.8, lvl.toReal()) - 1) * 10).round(),
-        pow(2, lvl) * 250,
-        lvl * 7 + 15
-    )
-        ..setHitPointsMaximumBase(25 + lvl * lvl * 25)
-        ..setDefenseBase((((lvl * (lvl + 1)) / 2)).round())
-        ..setFoodProduced(0)
-        ..setModelFile(hutModels[lvl])
-        ..setScalingValue(hutScales[lvl]) // TODO figure out each level
-        ..setIconGameInterface(Icons.bTNGenericHumanBuilding)
-        ..setTooltipExtended("Living place for citizens. Automatically expands when full and you have reached an advanced enough age.\n\n" + kStrHint + "Must be built adjacent to a road.")
-        ..setManaMaximum(Pow(2, lvl * 1.0).round() * 20)
-        ..setUnitSoundSet(Soundsets.townHall)
-        ..setSelectionScale(1.8)
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Housing.toRawCode())
-        ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGGenericHumanBuilding.blp")
-        ..setTargetedAs("structure,ward")
-    // Caster names and tips
-    var names = ""
-    var tips = ""
-    for i = 0 to 50
-        names += "Level " + I2S(i)
-        tips += "+" + I2S(i * 5) + "% capacity"
-        if i != 50
-            names += ","
-            tips += ","
-    def.setCasterUpgradeNames(names)
-    def.setCasterUpgradeTips(tips)
-    
-    // Set the upgrade to info
-    if lvl != kHouseLevelCount
-        def.setUpgradesTo(kUID_Struct_Huts[lvl + 1].toRawCode())
-    if lvl > 0
-        def.setRequirements( kRID_Ages[kHouseTierAges[lvl - 1]].toRawCode())
-    return def
+  let def = getCleanSmallBuilding(
+    kUID_Struct_Huts[lvl], 
+    hutNames[lvl], 
+    lvl == 0 ? "S" : "Z", 
+    lvl != 0,
+    ((Pow(1.8, lvl.toReal()) - 1) * 10).round(),
+    pow(2, lvl) * 250,
+    lvl * 7 + 15
+  )
+    ..setHitPointsMaximumBase(25 + lvl * lvl * 25)
+    ..setDefenseBase((((lvl * (lvl + 1)) / 2)).round())
+    ..setFoodProduced(0)
+    ..setModelFile(hutModels[lvl])
+    ..setScalingValue(hutScales[lvl]) // TODO figure out each level
+    ..setIconGameInterface(Icons.bTNGenericHumanBuilding)
+    ..setTooltipExtended("Living place for citizens. Automatically expands when full and you have reached an advanced enough age.\n\n" + kStrHint + "Must be built adjacent to a road.")
+    ..setManaMaximum(Pow(2, lvl * 1.0).round() * 20)
+    ..setUnitSoundSet(Soundsets.townHall)
+    ..setSelectionScale(1.8)
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Housing.toRawCode())
+    ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGGenericHumanBuilding.blp")
+    ..setTargetedAs("structure,ward")
+  // Caster names and tips
+  var names = ""
+  var tips = ""
+  for i = 0 to 50
+    names += "Level " + I2S(i)
+    tips += "+" + I2S(i * 5) + "% capacity"
+    if i != 50
+      names += ","
+      tips += ","
+  def.setCasterUpgradeNames(names)
+  def.setCasterUpgradeTips(tips)
+  
+  // Set the upgrade to info
+  if lvl != kHouseLevelCount
+    def.setUpgradesTo(kUID_Struct_Huts[lvl + 1].toRawCode())
+  if lvl > 0
+    def.setRequirements( kRID_Ages[kHouseTierAges[lvl - 1]].toRawCode())
+  return def
 
 function createWall(int lvl) returns BuildingDefinition
-    let techLevel = kWallTierAges[lvl].toReal()
-    let def = getCleanTinyBuilding(
-        kUID_Struct_Walls[lvl],
-        wallNames[lvl] + " Wall",
-        "Z",
-        lvl != 0,
-        Pow(kBuildingDefenseCostPowerGold, techLevel).toInt() * kWallCostBaseGold,
-        Pow(kBuildingDefenseCostPowerLumber, techLevel).toInt() * kWallCostBaseLumber,
-        20 + lvl * 5
-    )
-        ..setHitPointsMaximumBase(Pow(kWallHpPower, techLevel).toInt() * kWallHpBase)
-        ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
-        ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
-        ..setModelFile(wallModels[lvl])
-        ..setScalingValue(wallScales[lvl])
-        ..setIconGameInterface(Icons.bTNStoneArchitecture)
-        ..setPriority(1000)
-        ..setUpgradesTo(lvl < 5 ? kUID_Struct_Walls[lvl+1].toRawCode() : "")
-        ..setUnitSoundSet(Soundsets.watchTower)
-        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
-        ..setAttacksEnabled(1)
-        ..setAttack1CooldownTime(2.0)
-        ..setAttack1DamageBase(1)
-        ..setAttack1DamageNumberofDice(1)
-        ..setAttack1DamageSidesperDie(1)
-        ..setAttack1Range(200)
-        ..setAttack1WeaponType(WeaponType.Instant)
-        ..setAttack1AttackType(AttackType.Normal)
-        ..setAttack1ShowUI(true) // todo test if this can be disabled to the same effect
+  let techLevel = kWallTierAges[lvl].toReal()
+  let def = getCleanTinyBuilding(
+    kUID_Struct_Walls[lvl],
+    wallNames[lvl] + " Wall",
+    "Z",
+    lvl != 0,
+    Pow(kBuildingDefenseCostPowerGold, techLevel).toInt() * kWallCostBaseGold,
+    Pow(kBuildingDefenseCostPowerLumber, techLevel).toInt() * kWallCostBaseLumber,
+    20 + lvl * 5
+  )
+    ..setHitPointsMaximumBase(Pow(kWallHpPower, techLevel).toInt() * kWallHpBase)
+    ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
+    ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
+    ..setModelFile(wallModels[lvl])
+    ..setScalingValue(wallScales[lvl])
+    ..setIconGameInterface(Icons.bTNStoneArchitecture)
+    ..setPriority(1000)
+    ..setUpgradesTo(lvl < 5 ? kUID_Struct_Walls[lvl+1].toRawCode() : "")
+    ..setUnitSoundSet(Soundsets.watchTower)
+    ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
+    ..setAttacksEnabled(1)
+    ..setAttack1CooldownTime(2.0)
+    ..setAttack1DamageBase(1)
+    ..setAttack1DamageNumberofDice(1)
+    ..setAttack1DamageSidesperDie(1)
+    ..setAttack1Range(200)
+    ..setAttack1WeaponType(WeaponType.Instant)
+    ..setAttack1AttackType(AttackType.Normal)
+    ..setAttack1ShowUI(true) // todo test if this can be disabled to the same effect
 
-    if lvl != 0
-        def.setTooltipExtended("An upgraded wall with more hitpoints and armor.")
-    else
-        def.setTooltipExtended("A simple wall used to defend your empire.")
-    return def
+  if lvl != 0
+    def.setTooltipExtended("An upgraded wall with more hitpoints and armor.")
+  else
+    def.setTooltipExtended("A simple wall used to defend your empire.")
+  return def
 
 function createGate(int lvl) returns BuildingDefinition
-    let techLevel = kWallTierAges[lvl].toReal()
-    let def = getCleanTinyBuilding(
-        kUID_Struct_Gates[lvl],
-        wallNames[lvl] + " Gate",
-        lvl == 0 ? "X" : "Z",
-        lvl != 0,
-        (Pow(kBuildingDefenseCostPowerGold, techLevel) * kWallCostBaseGold).toInt(),
-        (Pow(kBuildingDefenseCostPowerLumber, techLevel) * kWallCostBaseLumber).toInt(),
-        20 + lvl * 5
-    )
-        ..setHitPointsMaximumBase((Pow(kWallHpPower, techLevel) * kWallHpBase).toInt())
-        ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
-        ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
-        ..setModelFile(Doodads.footSwitch)
-        ..setScalingValue(0.45)
-        ..setTintingColorRed(255 - 25 * lvl)
-        ..setTintingColorGreen(255 - 25 * lvl)
-        ..setTintingColorBlue(255 - 25 * lvl)
-        ..setIconGameInterface(Icons.bTNArcaniteArchitecture)
-        ..setPriority(1000)
-        ..setUpgradesTo(lvl < 5 ? kUID_Struct_Gates[lvl+1].toRawCode() : "")
-        ..setUnitSoundSet(Soundsets.watchTower)
-        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
-        ..setAttacksEnabled(1)
-        ..setAttack1CooldownTime(2.0)
-        ..setAttack1DamageBase(1)
-        ..setAttack1DamageNumberofDice(1)
-        ..setAttack1DamageSidesperDie(1)
-        ..setAttack1Range(200)
-        ..setAttack1WeaponType(WeaponType.Instant)
-        ..setAttack1AttackType(AttackType.Normal)
-        ..setAttack1ShowUI(true)
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_GateLower.toRawCode())
-    if lvl != 0
-        def.setTooltipExtended("An upgraded gate with more hitpoints and armor.")
-    else
-        def.setTooltipExtended("A simple gate that can be opened and closed to allow units through walls.")
-    
-    // Create the lowered gate!
-    let _lowered = getCleanTinyBuilding(
-        kUID_Struct_Gates_Lowered[lvl],
-        wallNames[lvl] + " Gate",
-        lvl == 0 ? "X" : "Z",
-        lvl != 0,
-        (Pow(kBuildingDefenseCostPowerGold, techLevel) * kWallCostBaseGold).toInt(),
-        (Pow(kBuildingDefenseCostPowerLumber, techLevel) * kWallCostBaseLumber).toInt(),
-        20 + lvl * 5
-    )
-        ..setHitPointsMaximumBase((Pow(kWallHpPower, techLevel) * kWallHpBase).toInt())
-        ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
-        ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
-        ..setModelFile(Doodads.footSwitch)
-        ..setScalingValue(0.45)
-        ..setTintingColorRed(255 - 25 * lvl)
-        ..setTintingColorGreen(255 - 25 * lvl)
-        ..setTintingColorBlue(255 - 25 * lvl)
-        ..setIconGameInterface(Icons.bTNArcaniteArchitecture)
-        ..setPriority(1000)
-        ..setUnitSoundSet(Soundsets.watchTower)
-        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
-        ..setPathingMap("PathTextures\\2x2Unbuildable.tga")
-        ..setUnitClassification("mechanical,standon")
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_GateRaise.toRawCode())
-    
-    return def
+  let techLevel = kWallTierAges[lvl].toReal()
+  let def = getCleanTinyBuilding(
+    kUID_Struct_Gates[lvl],
+    wallNames[lvl] + " Gate",
+    lvl == 0 ? "X" : "Z",
+    lvl != 0,
+    (Pow(kBuildingDefenseCostPowerGold, techLevel) * kWallCostBaseGold).toInt(),
+    (Pow(kBuildingDefenseCostPowerLumber, techLevel) * kWallCostBaseLumber).toInt(),
+    20 + lvl * 5
+  )
+    ..setHitPointsMaximumBase((Pow(kWallHpPower, techLevel) * kWallHpBase).toInt())
+    ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
+    ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
+    ..setModelFile(Doodads.footSwitch)
+    ..setScalingValue(0.45)
+    ..setTintingColorRed(255 - 25 * lvl)
+    ..setTintingColorGreen(255 - 25 * lvl)
+    ..setTintingColorBlue(255 - 25 * lvl)
+    ..setIconGameInterface(Icons.bTNArcaniteArchitecture)
+    ..setPriority(1000)
+    ..setUpgradesTo(lvl < 5 ? kUID_Struct_Gates[lvl+1].toRawCode() : "")
+    ..setUnitSoundSet(Soundsets.watchTower)
+    ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
+    ..setAttacksEnabled(1)
+    ..setAttack1CooldownTime(2.0)
+    ..setAttack1DamageBase(1)
+    ..setAttack1DamageNumberofDice(1)
+    ..setAttack1DamageSidesperDie(1)
+    ..setAttack1Range(200)
+    ..setAttack1WeaponType(WeaponType.Instant)
+    ..setAttack1AttackType(AttackType.Normal)
+    ..setAttack1ShowUI(true)
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_GateLower.toRawCode())
+  if lvl != 0
+    def.setTooltipExtended("An upgraded gate with more hitpoints and armor.")
+  else
+    def.setTooltipExtended("A simple gate that can be opened and closed to allow units through walls.")
+  
+  // Create the lowered gate!
+  let _lowered = getCleanTinyBuilding(
+    kUID_Struct_Gates_Lowered[lvl],
+    wallNames[lvl] + " Gate",
+    lvl == 0 ? "X" : "Z",
+    lvl != 0,
+    (Pow(kBuildingDefenseCostPowerGold, techLevel) * kWallCostBaseGold).toInt(),
+    (Pow(kBuildingDefenseCostPowerLumber, techLevel) * kWallCostBaseLumber).toInt(),
+    20 + lvl * 5
+  )
+    ..setHitPointsMaximumBase((Pow(kWallHpPower, techLevel) * kWallHpBase).toInt())
+    ..setDefenseBase((((lvl + 1) * (lvl + 2)) div 2) * 5)
+    ..setDefenseUpgradeBonus((((lvl + 1) * (lvl + 2)) div 2))
+    ..setModelFile(Doodads.footSwitch)
+    ..setScalingValue(0.45)
+    ..setTintingColorRed(255 - 25 * lvl)
+    ..setTintingColorGreen(255 - 25 * lvl)
+    ..setTintingColorBlue(255 - 25 * lvl)
+    ..setIconGameInterface(Icons.bTNArcaniteArchitecture)
+    ..setPriority(1000)
+    ..setUnitSoundSet(Soundsets.watchTower)
+    ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
+    ..setPathingMap("PathTextures\\2x2Unbuildable.tga")
+    ..setUnitClassification("mechanical,standon")
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_GateRaise.toRawCode())
+  
+  return def
 
 function createTower(int newId, int lvl, string name, string hotkey, 
-        bool isUpgrade, real cooldown, int range, real dmgMulti, real costMulti) returns BuildingDefinition
-    let techLevel = kWallTierAges[lvl].toReal()
-    real dps = (kTowerDpsBase * Pow(kTowerDpsPower, techLevel)) * dmgMulti
-    // Calculate dice off of DPS and CD
-    int dmgBase = (dps * 0.75 * cooldown).round()
-    int dmgDiceSides = ((dps * 0.25 * cooldown).round() * 2) - 1
-    let armor = kTowerArmorBase * Pow(kTowerArmorPower, techLevel)
-    let hp = kTowerHpBase * Pow(kTowerHpPower, techLevel)
-    real costGold = kTowerCostBaseGold.toReal()
-    real costLumber = kTowerCostBaseLumber.toReal()
-    for i = 1 to kWallTierAges[lvl] // LAZY RECURRANCE RELATIONSHIP SOLVER
-        costGold += kTowerCostConstantGold
-        costGold *= kBuildingDefenseCostPowerGold
-        costLumber += kTowerCostConstantLumber
-        costLumber *= kBuildingDefenseCostPowerLumber
-    // Add in the multipliers
-    costGold *= costMulti
-    costLumber *= costMulti
-    let def = getCleanTinyBuilding(newId, name, hotkey, isUpgrade, costGold.round(), costLumber.round(), 30 + lvl * 5)
-        ..setHitPointsMaximumBase(hp.round())
-        ..setDefenseBase(armor.round())
-        ..setAttack1CooldownTime(cooldown)
-        ..setAttack1DamageBase(dmgBase)
-        ..setAttack1DamageNumberofDice(1)
-        ..setAttack1DamageSidesperDie(dmgDiceSides)
-        ..setAttack1Range(range)
-        ..setAttacksEnabled(1)
-        ..setAttack1AttackType(AttackType.Pierce)
-        ..setAttack1WeaponType(WeaponType.Missile)
-        ..setAttack1ProjectileArt(Abilities.arrowMissile1)
-        ..setAttack1ProjectileArc(0.1)
-        ..setAttack1TargetsAllowed("ground,structure,debris,air,item,ward,playerunits,enemies")
-        ..setModelFile(Buildings.watchTower)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNOrcTower)
-        ..setTooltipExtended("Basic defensive structure. Shoots arrows at enemy units. Works best when placed behind walls.")
-        ..setUnitSoundSet(Soundsets.humanTower)
-        ..setSightRadiusDay(1000)
-        ..setSightRadiusNight(200)
-        ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
-    return def
+    bool isUpgrade, real cooldown, int range, real dmgMulti, real costMulti) returns BuildingDefinition
+  let techLevel = kWallTierAges[lvl].toReal()
+  real dps = (kTowerDpsBase * Pow(kTowerDpsPower, techLevel)) * dmgMulti
+  // Calculate dice off of DPS and CD
+  int dmgBase = (dps * 0.75 * cooldown).round()
+  int dmgDiceSides = ((dps * 0.25 * cooldown).round() * 2) - 1
+  let armor = kTowerArmorBase * Pow(kTowerArmorPower, techLevel)
+  let hp = kTowerHpBase * Pow(kTowerHpPower, techLevel)
+  real costGold = kTowerCostBaseGold.toReal()
+  real costLumber = kTowerCostBaseLumber.toReal()
+  for i = 1 to kWallTierAges[lvl] // LAZY RECURRANCE RELATIONSHIP SOLVER
+    costGold += kTowerCostConstantGold
+    costGold *= kBuildingDefenseCostPowerGold
+    costLumber += kTowerCostConstantLumber
+    costLumber *= kBuildingDefenseCostPowerLumber
+  // Add in the multipliers
+  costGold *= costMulti
+  costLumber *= costMulti
+  let def = getCleanTinyBuilding(newId, name, hotkey, isUpgrade, costGold.round(), costLumber.round(), 30 + lvl * 5)
+    ..setHitPointsMaximumBase(hp.round())
+    ..setDefenseBase(armor.round())
+    ..setAttack1CooldownTime(cooldown)
+    ..setAttack1DamageBase(dmgBase)
+    ..setAttack1DamageNumberofDice(1)
+    ..setAttack1DamageSidesperDie(dmgDiceSides)
+    ..setAttack1Range(range)
+    ..setAttacksEnabled(1)
+    ..setAttack1AttackType(AttackType.Pierce)
+    ..setAttack1WeaponType(WeaponType.Missile)
+    ..setAttack1ProjectileArt(Abilities.arrowMissile1)
+    ..setAttack1ProjectileArc(0.1)
+    ..setAttack1TargetsAllowed("ground,structure,debris,air,item,ward,playerunits,enemies")
+    ..setModelFile(Buildings.watchTower)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNOrcTower)
+    ..setTooltipExtended("Basic defensive structure. Shoots arrows at enemy units. Works best when placed behind walls.")
+    ..setUnitSoundSet(Soundsets.humanTower)
+    ..setSightRadiusDay(1000)
+    ..setSightRadiusNight(200)
+    ..setRequirements(kUID_Struct_Hall1.toRawCode() + "," + kRID_Ages[kWallTierAges[lvl]].toRawCode())
+  return def
 
 @compiletime function genStructures()
-    new BuildingDefinition(kUID_Struct_Hall1, 'htow')
-        ..setBuildTime(60)
-        ..setGoldCost(500)
-        ..setLumberCost(5000)
-        ..setDefenseBase(25)
-        ..setHitPointsMaximumBase(1000)
-        ..setRepairGoldCost(50)
-        ..setRepairLumberCost(500)
-        ..setRepairTime(60)
-        ..setIconGameInterface(Icons.bTNGreatHall)
-        ..setModelFile(Buildings.greatHall1)
-        ..setUnitsTrained(getTownHallUnitsTrained())
-        ..setName("Wooden Town Hall")
-        ..setTooltipBasic("Build Wooden Town Hall [" + kStrGold + "Q|r]")
-        ..setTooltipExtended("The main structure for your empire. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
-        ..setHotkey("Q")
-        ..setPathingMap("PathTextures\\8x8SimpleSolid.tga")
-        ..setScalingValue(.65)
-        ..setSelectionScale(4.0)
-        ..setGroundTexture("HMED")
-        ..setFoodProduced(75)
-        ..setShadowTextureBuilding(Textures.shadowGreatHall)
-        ..setButtonPositionX(0)
-        ..setButtonPositionY(0)
-        ..setResearchesAvailable(getTownHallResearches())
-        ..setNormalAbilities(getTownHallAbilities())
-        ..setUnitClassification("TownHall,Mechanical")
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
-        ..setUpgradesTo(kUID_Struct_Hall2.toRawCode())
-    new BuildingDefinition(kUID_Struct_Hall2, 'htow')
-        ..setBuildTime(60)
-        ..setGoldCost(1000)
-        ..setLumberCost(8000)
-        ..setDefenseBase(100)
-        ..setHitPointsMaximumBase(5000)
-        ..setRepairGoldCost(250)
-        ..setRepairLumberCost(2500)
-        ..setRepairTime(60)
-        ..setModelFile(Buildings.townHall)
-        ..setUnitsTrained(getTownHallUnitsTrained())
-        ..setIconGameInterface(Icons.bTNTownHall)
-        ..setName("Stone Town Hall")
-        ..setTooltipBasic("Upgrade to Stone Town Hall [" + kStrGold + "S|r]")
-        ..setTooltipExtended("An upgraded main structure for your empire. Has higher durability. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
-        ..setHotkey("S")
-        ..setPathingMap("PathTextures\\8x8SimpleSolid.tga")
-        ..setScalingValue(.65)
-        ..setSelectionScale(4.0)
-        ..setGroundTexture("HMED")
-        ..setFoodProduced(150)
-        ..setShadowTextureBuilding(Textures.shadowTownhall)
-        ..setButtonPositionX(1)
-        ..setButtonPositionY(1)
-        ..setUpgradesTo(kUID_Struct_Hall3.toRawCode())
-        ..setResearchesAvailable(getTownHallResearches())
-        ..setNormalAbilities(getTownHallAbilities())
-        ..setUnitClassification("TownHall,Mechanical")
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
-        ..setRequirements(kRID_Age05_Renaissance.toRawCode())
-    new BuildingDefinition(kUID_Struct_Hall3, 'htow')
-        ..setBuildTime(60)
-        ..setGoldCost(10000)
-        ..setLumberCost(50000)
-        ..setDefenseBase(200)
-        ..setHitPointsMaximumBase(30000)
-        ..setRepairGoldCost(1250)
-        ..setRepairLumberCost(6500)
-        ..setRepairTime(60)
-        ..setModelFile(Buildings.townHall)
-        ..setRequiredAnimationNames("upgrade,first")
-        ..setUnitsTrained(getTownHallUnitsTrained())
-        ..setIconGameInterface(Icons.bTNKeep)
-        ..setName("Steel Town Hall")
-        ..setTooltipBasic("Upgrade to Steel Town Hall [" + kStrGold + "S|r]")
-        ..setTooltipExtended("An upgraded main structure for your empire. Has higher durability. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
-        ..setHotkey("S")
-        ..setPathingMap("PathTextures\\8x8SimpleSolid.tga")
-        ..setScalingValue(.65)
-        ..setSelectionScale(4.0)
-        ..setGroundTexture("HMED")
-        ..setFoodProduced(200)
-        ..setShadowTextureBuilding(Textures.shadowTownhall)
-        ..setButtonPositionX(1)
-        ..setButtonPositionY(1)
-        ..setUpgradesTo("")
-        ..setResearchesAvailable(getTownHallResearches())
-        ..setNormalAbilities(getTownHallAbilities())
-        ..setUnitClassification("TownHall,Mechanical")
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
-        ..setRequirements(kRID_Age10_WorldWar.toRawCode())
+  new BuildingDefinition(kUID_Struct_Hall1, 'htow')
+    ..setBuildTime(60)
+    ..setGoldCost(500)
+    ..setLumberCost(5000)
+    ..setDefenseBase(25)
+    ..setHitPointsMaximumBase(1000)
+    ..setRepairGoldCost(50)
+    ..setRepairLumberCost(500)
+    ..setRepairTime(60)
+    ..setIconGameInterface(Icons.bTNGreatHall)
+    ..setModelFile(Buildings.greatHall1)
+    ..setUnitsTrained(getTownHallUnitsTrained())
+    ..setName("Wooden Town Hall")
+    ..setTooltipBasic("Build Wooden Town Hall [" + kStrGold + "Q|r]")
+    ..setTooltipExtended("The main structure for your empire. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
+    ..setHotkey("Q")
+    ..setPathingMap("PathTextures\\8x8SimpleSolid.tga")
+    ..setScalingValue(.65)
+    ..setSelectionScale(4.0)
+    ..setGroundTexture("HMED")
+    ..setFoodProduced(75)
+    ..setShadowTextureBuilding(Textures.shadowGreatHall)
+    ..setButtonPositionX(0)
+    ..setButtonPositionY(0)
+    ..setResearchesAvailable(getTownHallResearches())
+    ..setNormalAbilities(getTownHallAbilities())
+    ..setUnitClassification("TownHall,Mechanical")
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+    ..setUpgradesTo(kUID_Struct_Hall2.toRawCode())
+  new BuildingDefinition(kUID_Struct_Hall2, 'htow')
+    ..setBuildTime(60)
+    ..setGoldCost(1000)
+    ..setLumberCost(8000)
+    ..setDefenseBase(100)
+    ..setHitPointsMaximumBase(5000)
+    ..setRepairGoldCost(250)
+    ..setRepairLumberCost(2500)
+    ..setRepairTime(60)
+    ..setModelFile(Buildings.townHall)
+    ..setUnitsTrained(getTownHallUnitsTrained())
+    ..setIconGameInterface(Icons.bTNTownHall)
+    ..setName("Stone Town Hall")
+    ..setTooltipBasic("Upgrade to Stone Town Hall [" + kStrGold + "S|r]")
+    ..setTooltipExtended("An upgraded main structure for your empire. Has higher durability. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
+    ..setHotkey("S")
+    ..setPathingMap("PathTextures\\8x8SimpleSolid.tga")
+    ..setScalingValue(.65)
+    ..setSelectionScale(4.0)
+    ..setGroundTexture("HMED")
+    ..setFoodProduced(150)
+    ..setShadowTextureBuilding(Textures.shadowTownhall)
+    ..setButtonPositionX(1)
+    ..setButtonPositionY(1)
+    ..setUpgradesTo(kUID_Struct_Hall3.toRawCode())
+    ..setResearchesAvailable(getTownHallResearches())
+    ..setNormalAbilities(getTownHallAbilities())
+    ..setUnitClassification("TownHall,Mechanical")
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+    ..setRequirements(kRID_Age05_Renaissance.toRawCode())
+  new BuildingDefinition(kUID_Struct_Hall3, 'htow')
+    ..setBuildTime(60)
+    ..setGoldCost(10000)
+    ..setLumberCost(50000)
+    ..setDefenseBase(200)
+    ..setHitPointsMaximumBase(30000)
+    ..setRepairGoldCost(1250)
+    ..setRepairLumberCost(6500)
+    ..setRepairTime(60)
+    ..setModelFile(Buildings.townHall)
+    ..setRequiredAnimationNames("upgrade,first")
+    ..setUnitsTrained(getTownHallUnitsTrained())
+    ..setIconGameInterface(Icons.bTNKeep)
+    ..setName("Steel Town Hall")
+    ..setTooltipBasic("Upgrade to Steel Town Hall [" + kStrGold + "S|r]")
+    ..setTooltipExtended("An upgraded main structure for your empire. Has higher durability. Trains workers, sets empire policy, and advances your empire's age.\n\n" + kStrHint + "Provides the starting point for roads and a lumber drop-off.")
+    ..setHotkey("S")
+    ..setPathingMap("PathTextures\\8x8SimpleSolid.tga")
+    ..setScalingValue(.65)
+    ..setSelectionScale(4.0)
+    ..setGroundTexture("HMED")
+    ..setFoodProduced(200)
+    ..setShadowTextureBuilding(Textures.shadowTownhall)
+    ..setButtonPositionX(1)
+    ..setButtonPositionY(1)
+    ..setUpgradesTo("")
+    ..setResearchesAvailable(getTownHallResearches())
+    ..setNormalAbilities(getTownHallAbilities())
+    ..setUnitClassification("TownHall,Mechanical")
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode())
+    ..setRequirements(kRID_Age10_WorldWar.toRawCode())
 
-    getCleanTinyBuilding(kUID_Struct_Road, 
-            "Road", 
-            "D", 
-            false, 
-            5, 25, 7)
-        ..setHitPointsMaximumBase(50)
-        ..setModelFile(Doodads.ruins_NagaCircle)
-        ..setScalingValue(0.16)
-        ..setTintingColorBlue(200)
-        ..setTintingColorGreen(200)
-        ..setTintingColorRed(200)
-        ..setIconGameInterface(Icons.bTNCloudOfFog)
-        ..setTooltipExtended("Roads are the infrastructure of your empire. They are required for placing housing and foundations.\n\n" + kStrHint + "Must be built adjacent to the hall or another road.")
-        ..setUnitClassification("mechanical,standon")
+  getCleanTinyBuilding(kUID_Struct_Road, 
+      "Road", 
+      "D", 
+      false, 
+      5, 25, 7)
+    ..setHitPointsMaximumBase(50)
+    ..setModelFile(Doodads.ruins_NagaCircle)
+    ..setScalingValue(0.16)
+    ..setTintingColorBlue(200)
+    ..setTintingColorGreen(200)
+    ..setTintingColorRed(200)
+    ..setIconGameInterface(Icons.bTNCloudOfFog)
+    ..setTooltipExtended("Roads are the infrastructure of your empire. They are required for placing housing and foundations.\n\n" + kStrHint + "Must be built adjacent to the hall or another road.")
+    ..setUnitClassification("mechanical,standon")
 
-    getCleanSmallBuilding(kUID_Struct_Foundation, 
-            "Foundation", 
-            "F", false, 
-            0, 200, 25)
-        ..setHitPointsMaximumBase(100)
-        ..setModelFile(Doodads.grate1)
-        ..setIconGameInterface(Icons.bTNCrate)
-        ..setTooltipExtended("Foundations upgrade into a variety of useful structures which are required for your empire to function.\n\n" + kStrHint + "Must be built adjacent to a road.")
-        ..setUpgradesTo(getFoundationUpgrades())
-        ..setUnitSoundSet(Soundsets.humanLumberMill)
-    getCleanSmallBuilding(kUID_Struct_FireDept, 
-            "Fire Department", 
-            "Z", false, 
-            10, 250, 20)
-        ..setHitPointsMaximumBase(100)
-        ..setModelFile(Buildings.humanBarracks)
-        ..setIconGameInterface(Icons.bTNHumanBarracks)
-        ..setScalingValue(0.5)
-        ..setTooltipExtended("Fire departments provide an import service for your citizens. When a fire starts, your fire departments will all send fire fighters to handle the fire. Not having a fire department will result in the death of your structures.")
-        ..setUnitSoundSet(Soundsets.humanBarracks)
-    getCleanSmallBuilding(kUID_Struct_PotionShop, 
-            "Potion Shop", 
-            "D", true, 
-            50, 0, 10)
-        ..setHitPointsMaximumBase(150)
-        ..setUnitSoundSet("Merchant")
-        ..setModelFile(Buildings.merchant)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNMerchant)
-        ..setTooltipExtended("A shop for potions. Very helpful for players trying to explore the world.")
-        ..setItemsMade("pclr,hslv")
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "Aall,Apit") // shop sharing stuff
-    getCleanSmallBuilding(kUID_Struct_Hospital, 
-            "Hospital", 
-            "C", true, 
-            500, 1000, 25)
-        ..setHitPointsMaximumBase(500)
-        ..setModelFile(Buildings.mageTower) // this is high elven barracks I swear.
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNMageTower)
-        ..setTooltipExtended("Provides an aura of regeneration to all nearby biological units. Also regenerates the HP of any heroes that visit your base.\n\n" + kStrHint + " Regenerates health and mana.")
-        ..setNormalAbilities(kAID_HospitalHealAura_Life.toRawCode() + "," + kAID_HospitalHealAura_Mana.toRawCode())
-        ..setUnitSoundSet(Soundsets.moonWell)
-    getCleanSmallBuilding(kUID_Struct_ResearchCenter, 
-            "Research Center", 
-            "X", true, 
-            100, 500, 30)
-        ..setHitPointsMaximumBase(500)
-        ..setModelFile(Buildings.arcaneSanctum1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNArcaneSanctum)
-        ..setTooltipExtended("Provides the ability to research upgrades. Requires population in science and available funds for research to progress.\n\n" + kStrHint + "Only 1 allowed")
-        ..setNormalAbilities(getResearchCenterResearches())
-        ..setUnitSoundSet(Soundsets.arcaneSanctum)
-    getCleanSmallBuilding(kUID_Struct_PopMarket, 
-            "Market", 
-            "Q", true, 
-            100, 300, 20)
-        ..setHitPointsMaximumBase(200)
-        ..setModelFile(Buildings.marketPlace1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNMarketPlace)
-        ..setNormalAbilities(kAID_PopMarket.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kMarketAuraRate.toString() + "%\n"
-            + "Range: " + kMarketAuraRange.toString() 
-        )
-        ..setUnitSoundSet(Soundsets.marketPlace)
-    getCleanSmallBuilding(kUID_Struct_PopTavern, 
-            "Tavern", 
-            "W", true, 
-            300, 1000, 30)
-        ..setHitPointsMaximumBase(500)
-        ..setModelFile(Buildings.tavern1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNTavern)
-        ..setNormalAbilities(kAID_PopTavern.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kTavernAuraRate.toString() + "%\n"
-            + "Range: " + kTavernAuraRange.toString() 
-        )
-        ..setUnitSoundSet(Soundsets.tavern)
-    getCleanSmallBuilding(kUID_Struct_PopChurch, 
-            "Church", 
-            "E", true, 
-            750, 2000, 40)
-        ..setHitPointsMaximumBase(1000)
-        ..setModelFile(Buildings.crypt)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNCrypt)
-        ..setNormalAbilities(kAID_PopChurch.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kChurchAuraRate.toString() + "%\n"
-            + "Range: " + kChurchAuraRange.toString() 
-        )
-        ..setUnitSoundSet(Soundsets.crypt)
-    getCleanSmallBuilding(kUID_Struct_PopTheatre, 
-            "Theatre", 
-            "R", true, 
-            1500, 7500, 60)
-        ..setHitPointsMaximumBase(2000)
-        ..setModelFile(Buildings.altarOfKings1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNAltarOfKings)
-        ..setNormalAbilities(kAID_PopTheatre.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kTheatreAuraRate.toString() + "%\n"
-            + "Range: " + kTheatreAuraRange.toString() 
-        )
-        ..setUnitSoundSet(Soundsets.altarOfKings)
-    getCleanSmallBuilding(kUID_Struct_PopShoppingMall, 
-            "Shopping Mall", 
-            "A", true, 
-            2500, 10000, 60)
-        ..setHitPointsMaximumBase(2000)
-        ..setModelFile(Buildings.huntersHall1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNHuntersHall)
-        ..setNormalAbilities(kAID_PopShoppingMall.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kShoppingMallAuraRate.toString() + "%\n"
-            + "Range: " + kShoppingMallAuraRange.toString() 
-        )
-        ..setUnitSoundSet(Soundsets.townHall)
-    getCleanSmallBuilding(kUID_Struct_PopSwimmingPool, 
-            "Swimming Pool", 
-            "S", true, 
-            10000, 25000, 60)
-        ..setHitPointsMaximumBase(2000)
-        ..setModelFile(Buildings.spawningGrounds1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNSpawningGrounds)
-        ..setNormalAbilities(kAID_PopSwimmingPool.toRawCode())
-        ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
-            + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kSwimmingPoolAuraRate.toString() + "%\n"
-            + "Range: " + kSwimmingPoolAuraRange.toString() 
-        )
-        ..setUnitSoundSet(Soundsets.spawningGrounds)
-    getCleanSmallBuilding(kUID_Struct_PowerGenFoundation, 
-        "Power Generation Foundation", 
-        "F", true, 
-        0, 300, 5)
-        ..setHitPointsMaximumBase(250)
-        ..setModelFile(Doodads.grate1)
-        ..setIconGameInterface(Icons.bTNCrate)
-        ..setTooltipExtended("A foundation that upgrades into a variety of power generating structures.")
-        ..setUpgradesTo(getPowerGenFoundationUpgrades())
-        ..setRequirements(kRID_Age09_Machine.toRawCode())
-    getCleanSmallBuilding(kUID_Struct_PowerGenCoal, 
-        "Coal Power Plant", 
-        "Q", true, 
-        1250, 2500, 30)
-        ..setHitPointsMaximumBase(500)
-        ..setModelFile(Buildings.graveyard1)
-        ..setIconGameInterface(Icons.bTNGraveYard)
-        ..setScalingValue(0.5)
-        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenCoal) + "A coal burning power production plant. People don't want to live nearby a power plant due to the polution."
-            + "\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
-            + "Range: " + kPowerPlantAuraRange.toString() 
-        )
-        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setRequirements(kRID_Age09_Machine.toRawCode())
-    getCleanSmallBuilding(kUID_Struct_PowerGenGas, 
-        "Gas Power Plant", 
-        "A", true, 
-        2100, 5000, 30)
-        ..setHitPointsMaximumBase(600)
-        ..setModelFile(Buildings.tombOfRelics1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNTombOfRelics)
-        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenGas) + "A natural gas burning power production plant. People don't want to live nearby a power plant due to the polution."
-            + "\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
-            + "Range: " + kPowerPlantAuraRange.toString() 
-        )
-        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setRequirements(kRID_Age10_WorldWar.toRawCode())
-    getCleanSmallBuilding(kUID_Struct_PowerGenFission, 
-        "Nuclear Fission Power Plant", 
-        "W", true, 
-        6000, 12000, 40)
-        ..setHitPointsMaximumBase(750)
-        ..setModelFile(Buildings.sacrificialPit)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNSacrificialPit)
-        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFission) + "A power plant that produces energy from nuclear fission. If destroyed, nuclear plants explode terrifically. People don't want to live nearby a nuclear plant because of the risk."
-            + "\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
-            + "Range: " + kPowerPlantAuraRange.toString() 
-        )
-        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setRequirements(kRID_Age11_Atomic.toRawCode())
-    getCleanSmallBuilding(kUID_Struct_PowerGenSolar, 
-        "Solar Power Plant", 
-        "E", true, 
-        3500, 7000, 40)
-        ..setHitPointsMaximumBase(750)
-        ..setModelFile(Buildings.moonWell1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNMoonWell)
-        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenSolar) + "A power plant that uses the sun as it's source of power. Does not pollute and does not explode, so people are fine with living close to it."
-        )
-        ..setRequirements(kRID_Age12_Digital.toRawCode())
-    getCleanSmallBuilding(kUID_Struct_PowerGenFusion, 
-        "Fusion", 
-        "S", true, 
-        20000, 30000, 40)
-        ..setHitPointsMaximumBase(1000)
-        ..setModelFile(Buildings.ziggurat1)
-        ..setRequiredAnimationNames("upgrade,second")
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNFrostTower)
-        ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFusion) + "An advanced power plant that produces immense amounts of power from nuclear fusion. If destroyed, this plant will explode terrifically. People don't want to live near a nuclear plant because of the risk."
-            + "\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
-            + "Range: " + kPowerPlantAuraRange.toString() 
-        )
-        ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
-        ..setRequirements(kRID_Age13_Space.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_Foundation, 
+      "Foundation", 
+      "F", false, 
+      0, 200, 25)
+    ..setHitPointsMaximumBase(100)
+    ..setModelFile(Doodads.grate1)
+    ..setIconGameInterface(Icons.bTNCrate)
+    ..setTooltipExtended("Foundations upgrade into a variety of useful structures which are required for your empire to function.\n\n" + kStrHint + "Must be built adjacent to a road.")
+    ..setUpgradesTo(getFoundationUpgrades())
+    ..setUnitSoundSet(Soundsets.humanLumberMill)
+  getCleanSmallBuilding(kUID_Struct_FireDept, 
+      "Fire Department", 
+      "Z", false, 
+      10, 250, 20)
+    ..setHitPointsMaximumBase(100)
+    ..setModelFile(Buildings.humanBarracks)
+    ..setIconGameInterface(Icons.bTNHumanBarracks)
+    ..setScalingValue(0.5)
+    ..setTooltipExtended("Fire departments provide an import service for your citizens. When a fire starts, your fire departments will all send fire fighters to handle the fire. Not having a fire department will result in the death of your structures.")
+    ..setUnitSoundSet(Soundsets.humanBarracks)
+  getCleanSmallBuilding(kUID_Struct_PotionShop, 
+      "Potion Shop", 
+      "D", true, 
+      50, 0, 10)
+    ..setHitPointsMaximumBase(150)
+    ..setUnitSoundSet("Merchant")
+    ..setModelFile(Buildings.merchant)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNMerchant)
+    ..setTooltipExtended("A shop for potions. Very helpful for players trying to explore the world.")
+    ..setItemsMade("pclr,hslv")
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "Aall,Apit") // shop sharing stuff
+  getCleanSmallBuilding(kUID_Struct_Hospital, 
+      "Hospital", 
+      "C", true, 
+      500, 1000, 25)
+    ..setHitPointsMaximumBase(500)
+    ..setModelFile(Buildings.mageTower) // this is high elven barracks I swear.
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNMageTower)
+    ..setTooltipExtended("Provides an aura of regeneration to all nearby biological units. Also regenerates the HP of any heroes that visit your base.\n\n" + kStrHint + " Regenerates health and mana.")
+    ..setNormalAbilities(kAID_HospitalHealAura_Life.toRawCode() + "," + kAID_HospitalHealAura_Mana.toRawCode())
+    ..setUnitSoundSet(Soundsets.moonWell)
+  getCleanSmallBuilding(kUID_Struct_ResearchCenter, 
+      "Research Center", 
+      "X", true, 
+      100, 500, 30)
+    ..setHitPointsMaximumBase(500)
+    ..setModelFile(Buildings.arcaneSanctum1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNArcaneSanctum)
+    ..setTooltipExtended("Provides the ability to research upgrades. Requires population in science and available funds for research to progress.\n\n" + kStrHint + "Only 1 allowed")
+    ..setNormalAbilities(getResearchCenterResearches())
+    ..setUnitSoundSet(Soundsets.arcaneSanctum)
+  getCleanSmallBuilding(kUID_Struct_PopMarket, 
+      "Market", 
+      "Q", true, 
+      100, 300, 20)
+    ..setHitPointsMaximumBase(200)
+    ..setModelFile(Buildings.marketPlace1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNMarketPlace)
+    ..setNormalAbilities(kAID_PopMarket.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
+      + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kMarketAuraRate.toString() + "%\n"
+      + "Range: " + kMarketAuraRange.toString() 
+    )
+    ..setUnitSoundSet(Soundsets.marketPlace)
+  getCleanSmallBuilding(kUID_Struct_PopTavern, 
+      "Tavern", 
+      "W", true, 
+      300, 1000, 30)
+    ..setHitPointsMaximumBase(500)
+    ..setModelFile(Buildings.tavern1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNTavern)
+    ..setNormalAbilities(kAID_PopTavern.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
+      + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kTavernAuraRate.toString() + "%\n"
+      + "Range: " + kTavernAuraRange.toString() 
+    )
+    ..setUnitSoundSet(Soundsets.tavern)
+  getCleanSmallBuilding(kUID_Struct_PopChurch, 
+      "Church", 
+      "E", true, 
+      750, 2000, 40)
+    ..setHitPointsMaximumBase(1000)
+    ..setModelFile(Buildings.crypt)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNCrypt)
+    ..setNormalAbilities(kAID_PopChurch.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
+      + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kChurchAuraRate.toString() + "%\n"
+      + "Range: " + kChurchAuraRange.toString() 
+    )
+    ..setUnitSoundSet(Soundsets.crypt)
+  getCleanSmallBuilding(kUID_Struct_PopTheatre, 
+      "Theatre", 
+      "R", true, 
+      1500, 7500, 60)
+    ..setHitPointsMaximumBase(2000)
+    ..setModelFile(Buildings.altarOfKings1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNAltarOfKings)
+    ..setNormalAbilities(kAID_PopTheatre.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
+      + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kTheatreAuraRate.toString() + "%\n"
+      + "Range: " + kTheatreAuraRange.toString() 
+    )
+    ..setUnitSoundSet(Soundsets.altarOfKings)
+  getCleanSmallBuilding(kUID_Struct_PopShoppingMall, 
+      "Shopping Mall", 
+      "A", true, 
+      2500, 10000, 60)
+    ..setHitPointsMaximumBase(2000)
+    ..setModelFile(Buildings.huntersHall1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNHuntersHall)
+    ..setNormalAbilities(kAID_PopShoppingMall.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
+      + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kShoppingMallAuraRate.toString() + "%\n"
+      + "Range: " + kShoppingMallAuraRange.toString() 
+    )
+    ..setUnitSoundSet(Soundsets.townHall)
+  getCleanSmallBuilding(kUID_Struct_PopSwimmingPool, 
+      "Swimming Pool", 
+      "S", true, 
+      10000, 25000, 60)
+    ..setHitPointsMaximumBase(2000)
+    ..setModelFile(Buildings.spawningGrounds1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNSpawningGrounds)
+    ..setNormalAbilities(kAID_PopSwimmingPool.toRawCode())
+    ..setTooltipExtended("Increases the growth rate of nearby houses.\n" 
+      + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kSwimmingPoolAuraRate.toString() + "%\n"
+      + "Range: " + kSwimmingPoolAuraRange.toString() 
+    )
+    ..setUnitSoundSet(Soundsets.spawningGrounds)
+  getCleanSmallBuilding(kUID_Struct_PowerGenFoundation, 
+    "Power Generation Foundation", 
+    "F", true, 
+    0, 300, 5)
+    ..setHitPointsMaximumBase(250)
+    ..setModelFile(Doodads.grate1)
+    ..setIconGameInterface(Icons.bTNCrate)
+    ..setTooltipExtended("A foundation that upgrades into a variety of power generating structures.")
+    ..setUpgradesTo(getPowerGenFoundationUpgrades())
+    ..setRequirements(kRID_Age09_Machine.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_PowerGenCoal, 
+    "Coal Power Plant", 
+    "Q", true, 
+    1250, 2500, 30)
+    ..setHitPointsMaximumBase(500)
+    ..setModelFile(Buildings.graveyard1)
+    ..setIconGameInterface(Icons.bTNGraveYard)
+    ..setScalingValue(0.5)
+    ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenCoal) + "A coal burning power production plant. People don't want to live nearby a power plant due to the polution."
+      + "\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+      + "Range: " + kPowerPlantAuraRange.toString() 
+    )
+    ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setRequirements(kRID_Age09_Machine.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_PowerGenGas, 
+    "Gas Power Plant", 
+    "A", true, 
+    2100, 5000, 30)
+    ..setHitPointsMaximumBase(600)
+    ..setModelFile(Buildings.tombOfRelics1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNTombOfRelics)
+    ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenGas) + "A natural gas burning power production plant. People don't want to live nearby a power plant due to the polution."
+      + "\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+      + "Range: " + kPowerPlantAuraRange.toString() 
+    )
+    ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setRequirements(kRID_Age10_WorldWar.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_PowerGenFission, 
+    "Nuclear Fission Power Plant", 
+    "W", true, 
+    6000, 12000, 40)
+    ..setHitPointsMaximumBase(750)
+    ..setModelFile(Buildings.sacrificialPit)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNSacrificialPit)
+    ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFission) + "A power plant that produces energy from nuclear fission. If destroyed, nuclear plants explode terrifically. People don't want to live nearby a nuclear plant because of the risk."
+      + "\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+      + "Range: " + kPowerPlantAuraRange.toString() 
+    )
+    ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setRequirements(kRID_Age11_Atomic.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_PowerGenSolar, 
+    "Solar Power Plant", 
+    "E", true, 
+    3500, 7000, 40)
+    ..setHitPointsMaximumBase(750)
+    ..setModelFile(Buildings.moonWell1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNMoonWell)
+    ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenSolar) + "A power plant that uses the sun as it's source of power. Does not pollute and does not explode, so people are fine with living close to it."
+    )
+    ..setRequirements(kRID_Age12_Digital.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_PowerGenFusion, 
+    "Fusion", 
+    "S", true, 
+    20000, 30000, 40)
+    ..setHitPointsMaximumBase(1000)
+    ..setModelFile(Buildings.ziggurat1)
+    ..setRequiredAnimationNames("upgrade,second")
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNFrostTower)
+    ..setTooltipExtended(powerGenTT(kUID_Struct_PowerGenFusion) + "An advanced power plant that produces immense amounts of power from nuclear fusion. If destroyed, this plant will explode terrifically. People don't want to live near a nuclear plant because of the risk."
+      + "\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Effect: " + kPowerPlantAuraRate.toString() + "%\n"
+      + "Range: " + kPowerPlantAuraRange.toString() 
+    )
+    ..setNormalAbilities(kAID_PopPowerPlant.toRawCode() + "," + kAID_DemolishBuilding.toRawCode())
+    ..setRequirements(kRID_Age13_Space.toRawCode())
 
 
 
-    let farmDef = getCleanSmallBuilding(kUID_Struct_Farm, 
-            "Farm", 
-            "A", false, 
-            120, 1600, 35)
-        ..setHitPointsMaximumBase(500)
-        ..setGroundTexture("OSMA")
-        ..setModelFile(Doodads.barn)
-        ..setScalingValue(0.4)
-        ..setIconGameInterface(Icons.bTNFarm)
-        ..setTooltipExtended("Farms provide food for your citizens. Each cycle a farm produces " + kFoodPerFarm.toString() + " food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
-        ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
-        ..setUpgradesTo(kUID_Struct_FarmMechanized.toRawCode())
-    // Caster names and tips
-    var names = ""
-    var tips = ""
-    for i = 0 to 50
-        names += "" + (kFoodPerFarm * (1 + (i * kFoodUpgradeBonus))).toInt().toString() + " / cycle"
-        tips += "+" + (i * kFoodUpgradeBonus * 100.0).toInt().toString() + "% from upgrades"
-        if i != 50
-            names += ","
-            tips += ","
-    farmDef.setCasterUpgradeNames(names)
-    farmDef.setCasterUpgradeTips(tips)
-    let farmDefMech = getCleanSmallBuilding(kUID_Struct_FarmMechanized, 
-            "Mechanical Farm", 
-            "Z", true, 
-            1000, 5000, 35)
-        ..setHitPointsMaximumBase(2000)
-        ..setGroundTexture("OSMA")
-        ..setModelFile(Buildings.pigFarm)
-        ..setScalingValue(0.6)
-        ..setIconGameInterface(Icons.bTNPigFarm)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_FarmMechanized) + "A mechanized farm that provides " + kFoodPerMechanicalFarm.toString() + " food every cycle. Allows for larger populations with a smaller farming footprint.")
-        ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
-        ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
-        ..setRequirements(kRID_Age09_Machine.toRawCode())
-    // Caster names and tips
-    names = ""
-    tips = ""
-    for i = 0 to 50
-        names += "" + (kFoodPerMechanicalFarm * (1 + (i * kFoodUpgradeBonus))).toInt().toString() + " / cycle"
-        tips += "+" + (i * kFoodUpgradeBonus * 100.0).toInt().toString() + "% from upgrades"
-        if i != 50
-            names += ","
-            tips += ","
-    farmDefMech.setCasterUpgradeNames(names)
-    farmDefMech.setCasterUpgradeTips(tips)
+  let farmDef = getCleanSmallBuilding(kUID_Struct_Farm, 
+      "Farm", 
+      "A", false, 
+      120, 1600, 35)
+    ..setHitPointsMaximumBase(500)
+    ..setGroundTexture("OSMA")
+    ..setModelFile(Doodads.barn)
+    ..setScalingValue(0.4)
+    ..setIconGameInterface(Icons.bTNFarm)
+    ..setTooltipExtended("Farms provide food for your citizens. Each cycle a farm produces " + kFoodPerFarm.toString() + " food. Food production can be upgraded via research.\n\n" + kStrHint + "Check quests for more details on feeding your citizens.")
+    ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
+    ..setUpgradesTo(kUID_Struct_FarmMechanized.toRawCode())
+  // Caster names and tips
+  var names = ""
+  var tips = ""
+  for i = 0 to 50
+    names += "" + (kFoodPerFarm * (1 + (i * kFoodUpgradeBonus))).toInt().toString() + " / cycle"
+    tips += "+" + (i * kFoodUpgradeBonus * 100.0).toInt().toString() + "% from upgrades"
+    if i != 50
+      names += ","
+      tips += ","
+  farmDef.setCasterUpgradeNames(names)
+  farmDef.setCasterUpgradeTips(tips)
+  let farmDefMech = getCleanSmallBuilding(kUID_Struct_FarmMechanized, 
+      "Mechanical Farm", 
+      "Z", true, 
+      1000, 5000, 35)
+    ..setHitPointsMaximumBase(2000)
+    ..setGroundTexture("OSMA")
+    ..setModelFile(Buildings.pigFarm)
+    ..setScalingValue(0.6)
+    ..setIconGameInterface(Icons.bTNPigFarm)
+    ..setTooltipExtended(powerReqTT(kUID_Struct_FarmMechanized) + "A mechanized farm that provides " + kFoodPerMechanicalFarm.toString() + " food every cycle. Allows for larger populations with a smaller farming footprint.")
+    ..setCasterUpgradeArt("ReplaceableTextures\\CommandButtons\\UPGINV_Misc_Food_Wheat_01.blp")
+    ..setUpgradesUsed(kRID_CivilianBuildings.toRawCode() + "," + kRID_Farming.toRawCode())
+    ..setRequirements(kRID_Age09_Machine.toRawCode())
+  // Caster names and tips
+  names = ""
+  tips = ""
+  for i = 0 to 50
+    names += "" + (kFoodPerMechanicalFarm * (1 + (i * kFoodUpgradeBonus))).toInt().toString() + " / cycle"
+    tips += "+" + (i * kFoodUpgradeBonus * 100.0).toInt().toString() + "% from upgrades"
+    if i != 50
+      names += ","
+      tips += ","
+  farmDefMech.setCasterUpgradeNames(names)
+  farmDefMech.setCasterUpgradeTips(tips)
 
-    createTower(kUID_Struct_Tower0, 0, 
-        "Watch Tower", 
-        "C", false, 
-        2, 400,
-        1.0, 1.0)
-        ..setUpgradesTo(
-            kUID_Struct_Tower1_Guard.toRawCode()
-            + "," + kUID_Struct_Tower1_AntiHero.toRawCode()
-            + "," + kUID_Struct_Tower3_MachineGun.toRawCode()
-            + "," + kUID_Struct_Tower3_Artillery.toRawCode()
-            + "," + kUID_Struct_Tower3_AntiAir.toRawCode()
-            + "," + kUID_Struct_Tower4_Radar.toRawCode()
-        )
-    createTower(kUID_Struct_Tower1_Guard, 1, 
-        "Guard Tower", 
-        "A", true,  
-        2, 400,
-        1.0, 1.0)
-        ..setIconGameInterface(Icons.bTNGuardTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,first")
-        ..setTooltipExtended("An upgraded arrow shooting tower.")
-        ..setUpgradesTo(kUID_Struct_Tower2_Guard.toRawCode())
-    createTower(kUID_Struct_Tower2_Guard, 2, 
-        "Guard Tower", 
-        "Z", true,  
-        2, 400,
-        1.0, 1.0)
-        ..setIconGameInterface(Icons.bTNGuardTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,first")
-        ..setTooltipExtended("An upgraded arrow shooting tower.")
-        ..setUpgradesTo(kUID_Struct_Tower3_MachineGun.toRawCode())
-    createTower(kUID_Struct_Tower1_AntiHero, 1, 
-        "Simple Anti-Hero Tower", 
-        "S", true,  
-        1, 650,
-        2.0, 1.6)
-        ..setAttack1TargetsAllowed("hero,enemies")
-        ..setAttack1CooldownTime(1.25)
-        ..setIconGameInterface(Icons.bTNArcaneTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended("A tower only capable of attacking enemy heroes. Attacks slow their target.")
-        ..setUpgradesTo(kUID_Struct_Tower2_AntiHero.toRawCode())
-    createTower(kUID_Struct_Tower2_AntiHero, 2, 
-        "Anti-Hero Tower", 
-        "Z", true, 
-        1, 650,
-        2.0, 1.6)
-        ..setAttack1TargetsAllowed("hero,enemies")
-        ..setAttack1CooldownTime(1.25)
-        ..setIconGameInterface(Icons.bTNArcaneTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
-        ..setUpgradesTo(kUID_Struct_Tower3_AntiHero.toRawCode())
-    createTower(kUID_Struct_Tower3_AntiHero, 3, 
-        "Advanced Anti-Hero Tower", 
-        "Z", true,  
-        1, 650,
-        2.0, 1.6)
-        ..setAttack1TargetsAllowed("hero,enemies")
-        ..setAttack1CooldownTime(1.25)
-        ..setIconGameInterface(Icons.bTNArcaneTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
-        ..setUpgradesTo(kUID_Struct_Tower4_AntiHero.toRawCode())
-    createTower(kUID_Struct_Tower4_AntiHero, 4, 
-        "Electric Anti-Hero Tower", 
-        "Z", true, 
-        1, 650,
-        2.0, 1.6)
-        ..setAttack1TargetsAllowed("hero,enemies")
-        ..setAttack1CooldownTime(1.25)
-        ..setIconGameInterface(Icons.bTNArcaneTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
-        ..setUpgradesTo(kUID_Struct_Tower5_AntiHero.toRawCode())
-    createTower(kUID_Struct_Tower5_AntiHero, 5, 
-        "Laser Anti-Hero Tower", 
-        "Z", true, 
-        1, 650,
-        2.0, 1.6)
-        ..setAttack1TargetsAllowed("hero,enemies")
-        ..setAttack1CooldownTime(1.25)
-        ..setIconGameInterface(Icons.bTNArcaneTower)
-        ..setModelFile(Buildings.humanTower1)
-        ..setRequiredAnimationNames("upgrade,third")
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
-    createTower(kUID_Struct_Tower3_MachineGun, 3, 
-        "Machine Gun Tower", 
-        "Z", true,  
-        0.666, 400,
-        1.0, 1.0)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNSentrygun.blp")
-        ..setModelFile("Models\\sentrygun.mdx")
-        ..setAttack1AnimationDamagePoint(0.433)
-        ..setAttack1AnimationBackswingPoint(0.666)
-        ..setTooltipExtended("Rapid firing short range defensive structure.")
-        ..setUpgradesTo(kUID_Struct_Tower4_MachineGun.toRawCode())
-        ..setScalingValue(1)
-        ..setAttack1ProjectileArt(Abilities.rifleImpact)
-        ..setAttack1ProjectileArc(0)
-    createTower(kUID_Struct_Tower4_MachineGun, 4, 
-        "Advanced Machine Gun Tower", 
-        "Z", true,  
-        0.666, 400,
-        1.0, 1.0)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNSentrygun.blp")
-        ..setModelFile("Models\\sentrygun.mdx")
-        ..setAttack1AnimationDamagePoint(0.433)
-        ..setAttack1AnimationBackswingPoint(0.666)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_MachineGun) + "Rapid firing short range defensive structure.")
-        ..setUpgradesTo(kUID_Struct_Tower5_MachineGun.toRawCode())
-        ..setScalingValue(1)
-        ..setAttack1ProjectileArt(Abilities.rifleImpact)
-        ..setAttack1ProjectileArc(0)
-    createTower(kUID_Struct_Tower5_MachineGun, 5, 
-        "Laser Machine Gun Tower", 
-        "Z", true,  
-        0.666, 400,
-        1.0, 1.0)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNSentrygun.blp")
-        ..setModelFile("Models\\sentrygun.mdx")
-        ..setAttack1AnimationDamagePoint(0.433)
-        ..setAttack1AnimationBackswingPoint(0.666)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_MachineGun) + "Rapid firing short range defensive structure.")
-        ..setScalingValue(1)
-        ..setAttack1ProjectileArt(Abilities.rifleImpact)
-        ..setAttack1ProjectileArc(0)
-    createTower(kUID_Struct_Tower3_Artillery, 3, 
-        "Artillery Tower", 
-        "X", true,  
-        3.0, 900,
-        1.3, 1.2)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
-        ..setModelFile("Models\\NavalBattery.mdx")
-        ..setTooltipExtended("Long range tower that deals damage in an area around its target. Can only attack ground units.")
-        ..setUpgradesTo(kUID_Struct_Tower4_Artillery.toRawCode())
-        ..setScalingValue(0.5)
-        ..setAttack1AttackType(AttackType.Siege)
-        ..setAttack1WeaponType(WeaponType.Artillery)
-        ..setAttack1AreaofEffectFullDamage(25)
-        ..setAttack1AreaofEffectMediumDamage(50)
-        ..setAttack1AreaofEffectSmallDamage(75)
-        ..setAttack1DamageFactorMedium(0.5)
-        ..setAttack1DamageFactorSmall(0.2)
-        ..setAttack1ProjectileArc(.3)
-        ..setAttack1ProjectileArt(Abilities.cannonTowerMissile)
-        ..setAttack1ProjectileSpeed(600)
-        ..setAttack1TargetsAllowed("ground,debris,item,ward,playerunits,enemies")
-    createTower(kUID_Struct_Tower4_Artillery, 4, 
-        "Modern Artillery Tower", 
-        "Z", true,  
-        3.0, 900,
-        1.3, 1.2)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
-        ..setModelFile("Models\\NavalBattery.mdx")
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
-        ..setUpgradesTo(kUID_Struct_Tower5_Artillery.toRawCode())
-        ..setScalingValue(0.5)
-        ..setAttack1AttackType(AttackType.Siege)
-        ..setAttack1WeaponType(WeaponType.Artillery)
-        ..setAttack1AreaofEffectFullDamage(25)
-        ..setAttack1AreaofEffectMediumDamage(50)
-        ..setAttack1AreaofEffectSmallDamage(75)
-        ..setAttack1DamageFactorMedium(0.5)
-        ..setAttack1DamageFactorSmall(0.2)
-        ..setAttack1ProjectileArc(.3)
-        ..setAttack1ProjectileArt(Abilities.cannonTowerMissile)
-        ..setAttack1ProjectileSpeed(600)
-        ..setAttack1TargetsAllowed("ground,debris,item,ward,playerunits,enemies")
-    createTower(kUID_Struct_Tower5_Artillery, 5, 
-        "Future Artillery Tower", 
-        "Z", true,  
-        3.0, 900,
-        1.3, 1.2)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
-        ..setModelFile("Models\\NavalBattery.mdx")
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
-        ..setScalingValue(0.5)
-        ..setAttack1AttackType(AttackType.Siege)
-        ..setAttack1WeaponType(WeaponType.Artillery)
-        ..setAttack1AreaofEffectFullDamage(25)
-        ..setAttack1AreaofEffectMediumDamage(50)
-        ..setAttack1AreaofEffectSmallDamage(75)
-        ..setAttack1DamageFactorMedium(0.5)
-        ..setAttack1DamageFactorSmall(0.2)
-        ..setAttack1ProjectileArc(.3)
-        ..setAttack1ProjectileArt(Abilities.cannonTowerMissile)
-        ..setAttack1ProjectileSpeed(600)
-        ..setAttack1TargetsAllowed("ground,debris,item,ward,playerunits,enemies")
-    createTower(kUID_Struct_Tower3_AntiAir, 3, 
-        "Anti-Air Tower", 
-        "C", true,  
-        1.25, 900,
-        1.3, 1.2)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
-        ..setModelFile("Models\\AntiAircraftGun.mdx")
-        ..setTooltipExtended("Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
-        ..setUpgradesTo(kUID_Struct_Tower4_AntiAir.toRawCode())
-        ..setScalingValue(0.5)
-        ..setAttack1AttackType(AttackType.Pierce)
-        ..setAttack1WeaponType(WeaponType.MissileSplash)
-        ..setAttack1AreaofEffectFullDamage(50)
-        ..setAttack1AreaofEffectMediumDamage(100)
-        ..setAttack1AreaofEffectSmallDamage(150)
-        ..setAttack1DamageFactorMedium(0.5)
-        ..setAttack1DamageFactorSmall(0.2)
-        ..setAttack1ProjectileArc(.1)
-        ..setAttack1ProjectileArt(Abilities.rocketMissile)
-        ..setAttack1ProjectileSpeed(1000)
-        ..setAttack1TargetsAllowed("air,playerunits,enemies")
-    createTower(kUID_Struct_Tower4_AntiAir, 4, 
-        "Modern Anti-Air Tower", 
-        "Z", true,  
-        1.25, 900,
-        1.3, 1.2)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
-        ..setModelFile("Models\\AntiAircraftGun.mdx")
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
-        ..setUpgradesTo(kUID_Struct_Tower5_AntiAir.toRawCode())
-        ..setScalingValue(0.5)
-        ..setAttack1AttackType(AttackType.Pierce)
-        ..setAttack1WeaponType(WeaponType.MissileSplash)
-        ..setAttack1AreaofEffectFullDamage(50)
-        ..setAttack1AreaofEffectMediumDamage(100)
-        ..setAttack1AreaofEffectSmallDamage(150)
-        ..setAttack1DamageFactorMedium(0.5)
-        ..setAttack1DamageFactorSmall(0.2)
-        ..setAttack1ProjectileArc(.1)
-        ..setAttack1ProjectileArt(Abilities.rocketMissile)
-        ..setAttack1ProjectileSpeed(1000)
-        ..setAttack1TargetsAllowed("air,playerunits,enemies")
-    createTower(kUID_Struct_Tower5_AntiAir, 5, 
-        "Future Anti-Air Tower", 
-        "Z", true,  
-        1.25, 900,
-        1.3, 1.2)
-        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
-        ..setModelFile("Models\\AntiAircraftGun.mdx")
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
-        ..setScalingValue(0.5)
-        ..setAttack1AttackType(AttackType.Pierce)
-        ..setAttack1WeaponType(WeaponType.MissileSplash)
-        ..setAttack1AreaofEffectFullDamage(50)
-        ..setAttack1AreaofEffectMediumDamage(100)
-        ..setAttack1AreaofEffectSmallDamage(150)
-        ..setAttack1DamageFactorMedium(0.5)
-        ..setAttack1DamageFactorSmall(0.2)
-        ..setAttack1ProjectileArc(.1)
-        ..setAttack1ProjectileArt(Abilities.rocketMissile)
-        ..setAttack1ProjectileSpeed(1000)
-        ..setAttack1TargetsAllowed("air,playerunits,enemies")
-    createTower(kUID_Struct_Tower4_Radar, 4, 
-        "Radar Tower", 
-        "D", true,  
-        1.25, 900,
-        1.0, 1.4)
-        ..setIconGameInterface(Icons.bTNZiggurat)
-        ..setModelFile(Buildings.ziggurat1)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
-        ..setUpgradesTo(kUID_Struct_Tower5_Radar.toRawCode())
-        ..setScalingValue(0.333)
-        ..setAttacksEnabled(0)
-        ..setSightRadiusDay(2400)
-        ..setSightRadiusNight(2400)
-        ..setMovementType(MovementType.Fly)
-    createTower(kUID_Struct_Tower5_Radar, 5, 
-        "Future Radar Tower", 
-        "Z", true,  
-        1.25, 900,
-        1.0, 1.4)
-        ..setIconGameInterface(Icons.bTNZiggurat)
-        ..setModelFile(Buildings.ziggurat1)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
-        ..setScalingValue(0.333)
-        ..setAttacksEnabled(0)
-        ..setSightRadiusDay(3000)
-        ..setSightRadiusNight(3000)
-        ..setMovementType(MovementType.Fly)
+  createTower(kUID_Struct_Tower0, 0, 
+    "Watch Tower", 
+    "C", false, 
+    2, 400,
+    1.0, 1.0)
+    ..setUpgradesTo(
+      kUID_Struct_Tower1_Guard.toRawCode()
+      + "," + kUID_Struct_Tower1_AntiHero.toRawCode()
+      + "," + kUID_Struct_Tower3_MachineGun.toRawCode()
+      + "," + kUID_Struct_Tower3_Artillery.toRawCode()
+      + "," + kUID_Struct_Tower3_AntiAir.toRawCode()
+      + "," + kUID_Struct_Tower4_Radar.toRawCode()
+    )
+  createTower(kUID_Struct_Tower1_Guard, 1, 
+    "Guard Tower", 
+    "A", true,  
+    2, 400,
+    1.0, 1.0)
+    ..setIconGameInterface(Icons.bTNGuardTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,first")
+    ..setTooltipExtended("An upgraded arrow shooting tower.")
+    ..setUpgradesTo(kUID_Struct_Tower2_Guard.toRawCode())
+  createTower(kUID_Struct_Tower2_Guard, 2, 
+    "Guard Tower", 
+    "Z", true,  
+    2, 400,
+    1.0, 1.0)
+    ..setIconGameInterface(Icons.bTNGuardTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,first")
+    ..setTooltipExtended("An upgraded arrow shooting tower.")
+    ..setUpgradesTo(kUID_Struct_Tower3_MachineGun.toRawCode())
+  createTower(kUID_Struct_Tower1_AntiHero, 1, 
+    "Simple Anti-Hero Tower", 
+    "S", true,  
+    1, 650,
+    2.0, 1.6)
+    ..setAttack1TargetsAllowed("hero,enemies")
+    ..setAttack1CooldownTime(1.25)
+    ..setIconGameInterface(Icons.bTNArcaneTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,third")
+    ..setTooltipExtended("A tower only capable of attacking enemy heroes. Attacks slow their target.")
+    ..setUpgradesTo(kUID_Struct_Tower2_AntiHero.toRawCode())
+  createTower(kUID_Struct_Tower2_AntiHero, 2, 
+    "Anti-Hero Tower", 
+    "Z", true, 
+    1, 650,
+    2.0, 1.6)
+    ..setAttack1TargetsAllowed("hero,enemies")
+    ..setAttack1CooldownTime(1.25)
+    ..setIconGameInterface(Icons.bTNArcaneTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,third")
+    ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
+    ..setUpgradesTo(kUID_Struct_Tower3_AntiHero.toRawCode())
+  createTower(kUID_Struct_Tower3_AntiHero, 3, 
+    "Advanced Anti-Hero Tower", 
+    "Z", true,  
+    1, 650,
+    2.0, 1.6)
+    ..setAttack1TargetsAllowed("hero,enemies")
+    ..setAttack1CooldownTime(1.25)
+    ..setIconGameInterface(Icons.bTNArcaneTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,third")
+    ..setTooltipExtended("A stronger tower only capable of attacking enemy heroes.")
+    ..setUpgradesTo(kUID_Struct_Tower4_AntiHero.toRawCode())
+  createTower(kUID_Struct_Tower4_AntiHero, 4, 
+    "Electric Anti-Hero Tower", 
+    "Z", true, 
+    1, 650,
+    2.0, 1.6)
+    ..setAttack1TargetsAllowed("hero,enemies")
+    ..setAttack1CooldownTime(1.25)
+    ..setIconGameInterface(Icons.bTNArcaneTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,third")
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
+    ..setUpgradesTo(kUID_Struct_Tower5_AntiHero.toRawCode())
+  createTower(kUID_Struct_Tower5_AntiHero, 5, 
+    "Laser Anti-Hero Tower", 
+    "Z", true, 
+    1, 650,
+    2.0, 1.6)
+    ..setAttack1TargetsAllowed("hero,enemies")
+    ..setAttack1CooldownTime(1.25)
+    ..setIconGameInterface(Icons.bTNArcaneTower)
+    ..setModelFile(Buildings.humanTower1)
+    ..setRequiredAnimationNames("upgrade,third")
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_AntiHero) + "A stronger tower only capable of attacking enemy heroes.")
+  createTower(kUID_Struct_Tower3_MachineGun, 3, 
+    "Machine Gun Tower", 
+    "Z", true,  
+    0.666, 400,
+    1.0, 1.0)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNSentrygun.blp")
+    ..setModelFile("Models\\sentrygun.mdx")
+    ..setAttack1AnimationDamagePoint(0.433)
+    ..setAttack1AnimationBackswingPoint(0.666)
+    ..setTooltipExtended("Rapid firing short range defensive structure.")
+    ..setUpgradesTo(kUID_Struct_Tower4_MachineGun.toRawCode())
+    ..setScalingValue(1)
+    ..setAttack1ProjectileArt(Abilities.rifleImpact)
+    ..setAttack1ProjectileArc(0)
+  createTower(kUID_Struct_Tower4_MachineGun, 4, 
+    "Advanced Machine Gun Tower", 
+    "Z", true,  
+    0.666, 400,
+    1.0, 1.0)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNSentrygun.blp")
+    ..setModelFile("Models\\sentrygun.mdx")
+    ..setAttack1AnimationDamagePoint(0.433)
+    ..setAttack1AnimationBackswingPoint(0.666)
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_MachineGun) + "Rapid firing short range defensive structure.")
+    ..setUpgradesTo(kUID_Struct_Tower5_MachineGun.toRawCode())
+    ..setScalingValue(1)
+    ..setAttack1ProjectileArt(Abilities.rifleImpact)
+    ..setAttack1ProjectileArc(0)
+  createTower(kUID_Struct_Tower5_MachineGun, 5, 
+    "Laser Machine Gun Tower", 
+    "Z", true,  
+    0.666, 400,
+    1.0, 1.0)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNSentrygun.blp")
+    ..setModelFile("Models\\sentrygun.mdx")
+    ..setAttack1AnimationDamagePoint(0.433)
+    ..setAttack1AnimationBackswingPoint(0.666)
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_MachineGun) + "Rapid firing short range defensive structure.")
+    ..setScalingValue(1)
+    ..setAttack1ProjectileArt(Abilities.rifleImpact)
+    ..setAttack1ProjectileArc(0)
+  createTower(kUID_Struct_Tower3_Artillery, 3, 
+    "Artillery Tower", 
+    "X", true,  
+    3.0, 900,
+    1.3, 1.2)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
+    ..setModelFile("Models\\NavalBattery.mdx")
+    ..setTooltipExtended("Long range tower that deals damage in an area around its target. Can only attack ground units.")
+    ..setUpgradesTo(kUID_Struct_Tower4_Artillery.toRawCode())
+    ..setScalingValue(0.5)
+    ..setAttack1AttackType(AttackType.Siege)
+    ..setAttack1WeaponType(WeaponType.Artillery)
+    ..setAttack1AreaofEffectFullDamage(25)
+    ..setAttack1AreaofEffectMediumDamage(50)
+    ..setAttack1AreaofEffectSmallDamage(75)
+    ..setAttack1DamageFactorMedium(0.5)
+    ..setAttack1DamageFactorSmall(0.2)
+    ..setAttack1ProjectileArc(.3)
+    ..setAttack1ProjectileArt(Abilities.cannonTowerMissile)
+    ..setAttack1ProjectileSpeed(600)
+    ..setAttack1TargetsAllowed("ground,debris,item,ward,playerunits,enemies")
+  createTower(kUID_Struct_Tower4_Artillery, 4, 
+    "Modern Artillery Tower", 
+    "Z", true,  
+    3.0, 900,
+    1.3, 1.2)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
+    ..setModelFile("Models\\NavalBattery.mdx")
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
+    ..setUpgradesTo(kUID_Struct_Tower5_Artillery.toRawCode())
+    ..setScalingValue(0.5)
+    ..setAttack1AttackType(AttackType.Siege)
+    ..setAttack1WeaponType(WeaponType.Artillery)
+    ..setAttack1AreaofEffectFullDamage(25)
+    ..setAttack1AreaofEffectMediumDamage(50)
+    ..setAttack1AreaofEffectSmallDamage(75)
+    ..setAttack1DamageFactorMedium(0.5)
+    ..setAttack1DamageFactorSmall(0.2)
+    ..setAttack1ProjectileArc(.3)
+    ..setAttack1ProjectileArt(Abilities.cannonTowerMissile)
+    ..setAttack1ProjectileSpeed(600)
+    ..setAttack1TargetsAllowed("ground,debris,item,ward,playerunits,enemies")
+  createTower(kUID_Struct_Tower5_Artillery, 5, 
+    "Future Artillery Tower", 
+    "Z", true,  
+    3.0, 900,
+    1.3, 1.2)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNGoblinAssaultTank.blp")
+    ..setModelFile("Models\\NavalBattery.mdx")
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_Artillery) + "Long range tower that deals damage in an area around its target. Can only attack ground units.")
+    ..setScalingValue(0.5)
+    ..setAttack1AttackType(AttackType.Siege)
+    ..setAttack1WeaponType(WeaponType.Artillery)
+    ..setAttack1AreaofEffectFullDamage(25)
+    ..setAttack1AreaofEffectMediumDamage(50)
+    ..setAttack1AreaofEffectSmallDamage(75)
+    ..setAttack1DamageFactorMedium(0.5)
+    ..setAttack1DamageFactorSmall(0.2)
+    ..setAttack1ProjectileArc(.3)
+    ..setAttack1ProjectileArt(Abilities.cannonTowerMissile)
+    ..setAttack1ProjectileSpeed(600)
+    ..setAttack1TargetsAllowed("ground,debris,item,ward,playerunits,enemies")
+  createTower(kUID_Struct_Tower3_AntiAir, 3, 
+    "Anti-Air Tower", 
+    "C", true,  
+    1.25, 900,
+    1.3, 1.2)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
+    ..setModelFile("Models\\AntiAircraftGun.mdx")
+    ..setTooltipExtended("Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
+    ..setUpgradesTo(kUID_Struct_Tower4_AntiAir.toRawCode())
+    ..setScalingValue(0.5)
+    ..setAttack1AttackType(AttackType.Pierce)
+    ..setAttack1WeaponType(WeaponType.MissileSplash)
+    ..setAttack1AreaofEffectFullDamage(50)
+    ..setAttack1AreaofEffectMediumDamage(100)
+    ..setAttack1AreaofEffectSmallDamage(150)
+    ..setAttack1DamageFactorMedium(0.5)
+    ..setAttack1DamageFactorSmall(0.2)
+    ..setAttack1ProjectileArc(.1)
+    ..setAttack1ProjectileArt(Abilities.rocketMissile)
+    ..setAttack1ProjectileSpeed(1000)
+    ..setAttack1TargetsAllowed("air,playerunits,enemies")
+  createTower(kUID_Struct_Tower4_AntiAir, 4, 
+    "Modern Anti-Air Tower", 
+    "Z", true,  
+    1.25, 900,
+    1.3, 1.2)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
+    ..setModelFile("Models\\AntiAircraftGun.mdx")
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
+    ..setUpgradesTo(kUID_Struct_Tower5_AntiAir.toRawCode())
+    ..setScalingValue(0.5)
+    ..setAttack1AttackType(AttackType.Pierce)
+    ..setAttack1WeaponType(WeaponType.MissileSplash)
+    ..setAttack1AreaofEffectFullDamage(50)
+    ..setAttack1AreaofEffectMediumDamage(100)
+    ..setAttack1AreaofEffectSmallDamage(150)
+    ..setAttack1DamageFactorMedium(0.5)
+    ..setAttack1DamageFactorSmall(0.2)
+    ..setAttack1ProjectileArc(.1)
+    ..setAttack1ProjectileArt(Abilities.rocketMissile)
+    ..setAttack1ProjectileSpeed(1000)
+    ..setAttack1TargetsAllowed("air,playerunits,enemies")
+  createTower(kUID_Struct_Tower5_AntiAir, 5, 
+    "Future Anti-Air Tower", 
+    "Z", true,  
+    1.25, 900,
+    1.3, 1.2)
+    ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNantiAirPlasmaGS.blp")
+    ..setModelFile("Models\\AntiAircraftGun.mdx")
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_AntiAir) + "Long range tower specialized in destroying enemy air forces. Deals damage in an AoE to air units.")
+    ..setScalingValue(0.5)
+    ..setAttack1AttackType(AttackType.Pierce)
+    ..setAttack1WeaponType(WeaponType.MissileSplash)
+    ..setAttack1AreaofEffectFullDamage(50)
+    ..setAttack1AreaofEffectMediumDamage(100)
+    ..setAttack1AreaofEffectSmallDamage(150)
+    ..setAttack1DamageFactorMedium(0.5)
+    ..setAttack1DamageFactorSmall(0.2)
+    ..setAttack1ProjectileArc(.1)
+    ..setAttack1ProjectileArt(Abilities.rocketMissile)
+    ..setAttack1ProjectileSpeed(1000)
+    ..setAttack1TargetsAllowed("air,playerunits,enemies")
+  createTower(kUID_Struct_Tower4_Radar, 4, 
+    "Radar Tower", 
+    "D", true,  
+    1.25, 900,
+    1.0, 1.4)
+    ..setIconGameInterface(Icons.bTNZiggurat)
+    ..setModelFile(Buildings.ziggurat1)
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower4_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
+    ..setUpgradesTo(kUID_Struct_Tower5_Radar.toRawCode())
+    ..setScalingValue(0.333)
+    ..setAttacksEnabled(0)
+    ..setSightRadiusDay(2400)
+    ..setSightRadiusNight(2400)
+    ..setMovementType(MovementType.Fly)
+  createTower(kUID_Struct_Tower5_Radar, 5, 
+    "Future Radar Tower", 
+    "Z", true,  
+    1.25, 900,
+    1.0, 1.4)
+    ..setIconGameInterface(Icons.bTNZiggurat)
+    ..setModelFile(Buildings.ziggurat1)
+    ..setTooltipExtended(powerReqTT(kUID_Struct_Tower5_Radar) + "Sensor tower that grants a large area of vision. Can see invisible units.")
+    ..setScalingValue(0.333)
+    ..setAttacksEnabled(0)
+    ..setSightRadiusDay(3000)
+    ..setSightRadiusNight(3000)
+    ..setMovementType(MovementType.Fly)
 
-    getCleanTinyBuilding(kUID_Struct_Campfire, 
-        "Campfire", 
-        "R", false, 
-        20, 200, 10)
-        ..setHitPointsMaximumBase(50)
-        ..setModelFile(Doodads.firePit1)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNFire)
-        ..setTooltipExtended("A campfire that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kFireLightAuraRate.toString() + "%\n"
-            + "Range: " + kFireLightAuraRange.toString())
-        ..setUnitSoundSet("LavaSpawn")
-        ..setSightRadiusDay(1000)
-        ..setSightRadiusNight(1000)
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopFireLight.toRawCode())
-        ..setUpgradesTo(kUID_Struct_Firepit.toRawCode())
-    getCleanTinyBuilding(kUID_Struct_Firepit, 
-        "Firepit", 
-        "Z", true, 
-        50, 500, 20)
-        ..setHitPointsMaximumBase(250)
-        ..setModelFile(Doodads.firePitPig)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNFire)
-        ..setTooltipExtended("A firepit that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kFireLightAuraRate.toString() + "%\n"
-            + "Range: " + kFireLightAuraRange.toString())
-        ..setUnitSoundSet("LavaSpawn")
-        ..setSightRadiusDay(1250)
-        ..setSightRadiusNight(1250)
-        ..setRequirements(kRID_Age03_Dark.toRawCode())
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopFireLight.toRawCode())
-        ..setUpgradesTo(kUID_Struct_Latern.toRawCode())
-    getCleanTinyBuilding(kUID_Struct_Latern, 
-        "Latern", 
-        "Z", true, 
-        150, 1000, 40)
-        ..setHitPointsMaximumBase(500)
-        ..setModelFile(Doodads.lanternPost)
-        ..setScalingValue(1.0)
-        ..setIconGameInterface(Icons.bTNLamp)
-        ..setTooltipExtended("A latern that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kLaternLightAuraRate.toString() + "%\n"
-            + "Range: " + kLaternLightAuraRange.toString())
-        ..setUnitSoundSet("LavaSpawn")
-        ..setSightRadiusDay(1500)
-        ..setSightRadiusNight(1500)
-        ..setRequirements(kRID_Age07_Enlightenment.toRawCode())
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopLaternLight.toRawCode())
-        ..setUpgradesTo(kUID_Struct_StreetLight.toRawCode())
-    getCleanTinyBuilding(kUID_Struct_StreetLight, 
-        "Street Light", 
-        "Z", true, 
-        500, 2500, 40)
-        ..setHitPointsMaximumBase(2500)
-        ..setModelFile(Doodads.lanternPost)
-        ..setScalingValue(1.0)
-        ..setIconGameInterface(Icons.bTNLamp)
-        ..setTooltipExtended(powerReqTT(kUID_Struct_StreetLight) 
-            + "A street light that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
-            + "Increase: " + kLaternLightAuraRate.toString() + "%\n"
-            + "Range: " + kLaternLightAuraRange.toString())
-        ..setUnitSoundSet("LavaSpawn")
-        ..setSightRadiusDay(2000)
-        ..setSightRadiusNight(2000)
-        ..setRequirements(kRID_Age11_Atomic.toRawCode())
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopLaternLight.toRawCode())
-    getCleanSmallBuilding(kUID_Struct_Barracks1, 
-        "Wooden Barracks", "E", false, 50, 400, 25)
-        ..setHitPointsMaximumBase(100)
-        ..setGroundTexture("OSMA")
-        ..setModelFile(Buildings.orcBarracks)
-        ..setScalingValue(0.45)
-        ..setIconGameInterface(Icons.bTNBarracks)
-        ..setTooltipExtended("Trains combat units.\n\n" + kStrHint + "Can be upgraded into more advanced unit production buildings.")
-        ..setUnitSoundSet(Soundsets.orcBarracks)
-    getCleanSmallBuilding(kUID_Struct_LumberMill, 
-        "Woodsmens Hut", "W", false, 15, 150, 20)
-        ..setHitPointsMaximumBase(50)
-        ..setGroundTexture("OSMA")
-        ..setModelFile(Buildings.draneiHut0)
-        ..setScalingValue(0.5)
-        ..setIconGameInterface(Icons.bTNDranaiHut)
-        ..setTooltipExtended("Provides a return location for lumber.")
-        ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + ",Argl")
-        ..setUnitSoundSet(Soundsets.warMill)
+  getCleanTinyBuilding(kUID_Struct_Campfire, 
+    "Campfire", 
+    "R", false, 
+    20, 200, 10)
+    ..setHitPointsMaximumBase(50)
+    ..setModelFile(Doodads.firePit1)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNFire)
+    ..setTooltipExtended("A campfire that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kFireLightAuraRate.toString() + "%\n"
+      + "Range: " + kFireLightAuraRange.toString())
+    ..setUnitSoundSet("LavaSpawn")
+    ..setSightRadiusDay(1000)
+    ..setSightRadiusNight(1000)
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopFireLight.toRawCode())
+    ..setUpgradesTo(kUID_Struct_Firepit.toRawCode())
+  getCleanTinyBuilding(kUID_Struct_Firepit, 
+    "Firepit", 
+    "Z", true, 
+    50, 500, 20)
+    ..setHitPointsMaximumBase(250)
+    ..setModelFile(Doodads.firePitPig)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNFire)
+    ..setTooltipExtended("A firepit that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kFireLightAuraRate.toString() + "%\n"
+      + "Range: " + kFireLightAuraRange.toString())
+    ..setUnitSoundSet("LavaSpawn")
+    ..setSightRadiusDay(1250)
+    ..setSightRadiusNight(1250)
+    ..setRequirements(kRID_Age03_Dark.toRawCode())
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopFireLight.toRawCode())
+    ..setUpgradesTo(kUID_Struct_Latern.toRawCode())
+  getCleanTinyBuilding(kUID_Struct_Latern, 
+    "Latern", 
+    "Z", true, 
+    150, 1000, 40)
+    ..setHitPointsMaximumBase(500)
+    ..setModelFile(Doodads.lanternPost)
+    ..setScalingValue(1.0)
+    ..setIconGameInterface(Icons.bTNLamp)
+    ..setTooltipExtended("A latern that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kLaternLightAuraRate.toString() + "%\n"
+      + "Range: " + kLaternLightAuraRange.toString())
+    ..setUnitSoundSet("LavaSpawn")
+    ..setSightRadiusDay(1500)
+    ..setSightRadiusNight(1500)
+    ..setRequirements(kRID_Age07_Enlightenment.toRawCode())
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopLaternLight.toRawCode())
+    ..setUpgradesTo(kUID_Struct_StreetLight.toRawCode())
+  getCleanTinyBuilding(kUID_Struct_StreetLight, 
+    "Street Light", 
+    "Z", true, 
+    500, 2500, 40)
+    ..setHitPointsMaximumBase(2500)
+    ..setModelFile(Doodads.lanternPost)
+    ..setScalingValue(1.0)
+    ..setIconGameInterface(Icons.bTNLamp)
+    ..setTooltipExtended(powerReqTT(kUID_Struct_StreetLight) 
+      + "A street light that provides light. Has a high sight range both during the day and at night and provides bonus growth to nearby civilian houses.\n" + kStrGreen + "Nearby Growth:\n" 
+      + "Increase: " + kLaternLightAuraRate.toString() + "%\n"
+      + "Range: " + kLaternLightAuraRange.toString())
+    ..setUnitSoundSet("LavaSpawn")
+    ..setSightRadiusDay(2000)
+    ..setSightRadiusNight(2000)
+    ..setRequirements(kRID_Age11_Atomic.toRawCode())
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + "," + kAID_PopLaternLight.toRawCode())
+  getCleanSmallBuilding(kUID_Struct_Barracks1, 
+    "Wooden Barracks", "E", false, 50, 400, 25)
+    ..setHitPointsMaximumBase(100)
+    ..setGroundTexture("OSMA")
+    ..setModelFile(Buildings.orcBarracks)
+    ..setScalingValue(0.45)
+    ..setIconGameInterface(Icons.bTNBarracks)
+    ..setTooltipExtended("Trains combat units.\n\n" + kStrHint + "Can be upgraded into more advanced unit production buildings.")
+    ..setUnitSoundSet(Soundsets.orcBarracks)
+  getCleanSmallBuilding(kUID_Struct_LumberMill, 
+    "Woodsmens Hut", "W", false, 15, 150, 20)
+    ..setHitPointsMaximumBase(50)
+    ..setGroundTexture("OSMA")
+    ..setModelFile(Buildings.draneiHut0)
+    ..setScalingValue(0.5)
+    ..setIconGameInterface(Icons.bTNDranaiHut)
+    ..setTooltipExtended("Provides a return location for lumber.")
+    ..setNormalAbilities(kAID_DemolishBuilding.toRawCode() + ",Argl")
+    ..setUnitSoundSet(Soundsets.warMill)
 
-    for i = 0 to kHouseLevelCount - 1
-        createHut(i)
-    
-    for i = 0 to 5
-        createWall(i)
-        createGate(i)
+  for i = 0 to kHouseLevelCount - 1
+    createHut(i)
+  
+  for i = 0 to 5
+    createWall(i)
+    createGate(i)

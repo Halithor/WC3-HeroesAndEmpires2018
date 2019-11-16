@@ -26,27 +26,27 @@ SoundDefinition soundFoodEmpty = new SoundDefinition("Sounds\\Food_Empty.mp3", f
 SoundDefinition soundResearchComplete = new SoundDefinition(Sounds.genericWarningUpgradeComplete1, false)
 
 function log( real py, real pbase ) returns real
-    real y = py
-    real curBase = pbase
-    real factor = 1.0
-    real logy = 0.0
-    real sign = 1.0
-    if y < 0.
-        return 0.0
+  real y = py
+  real curBase = pbase
+  real factor = 1.0
+  real logy = 0.0
+  real sign = 1.0
+  if y < 0.
+    return 0.0
 
-    if y < 1.
-        y = 1.0/y
-        sign = -1.0
+  if y < 1.
+    y = 1.0/y
+    sign = -1.0
 
-    //Chop out powers of the base
-    while y >= 1.0001
-        if y > curBase
-            y = y / curBase
-            logy = logy + factor
-        else
-            curBase = SquareRoot(curBase)	 //If you use just one base a lot, precompute its squareroots
-            factor = factor / 2.
-    return sign*logy
+  //Chop out powers of the base
+  while y >= 1.0001
+    if y > curBase
+      y = y / curBase
+      logy = logy + factor
+    else
+      curBase = SquareRoot(curBase)	 //If you use just one base a lot, precompute its squareroots
+      factor = factor / 2.
+  return sign*logy
 
 // function getPlayerHuts(player p) returns group
 //     tempP = p
@@ -56,667 +56,667 @@ function log( real py, real pbase ) returns real
 
 
 class FireEvent
-    unit fire
-    group fighters
-    trigger onDeath
-    trigger onDamage
+  unit fire
+  group fighters
+  trigger onDeath
+  trigger onDamage
 
-    construct(unit fire)
-        this.fire = fire
-        fighters = CreateGroup()
-        onDeath = CreateTrigger()
-            ..addAction(function handleDeath)
-            ..registerUnitEvent(fire, EVENT_UNIT_DEATH)
-        onDamage = CreateTrigger()
-            ..addAction(function handleDamage)
-            ..registerUnitEvent(fire, EVENT_UNIT_DAMAGED)
-        // add to array
-        fireEvents[fire.getIndex()] = this
-    
-    ondestroy
-        fireEvents[fire.getIndex()] = null
-        onDeath.destr()
-        onDamage.destr()
-        fighters.destr()
+  construct(unit fire)
+    this.fire = fire
+    fighters = CreateGroup()
+    onDeath = CreateTrigger()
+      ..addAction(function handleDeath)
+      ..registerUnitEvent(fire, EVENT_UNIT_DEATH)
+    onDamage = CreateTrigger()
+      ..addAction(function handleDamage)
+      ..registerUnitEvent(fire, EVENT_UNIT_DAMAGED)
+    // add to array
+    fireEvents[fire.getIndex()] = this
+  
+  ondestroy
+    fireEvents[fire.getIndex()] = null
+    onDeath.destr()
+    onDamage.destr()
+    fighters.destr()
 
-    static function handleDeath()
-        let data = fireEvents[GetDyingUnit().getIndex()]
-        // remove the units
-        for fighter in data.fighters
-            flashEffect(Abilities.blinkCaster, fighter.getPos())
-            fighter.remove()
-        // destroy the object, cleaning up triggers etc
-        destroy data
-    
-    static function handleDamage()
-        let data = fireEvents[GetTriggerUnit().getIndex()]
-        data.fire.addHP(-kEventFireFighterDamage.toReal())
+  static function handleDeath()
+    let data = fireEvents[GetDyingUnit().getIndex()]
+    // remove the units
+    for fighter in data.fighters
+      flashEffect(Abilities.blinkCaster, fighter.getPos())
+      fighter.remove()
+    // destroy the object, cleaning up triggers etc
+    destroy data
+  
+  static function handleDamage()
+    let data = fireEvents[GetTriggerUnit().getIndex()]
+    data.fire.addHP(-kEventFireFighterDamage.toReal())
 
 public class EmpireInfo
-    // Player who owns this empire.
-    player p
+  // Player who owns this empire.
+  player p
+  
+  // multiboard stuff
+  multiboard board
+  bool boardInitialized = false
+
+  // all of our halls
+  group hallGroup
+
+  // Upgrading unit fixes. Can be static.
+  // This map stores the CURRENT id of a unit, set on upgrade finish or construction 
+  // finish. It's needed for upgrade stuff.
+  static HashMap<unit, int> upgradingIds = new HashMap<unit, int>()
+  // Currently upgrading units.
+  static HashSet<unit> upgradingUnits = new HashSet<unit>()
+  
+
+  // Research stuff
+  int currentAge = -1
+  int currentResearchIndex = -1
+  int array[kResearchCount] researchLevels
+  real array[kResearchCount] researchProgresses
+  unit researchCenter = null
+  trigger researchStart = null
+  int researchEtaCycles = 0
+
+  // Hero stuff
+  int heroSupport = 0
+
+  // Population related variables
+  group houseGroup
+  group groupFireDepts
+  int population = 0
+  int popRelaxing = 100
+  int popIndustry = 0
+  int popCommerce = 0
+  int popScience = 0
+  int houses = 0
+  real lastGrowthRate = 0.0
+  real lastGrowthSum = 0.0
+  real lastGrowthBonusAvg = 0.0
+  int negativeGrowths = 0
+  bool autoHouseUpgrade = true
+
+  // Tax rate
+  int taxRate = 3
+  // Food related stuff
+  int food = 5000
+  int foodRate = 10
+  int farms = 0
+  int farmsMechanical = 0
+  group farmGroup
+  bool foodFallingFast = false
+  // Incomes
+  int goldIncome = 0
+  int lumberIncome = 0
+  int foodIncome = 0
+  // Happiness ranges from -100 to 100
+  real happiness = 60.0
+  real happinessRatio = 1.0
+  real happyIncome = 0.0
+  real starvationReq = 0.0
+
+  // Power stuff
+  int powerGenerated
+  int powerRequired
+  bool powerDisabled = false
+  group groupPower
+
+  construct(player p)
+    this.p = p
+    hallGroup = CreateGroup()
+    farmGroup = CreateGroup()
+    houseGroup = CreateGroup()
+    groupPower = CreateGroup()
+    groupFireDepts = CreateGroup()
+    for i = 0 to kResearchCount - 1
+      researchProgresses[i] = 0
+      researchLevels[i] = 0
+
+  // big update function, not used in lieu of stepwise updates (reduces chance of big
+  // lag spike when empires update).
+  function update()
+    updateHappiness()
+    updatePopulation()
+    updateIncome()
+    updateResearch()
+    updateEvents()
+  
+  function updateHappiness()
+    // First calculate required happiness
+    real req = 0.0
+    req += (taxRate.toReal() * (taxRate.toReal() + 1.0)) / 2.0 // Tax requirements
+    req += population > 0 ? log(population.toReal(), kHappinessPopulationReqBase) : 0 // Pop reqs
+    req += starvationReq
+    // reduce the starvation requirements over time.
+    starvationReq *= 0.9
+    // TODO add in unit deaths happiness stuff
+    // Now calculate the happiness production
+    real prod = 0.0
+    // Food is only 100% effective up to 20, then it peters out
+    prod += min(foodRate, kHappinessFoodMaxFullEffect)
+    if (foodRate > kHappinessFoodMaxFullEffect)
+      real part = min(foodRate - kHappinessFoodMaxFullEffect, kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect).toReal()
+      prod += part - (part * part) * (0.5 / (kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect))
     
-    // multiboard stuff
-    multiboard board
-    bool boardInitialized = false
-
-    // all of our halls
-    group hallGroup
-
-    // Upgrading unit fixes. Can be static.
-    // This map stores the CURRENT id of a unit, set on upgrade finish or construction 
-    // finish. It's needed for upgrade stuff.
-    static HashMap<unit, int> upgradingIds = new HashMap<unit, int>()
-    // Currently upgrading units.
-    static HashSet<unit> upgradingUnits = new HashSet<unit>()
+    
+    real _ratio = req != 0 ? prod/req : 2.5 
+    if prod > req
+      happyIncome = (req != 0 ? prod/req : 3.0) - 1.0
+    else 
+      happyIncome = ((prod != 0 ? req/prod : 3) - 1.0) * -2
     
 
-    // Research stuff
-    int currentAge = -1
-    int currentResearchIndex = -1
-    int array[kResearchCount] researchLevels
-    real array[kResearchCount] researchProgresses
-    unit researchCenter = null
-    trigger researchStart = null
-    int researchEtaCycles = 0
+    // Having high happiness requires high ratios
+    // TODO FIX THIS WIERDNESS
+    // if (happyIncome > 0 and happiness > 75.0 * ratio)
+    //     happyIncome = (happiness - (75 * ratio)) / 50
+    // if (happyIncome < 0)
+    //     if (.50 < ratio and ratio < 1.0 and happiness < 50 * ((ratio - 0.5) / .5))
+    //         happyIncome = ((50 * ((ratio - 0.5) / .5)) - happiness) / 50
+    //     if ratio < 0.5 and happiness < ((ratio - 0.5) / 0.5) * 100 
+    //         happyIncome = ((((ratio - 0.5) / 0.5) * 100) - happiness) / 50
+    // Now add the happy income! My god this is crazy
+    happiness += happyIncome
+    happiness = min(max(happiness, -kHappinessMax), kHappinessMax)
+      
 
-    // Hero stuff
-    int heroSupport = 0
 
-    // Population related variables
-    group houseGroup
-    group groupFireDepts
-    int population = 0
-    int popRelaxing = 100
-    int popIndustry = 0
-    int popCommerce = 0
-    int popScience = 0
-    int houses = 0
-    real lastGrowthRate = 0.0
-    real lastGrowthSum = 0.0
-    real lastGrowthBonusAvg = 0.0
-    int negativeGrowths = 0
-    bool autoHouseUpgrade = true
-
-    // Tax rate
-    int taxRate = 3
-    // Food related stuff
-    int food = 5000
-    int foodRate = 10
-    int farms = 0
-    int farmsMechanical = 0
-    group farmGroup
-    bool foodFallingFast = false
-    // Incomes
-    int goldIncome = 0
-    int lumberIncome = 0
-    int foodIncome = 0
-    // Happiness ranges from -100 to 100
-    real happiness = 60.0
-    real happinessRatio = 1.0
-    real happyIncome = 0.0
-    real starvationReq = 0.0
-
-    // Power stuff
-    int powerGenerated
-    int powerRequired
-    bool powerDisabled = false
-    group groupPower
-
-    construct(player p)
-        this.p = p
-        hallGroup = CreateGroup()
-        farmGroup = CreateGroup()
-        houseGroup = CreateGroup()
-        groupPower = CreateGroup()
-        groupFireDepts = CreateGroup()
-        for i = 0 to kResearchCount - 1
-            researchProgresses[i] = 0
-            researchLevels[i] = 0
-
-    // big update function, not used in lieu of stepwise updates (reduces chance of big
-    // lag spike when empires update).
-    function update()
-        updateHappiness()
-        updatePopulation()
-        updateIncome()
-        updateResearch()
-        updateEvents()
+  // Updates the number of people you have and upgrades houses
+  function updatePopulation()
+    // let huts = getPlayerHuts(this.p)
+    population = 0
+    houses = 0
+    // Calculate the happiness growth
+    real growth = (happiness / kPopulationHappinessGrowthFactor)
+    if growth > 0
+      // Add the relaxing bonus
+      growth *= 1.0 + (popRelaxing.toReal() / kPopulationRelaxingGrowthMultiplier)
+      negativeGrowths = 0
+    if growth < 0
+      // Negative growth will escalate quickly.
+      growth *= (1.0 + kPopulationNegativeGrowthFactor * negativeGrowths)
+      negativeGrowths += 1
     
-    function updateHappiness()
-        // First calculate required happiness
-        real req = 0.0
-        req += (taxRate.toReal() * (taxRate.toReal() + 1.0)) / 2.0 // Tax requirements
-        req += population > 0 ? log(population.toReal(), kHappinessPopulationReqBase) : 0 // Pop reqs
-        req += starvationReq
-        // reduce the starvation requirements over time.
-        starvationReq *= 0.9
-        // TODO add in unit deaths happiness stuff
-        // Now calculate the happiness production
-        real prod = 0.0
-        // Food is only 100% effective up to 20, then it peters out
-        prod += min(foodRate, kHappinessFoodMaxFullEffect)
-        if (foodRate > kHappinessFoodMaxFullEffect)
-            real part = min(foodRate - kHappinessFoodMaxFullEffect, kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect).toReal()
-            prod += part - (part * part) * (0.5 / (kHappinessFoodMaxEffective - kHappinessFoodMaxFullEffect))
-        
-        
-        real _ratio = req != 0 ? prod/req : 2.5 
-        if prod > req
-            happyIncome = (req != 0 ? prod/req : 3.0) - 1.0
-        else 
-            happyIncome = ((prod != 0 ? req/prod : 3) - 1.0) * -2
-        
+    lastGrowthRate = growth
+    lastGrowthSum = 0.0
+    lastGrowthBonusAvg = 0.0
+    for hut in houseGroup
+      houses += 1
+      real hpop = hut.getMana()
+      real hpop_old = hpop
+      if growth > 0
+        // Add in aura bonus. Yes this is ugly.
+        var multiplier = 100.0
+        if UnitHasBuffBJ(hut, kBID_PopMarket)
+          multiplier += kMarketAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopTavern)
+          multiplier += kTavernAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopChurch)
+          multiplier += kChurchAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopTheatre)
+          multiplier += kTheatreAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopShoppingMall)
+          multiplier += kShoppingMallAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopSwimmingPool)
+          multiplier += kSwimmingPoolAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopFireLight)
+          multiplier += kFireLightAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopLaternLight)
+          multiplier += kLaternLightAuraRate
+        if UnitHasBuffBJ(hut, kBID_PopPowerPlant)
+          multiplier += kPowerPlantAuraRate
+        var m = (multiplier / 100.0)
+        lastGrowthBonusAvg += (m - 1.0)
+        hpop = hpop + m * growth
+      else
+        // growth is negative, so no auras
+        hpop = hpop + growth
+        if hpop < 0
+          // going negative!, reset to 0
+          hpop = 0
+          
+      // Make sure that we don't get bigger than the max
+      if hpop > hut.getMaxMana()
+        hpop = hut.getMaxMana()
+        hut.setMana(hpop)
+        if hut.getHouseLevel() < kHouseLevelCount and (currentAge >= kHouseTierAges[hut.getHouseLevel()]) and autoHouseUpgrade
+          hut.issueImmediateOrderById(UnitId2OrderIdBJ(kUID_Struct_Huts[hut.getHouseLevel() + 1]))                    
+      else 
+        hut.setMana(hpop) // wierdness for the upgrade fix
+      
+      // count the pop etc
+      lastGrowthSum += hpop - hpop_old
+      population += hpop.round()
+    
+    lastGrowthBonusAvg = houses > 0 ? lastGrowthBonusAvg  / houses.toReal() : 0
+    // Happiness reset to positive value if everyone dies
+    if population == 0
+      happiness = 60
+      starvationReq = 0
 
-        // Having high happiness requires high ratios
-        // TODO FIX THIS WIERDNESS
-        // if (happyIncome > 0 and happiness > 75.0 * ratio)
-        //     happyIncome = (happiness - (75 * ratio)) / 50
-        // if (happyIncome < 0)
-        //     if (.50 < ratio and ratio < 1.0 and happiness < 50 * ((ratio - 0.5) / .5))
-        //         happyIncome = ((50 * ((ratio - 0.5) / .5)) - happiness) / 50
-        //     if ratio < 0.5 and happiness < ((ratio - 0.5) / 0.5) * 100 
-        //         happyIncome = ((((ratio - 0.5) / 0.5) * 100) - happiness) / 50
-        // Now add the happy income! My god this is crazy
-        happiness += happyIncome
-        happiness = min(max(happiness, -kHappinessMax), kHappinessMax)
+  // Calculates income and gives it to the empire.
+  function updateIncome()      
+    tempP = p
+    // Food income is the farms production minus pop consumption
+    foodIncome = (farms * kFoodPerFarm) + (farmsMechanical * kFoodPerMechanicalFarm)
+    foodIncome = (foodIncome * (1.0 + researchLevels[getResearchInfo(kRID_Farming).index].toReal() * kFoodUpgradeBonus)).round()
+    // Population consumption
+    foodIncome -= ((population * foodRate) div 100)
+
+    food += foodIncome
+
+    // Check to see if the food is dropping fast
+    if (food + foodIncome * 15) < 0 and food > 0
+      printWarningMessage(this.p, "Food stocks are dropping quickly!")
+      soundFoodFalling.playForPlayer(p)
+      foodFallingFast = true
+    else if foodFallingFast and foodIncome > 0 and food > 0
+      foodFallingFast = false
+      soundFoodRising.playForPlayer(p)
+
+    // Starve the peoples if we went negative
+    if food < 0
+      let starved = (food.abs() * foodRate)
+      food = 0
+      starvePeople(starved)
+      soundFoodEmpty.playForPlayer(p)
+    // Now calculate gold and lumber income
+    goldIncome = (((population * taxRate).toReal() / kIncomeGoldTaxPopDivisor) 
+      * (1. + popCommerce.toReal() * kIncomeGoldCommerceMultiplier)).round() 
+      + kIncomeGoldBasic
+    lumberIncome = ((((population).toReal() / kIncomeLumberPopDivisor) 
+      * (popIndustry.toReal() * kIncomeLumberIndustryMultiplier))).round() 
+      + kIncomeLumberBasic
+
+    // add to player state
+    p.addGold(goldIncome)
+    p.addLumber(lumberIncome)
+
+    // Now some floating text
+    let text = kStrGoldIncome + "+" + goldIncome.toString() + "|r|n"
+        + kStrLumberIncome +"+" + lumberIncome.toString() + "|r|n"
+        + kStrFoodIncome + (foodIncome > 0 ? "+" : "") + foodIncome.toString()
+    tempP = p
+    
+    for hall in hallGroup
+      standardTextTag(hall.getPos(), text)
+        ..setVisibility(GetLocalPlayer() == p)
+    
+
+  // Progresses the research you are currently conducting
+  function updateResearch()
+    if researchCenter != null and researchCenter.isAlive()
+      if popScience > 0
+        // we have science workers!
+        if currentResearchIndex > -1
+          let ri = getResearchInfoFromIndex(currentResearchIndex)
+          int researchCapacity = ((population * popScience).toReal() / (100.0 * kResearchPopPerCapacity)).toInt()
+          int totalCost = ri.getTotalCostGold(researchLevels[currentResearchIndex] + 1)
+          real percGold = researchCapacity.toReal() / totalCost.toReal()
+          real newProgress = researchProgresses[currentResearchIndex] + percGold
+          if percGold == 0.0
+            researchEtaCycles = -1
+          else 
+            // calculate eta, the .999 is for ceiling calculation
+            researchEtaCycles = (((1.0 - newProgress) / percGold) + 0.9999).toInt()
             
-
-
-    // Updates the number of people you have and upgrades houses
-    function updatePopulation()
-        // let huts = getPlayerHuts(this.p)
-        population = 0
-        houses = 0
-        // Calculate the happiness growth
-        real growth = (happiness / kPopulationHappinessGrowthFactor)
-        if growth > 0
-            // Add the relaxing bonus
-            growth *= 1.0 + (popRelaxing.toReal() / kPopulationRelaxingGrowthMultiplier)
-            negativeGrowths = 0
-        if growth < 0
-            // Negative growth will escalate quickly.
-            growth *= (1.0 + kPopulationNegativeGrowthFactor * negativeGrowths)
-            negativeGrowths += 1
-        
-        lastGrowthRate = growth
-        lastGrowthSum = 0.0
-        lastGrowthBonusAvg = 0.0
-        for hut in houseGroup
-            houses += 1
-            real hpop = hut.getMana()
-            real hpop_old = hpop
-            if growth > 0
-                // Add in aura bonus. Yes this is ugly.
-                var multiplier = 100.0
-                if UnitHasBuffBJ(hut, kBID_PopMarket)
-                    multiplier += kMarketAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopTavern)
-                    multiplier += kTavernAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopChurch)
-                    multiplier += kChurchAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopTheatre)
-                    multiplier += kTheatreAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopShoppingMall)
-                    multiplier += kShoppingMallAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopSwimmingPool)
-                    multiplier += kSwimmingPoolAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopFireLight)
-                    multiplier += kFireLightAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopLaternLight)
-                    multiplier += kLaternLightAuraRate
-                if UnitHasBuffBJ(hut, kBID_PopPowerPlant)
-                    multiplier += kPowerPlantAuraRate
-                var m = (multiplier / 100.0)
-                lastGrowthBonusAvg += (m - 1.0)
-                hpop = hpop + m * growth
-            else
-                // growth is negative, so no auras
-                hpop = hpop + growth
-                if hpop < 0
-                    // going negative!, reset to 0
-                    hpop = 0
-                    
-            // Make sure that we don't get bigger than the max
-            if hpop > hut.getMaxMana()
-                hpop = hut.getMaxMana()
-                hut.setMana(hpop)
-                if hut.getHouseLevel() < kHouseLevelCount and (currentAge >= kHouseTierAges[hut.getHouseLevel()]) and autoHouseUpgrade
-                    hut.issueImmediateOrderById(UnitId2OrderIdBJ(kUID_Struct_Huts[hut.getHouseLevel() + 1]))                    
-            else 
-                hut.setMana(hpop) // wierdness for the upgrade fix
-            
-            // count the pop etc
-            lastGrowthSum += hpop - hpop_old
-            population += hpop.round()
-        
-        lastGrowthBonusAvg = houses > 0 ? lastGrowthBonusAvg  / houses.toReal() : 0
-        // Happiness reset to positive value if everyone dies
-        if population == 0
-            happiness = 60
-            starvationReq = 0
-
-    // Calculates income and gives it to the empire.
-    function updateIncome()      
-        tempP = p
-        // Food income is the farms production minus pop consumption
-        foodIncome = (farms * kFoodPerFarm) + (farmsMechanical * kFoodPerMechanicalFarm)
-        foodIncome = (foodIncome * (1.0 + researchLevels[getResearchInfo(kRID_Farming).index].toReal() * kFoodUpgradeBonus)).round()
-        // Population consumption
-        foodIncome -= ((population * foodRate) div 100)
-
-        food += foodIncome
-
-        // Check to see if the food is dropping fast
-        if (food + foodIncome * 15) < 0 and food > 0
-            printWarningMessage(this.p, "Food stocks are dropping quickly!")
-            soundFoodFalling.playForPlayer(p)
-            foodFallingFast = true
-        else if foodFallingFast and foodIncome > 0 and food > 0
-            foodFallingFast = false
-            soundFoodRising.playForPlayer(p)
-
-        // Starve the peoples if we went negative
-        if food < 0
-            let starved = (food.abs() * foodRate)
-            food = 0
-            starvePeople(starved)
-            soundFoodEmpty.playForPlayer(p)
-        // Now calculate gold and lumber income
-        goldIncome = (((population * taxRate).toReal() / kIncomeGoldTaxPopDivisor) 
-            * (1. + popCommerce.toReal() * kIncomeGoldCommerceMultiplier)).round() 
-            + kIncomeGoldBasic
-        lumberIncome = ((((population).toReal() / kIncomeLumberPopDivisor) 
-            * (popIndustry.toReal() * kIncomeLumberIndustryMultiplier))).round() 
-            + kIncomeLumberBasic
-
-        // add to player state
-        p.addGold(goldIncome)
-        p.addLumber(lumberIncome)
-
-        // Now some floating text
-        let text = kStrGoldIncome + "+" + goldIncome.toString() + "|r|n"
-                + kStrLumberIncome +"+" + lumberIncome.toString() + "|r|n"
-                + kStrFoodIncome + (foodIncome > 0 ? "+" : "") + foodIncome.toString()
-        tempP = p
-        
-        for hall in hallGroup
-            standardTextTag(hall.getPos(), text)
-                ..setVisibility(GetLocalPlayer() == p)
-        
-
-    // Progresses the research you are currently conducting
-    function updateResearch()
-        if researchCenter != null and researchCenter.isAlive()
-            if popScience > 0
-                // we have science workers!
-                if currentResearchIndex > -1
-                    let ri = getResearchInfoFromIndex(currentResearchIndex)
-                    int researchCapacity = ((population * popScience).toReal() / (100.0 * kResearchPopPerCapacity)).toInt()
-                    int totalCost = ri.getTotalCostGold(researchLevels[currentResearchIndex] + 1)
-                    real percGold = researchCapacity.toReal() / totalCost.toReal()
-                    real newProgress = researchProgresses[currentResearchIndex] + percGold
-                    if percGold == 0.0
-                        researchEtaCycles = -1
-                    else 
-                        // calculate eta, the .999 is for ceiling calculation
-                        researchEtaCycles = (((1.0 - newProgress) / percGold) + 0.9999).toInt()
-                        
-                    if newProgress > 1.0
-                        // only need part of this update, remove the overflow gold cost.
-                        researchCapacity -= ((newProgress - 1.0) * totalCost).toInt()
-                    if p.getGold() > researchCapacity
-                        p.addGold(-researchCapacity)
-                        researchProgresses[currentResearchIndex] = newProgress
-                        if researchProgresses[currentResearchIndex] > 1.0
-                            // finished!
-                            printTimedToPlayer(kStrBlue + "Research Completed!", 5.0, p)
-                            soundResearchComplete.playForPlayer(p)
-                            researchEtaCycles = 0
-                            researchProgresses[currentResearchIndex] = 0
-                            researchLevels[currentResearchIndex] += 1
-                            AddPlayerTechResearched(p, ri.rid, 1)
-                            ri.onTechFinished(p, researchLevels[currentResearchIndex])
-                            if ri.rid == kRID_Housing
-                                // Need to make sure that the housing research doesn't give pop.
-                                
-                                let ratio = (100.0 + (researchLevels[currentResearchIndex] - 1) * 5.0) / (100.0 + researchLevels[currentResearchIndex] * 5.0)
-                                for house in houseGroup
-                                    house.setMana(ratio * house.getMana())
-
-                            currentResearchIndex = -1
-                        standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-" + researchCapacity.toString())
-                            ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-" + researchCapacity.toString(), 10.434)
-                    else 
-                        // Not enough gold
-                        researchEtaCycles = -1
-                        standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-0")
-                            ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-0", 10.434)
-                else 
-                    // pop in science but no active research.
-                    researchEtaCycles = -1
-                    standardTextTag(researchCenter.getPos(), kStrBlue + "No active research!")
-                            ..center(researchCenter.getPos3Zero(),kStrBlue + "No active research!", 10.434)
-            else 
-                if currentResearchIndex > -1
-                    // research, but nobody in science
-                    researchEtaCycles = -1
-                    standardTextTag(researchCenter.getPos(), kStrBlue + "No people in research!")
-                            ..center(researchCenter.getPos3Zero(),kStrBlue + "No people in research!", 10.434)
-
-    // Generate random empire specific events such as fires
-    function updateEvents()
-        // Check for fire
-        
-        if (GetRandomReal(0, 100) < kEventFireSpawnRate and houses > 5)
-            eventHouseFire()
-    
-
-    // This causes a fire to occur
-    private function eventHouseFire()
-        // pick a random house, create the fire
-        let victim = houseGroup.getRandomUnit()
-        let fire = CreateUnit(p, kUID_FireEntity, victim.getPos().x, victim.getPos().y, 0)
-            ..setHP(kEventFireFireInitHp)
-            ..setTimedLife(25) // can kill buildings
-        // reduce the mana and HP of the nearby structures so that the auras take effect
-        let nearby = CreateGroup()
-            ..enumUnitsInRange(victim.getPos(), 128.0 + 92, Filter(() -> GetFilterUnit().isHouse()))
-        for u from nearby
-            if u.getMaxHP() == u.getHP()
-                u.addHP(-1.0)
-            if u.getMaxMana() == u.getMana()
-                u.addMana(-1.0)
-        nearby.destr()
-        // Create the fire event
-        let fireEvent = new FireEvent(fire)
-        // Send out the firefighters!
-        for fireDept in groupFireDepts
-            let fighter = CreateUnit(p, kUID_FireFighter, fireDept.getPos().x, fireDept.getPos().y, 0)
-            fighter.issueTargetOrder("attack", fire)
-            fighter.setTimedLife(25) // no reason to live longer than this.
-            // add to the event
-            fireEvent.fighters.addUnit(fighter)
-        // Play sound!
-        soundFire.playForPlayer(p)
-
-    function toString() returns string
-        var result = kStrGold + "===== Empire Report =====\n" +
-            kStrBlue + "Owner:|r " + p.getName() + "\n" +
-            kStrBlue + "Happiness:|r " + happiness.toString() + "(" + happyIncome.toString() + ")\n" +
-            kStrBlue + "Population:|r " + population.toString() + " [" + houses.toString() + " houses |" + lastGrowthRate.toString(2) + " growth rate | " + lastGrowthSum.toString(2) + " total | " + (lastGrowthBonusAvg * 100.0).toString(2) + "% aura bonus avg]\n" +
-            kStrBlue + "PopulationDist:|r " + popRelaxing.toString() + "/" + popCommerce.toString() + "/" + popIndustry.toString() + "/" + popScience.toString()  + "(rel/com/ind/sci)\n" +
-            kStrBlue + "Tax Rate:|r " + taxRate.toString() + "\n" +
-            kStrBlue + "Income:|r " + "|cffffdc00+" + goldIncome.toString() + "|r |cff00c850+" + lumberIncome.toString() + "|r" + "\n" +
-            kStrBlue + "Food:|r " + food.toString() + "\n" +
-            kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
-            kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
-            kStrBlue + "Power:|r " + powerRequired.toString() + "/" + powerGenerated.toString() + "(disabled: " + powerDisabled.toString() +")\n" +
-            kStrBlue + "Research:|r "
-        if currentResearchIndex > -1 
-            result += getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" + " [ETA: " +   researchEtaCycles.toString() + " cycles]\n" 
-        else 
-            result += "No Tech Selected"
-        return result
+          if newProgress > 1.0
+            // only need part of this update, remove the overflow gold cost.
+            researchCapacity -= ((newProgress - 1.0) * totalCost).toInt()
+          if p.getGold() > researchCapacity
+            p.addGold(-researchCapacity)
+            researchProgresses[currentResearchIndex] = newProgress
+            if researchProgresses[currentResearchIndex] > 1.0
+              // finished!
+              printTimedToPlayer(kStrBlue + "Research Completed!", 5.0, p)
+              soundResearchComplete.playForPlayer(p)
+              researchEtaCycles = 0
+              researchProgresses[currentResearchIndex] = 0
+              researchLevels[currentResearchIndex] += 1
+              AddPlayerTechResearched(p, ri.rid, 1)
+              ri.onTechFinished(p, researchLevels[currentResearchIndex])
+              if ri.rid == kRID_Housing
+                // Need to make sure that the housing research doesn't give pop.
                 
-    private function starvePeople(int starved)
-        // what percent of the pop is left?
-        real left = (population - starved) / population
-        starvationReq += (1.0 - left) * kHappinessStarvationEffect
-        population = 0
-        for hut in houseGroup
-            let newPop = (hut.getMana() * left).toInt()
-            population += newPop
-            hut.setMana(newPop.toReal())
-        printWarningMessage(p, "Your people are starving!")
+                let ratio = (100.0 + (researchLevels[currentResearchIndex] - 1) * 5.0) / (100.0 + researchLevels[currentResearchIndex] * 5.0)
+                for house in houseGroup
+                  house.setMana(ratio * house.getMana())
 
-    function increasePopCommerce()
-        if popRelaxing > 0
-            popCommerce += 5
-            popRelaxing -= 5
-        else if popCommerce < 100
-            if popIndustry > popScience
-                popIndustry -= 5
-            else 
-                popScience -= 5
-            popCommerce += 5
-        fixTownHallItems()
+              currentResearchIndex = -1
+            standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-" + researchCapacity.toString())
+              ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-" + researchCapacity.toString(), 10.434)
+          else 
+            // Not enough gold
+            researchEtaCycles = -1
+            standardTextTag(researchCenter.getPos(), kStrGoldIncome + "-0")
+              ..center(researchCenter.getPos3Zero(),kStrGoldIncome + "-0", 10.434)
+        else 
+          // pop in science but no active research.
+          researchEtaCycles = -1
+          standardTextTag(researchCenter.getPos(), kStrBlue + "No active research!")
+              ..center(researchCenter.getPos3Zero(),kStrBlue + "No active research!", 10.434)
+      else 
+        if currentResearchIndex > -1
+          // research, but nobody in science
+          researchEtaCycles = -1
+          standardTextTag(researchCenter.getPos(), kStrBlue + "No people in research!")
+              ..center(researchCenter.getPos3Zero(),kStrBlue + "No people in research!", 10.434)
 
-    function increasePopIndustry()
-        if popRelaxing > 0
-            popIndustry += 5
-            popRelaxing -= 5
-        else if popIndustry < 100
-            if popCommerce > popScience
-                popCommerce -= 5
-            else 
-                popScience -= 5
-            popIndustry += 5
-        fixTownHallItems()
-
-    function increasePopScience()
-        if popRelaxing > 0
-            popScience += 5
-            popRelaxing -= 5
-        else if popScience < 100
-            if popCommerce > popIndustry
-                popCommerce -= 5
-            else 
-                popIndustry -= 5
-            popScience += 5
-        fixTownHallItems()
-
-    function increasePopRelaxing()
-        if popRelaxing < 100
-            if popIndustry > popScience and popIndustry > popCommerce
-                popIndustry -= 5
-            else if popCommerce > popScience
-                popCommerce -= 5
-            else 
-                popScience -= 5
-            popRelaxing += 5
-        fixTownHallItems()
-
-    function resetPopFocus()
-        popScience = 0
-        popIndustry = 0
-        popCommerce = 0
-        popRelaxing = 100
-        fixTownHallItems()
-
-    function fixTownHallItems()
-        tempP = p
-        let halls = CreateGroup()
-            ..enumUnitsInRect(GetPlayableMapRect(), 
-                Filter(() -> GetFilterUnit().isType(UNIT_TYPE_TOWNHALL) and GetFilterUnit().getOwner() == tempP))
-        for hall in halls
-            var i = hall.itemInSlot(0)
-            if i.getTypeId() != kIID_PopIndustry
-                i.remove()
-                hall.addItemToSlot(kIID_PopIndustry, 0)
-                i = hall.itemInSlot(0)
-            SetItemCharges(i, popIndustry)
-            
-            i = hall.itemInSlot(1)
-            if i.getTypeId() != kIID_PopRelaxing
-                i.remove()
-                hall.addItemToSlot(kIID_PopRelaxing, 1)
-                i = hall.itemInSlot(1)
-            SetItemCharges(i, popRelaxing)
-            
-            i = hall.itemInSlot(2)
-            if i.getTypeId() != kIID_PopCommerce
-                i.remove()
-                hall.addItemToSlot(kIID_PopCommerce, 2)
-                i = hall.itemInSlot(2)
-            SetItemCharges(i, popCommerce)
-            
-            i = hall.itemInSlot(3)
-            if i.getTypeId() != kIID_PopReset
-                i.remove()
-                hall.addItemToSlot(kIID_PopReset, 3)
-            
-            i = hall.itemInSlot(4)
-            if i.getTypeId() != kIID_PopScience
-                i.remove()
-                hall.addItemToSlot(kIID_PopScience, 4)
-                i = hall.itemInSlot(4)
-            SetItemCharges(i, popScience)
-
-    function setAge(int age)
-        if age > this.currentAge
-            this.currentAge = age
-
-    function setResearchCenter(unit u)
-        this.researchCenter = u
+  // Generate random empire specific events such as fires
+  function updateEvents()
+    // Check for fire
     
-    function setActiveResearch(int rid)
-        currentResearchIndex =  getResearchInfo(rid).index
-        if (researchProgresses[currentResearchIndex] < 0
-                or researchProgresses[currentResearchIndex] > 1.0)
-            // Make sure it's valid, or reset it.
-            researchProgresses[currentResearchIndex] = 0
+    if (GetRandomReal(0, 100) < kEventFireSpawnRate and houses > 5)
+      eventHouseFire()
+  
 
-    function setActiveResearchOff()
-        currentResearchIndex = -1
+  // This causes a fire to occur
+  private function eventHouseFire()
+    // pick a random house, create the fire
+    let victim = houseGroup.getRandomUnit()
+    let fire = CreateUnit(p, kUID_FireEntity, victim.getPos().x, victim.getPos().y, 0)
+      ..setHP(kEventFireFireInitHp)
+      ..setTimedLife(25) // can kill buildings
+    // reduce the mana and HP of the nearby structures so that the auras take effect
+    let nearby = CreateGroup()
+      ..enumUnitsInRange(victim.getPos(), 128.0 + 92, Filter(() -> GetFilterUnit().isHouse()))
+    for u from nearby
+      if u.getMaxHP() == u.getHP()
+        u.addHP(-1.0)
+      if u.getMaxMana() == u.getMana()
+        u.addMana(-1.0)
+    nearby.destr()
+    // Create the fire event
+    let fireEvent = new FireEvent(fire)
+    // Send out the firefighters!
+    for fireDept in groupFireDepts
+      let fighter = CreateUnit(p, kUID_FireFighter, fireDept.getPos().x, fireDept.getPos().y, 0)
+      fighter.issueTargetOrder("attack", fire)
+      fighter.setTimedLife(25) // no reason to live longer than this.
+      // add to the event
+      fireEvent.fighters.addUnit(fighter)
+    // Play sound!
+    soundFire.playForPlayer(p)
 
-    function addHouse(unit u)
-        houseGroup.addUnit(u)
+  function toString() returns string
+    var result = kStrGold + "===== Empire Report =====\n" +
+      kStrBlue + "Owner:|r " + p.getName() + "\n" +
+      kStrBlue + "Happiness:|r " + happiness.toString() + "(" + happyIncome.toString() + ")\n" +
+      kStrBlue + "Population:|r " + population.toString() + " [" + houses.toString() + " houses |" + lastGrowthRate.toString(2) + " growth rate | " + lastGrowthSum.toString(2) + " total | " + (lastGrowthBonusAvg * 100.0).toString(2) + "% aura bonus avg]\n" +
+      kStrBlue + "PopulationDist:|r " + popRelaxing.toString() + "/" + popCommerce.toString() + "/" + popIndustry.toString() + "/" + popScience.toString()  + "(rel/com/ind/sci)\n" +
+      kStrBlue + "Tax Rate:|r " + taxRate.toString() + "\n" +
+      kStrBlue + "Income:|r " + "|cffffdc00+" + goldIncome.toString() + "|r |cff00c850+" + lumberIncome.toString() + "|r" + "\n" +
+      kStrBlue + "Food:|r " + food.toString() + "\n" +
+      kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
+      kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
+      kStrBlue + "Power:|r " + powerRequired.toString() + "/" + powerGenerated.toString() + "(disabled: " + powerDisabled.toString() +")\n" +
+      kStrBlue + "Research:|r "
+    if currentResearchIndex > -1 
+      result += getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" + " [ETA: " +   researchEtaCycles.toString() + " cycles]\n" 
+    else 
+      result += "No Tech Selected"
+    return result
+        
+  private function starvePeople(int starved)
+    // what percent of the pop is left?
+    real left = (population - starved) / population
+    starvationReq += (1.0 - left) * kHappinessStarvationEffect
+    population = 0
+    for hut in houseGroup
+      let newPop = (hut.getMana() * left).toInt()
+      population += newPop
+      hut.setMana(newPop.toReal())
+    printWarningMessage(p, "Your people are starving!")
 
-    function removeHouse(unit u)
-        houseGroup.removeUnit(u)
+  function increasePopCommerce()
+    if popRelaxing > 0
+      popCommerce += 5
+      popRelaxing -= 5
+    else if popCommerce < 100
+      if popIndustry > popScience
+        popIndustry -= 5
+      else 
+        popScience -= 5
+      popCommerce += 5
+    fixTownHallItems()
 
-    function addHall(unit u)
-        hallGroup.addUnit(u)
+  function increasePopIndustry()
+    if popRelaxing > 0
+      popIndustry += 5
+      popRelaxing -= 5
+    else if popIndustry < 100
+      if popCommerce > popScience
+        popCommerce -= 5
+      else 
+        popScience -= 5
+      popIndustry += 5
+    fixTownHallItems()
 
-    function removeHall(unit u)
-        hallGroup.removeUnit(u)
+  function increasePopScience()
+    if popRelaxing > 0
+      popScience += 5
+      popRelaxing -= 5
+    else if popScience < 100
+      if popCommerce > popIndustry
+        popCommerce -= 5
+      else 
+        popIndustry -= 5
+      popScience += 5
+    fixTownHallItems()
 
-    // Checks the current power needed vs generated and disables/enables stuff
-    function checkPowerState()
-        let surplus = powerGenerated - powerRequired
-        if surplus >= 0 and powerDisabled == true
-            powerDisabled = false
-            for u in groupPower
-                u.unpause()
-        else if surplus < 0 and powerDisabled == false
-            powerDisabled = true
-            for u in groupPower
-                u.pause()
+  function increasePopRelaxing()
+    if popRelaxing < 100
+      if popIndustry > popScience and popIndustry > popCommerce
+        popIndustry -= 5
+      else if popCommerce > popScience
+        popCommerce -= 5
+      else 
+        popScience -= 5
+      popRelaxing += 5
+    fixTownHallItems()
 
-    function handleUnitConstructionFinish(unit u)
-        handleUnitAddition(u)
+  function resetPopFocus()
+    popScience = 0
+    popIndustry = 0
+    popCommerce = 0
+    popRelaxing = 100
+    fixTownHallItems()
+
+  function fixTownHallItems()
+    tempP = p
+    let halls = CreateGroup()
+      ..enumUnitsInRect(GetPlayableMapRect(), 
+        Filter(() -> GetFilterUnit().isType(UNIT_TYPE_TOWNHALL) and GetFilterUnit().getOwner() == tempP))
+    for hall in halls
+      var i = hall.itemInSlot(0)
+      if i.getTypeId() != kIID_PopIndustry
+        i.remove()
+        hall.addItemToSlot(kIID_PopIndustry, 0)
+        i = hall.itemInSlot(0)
+      SetItemCharges(i, popIndustry)
+      
+      i = hall.itemInSlot(1)
+      if i.getTypeId() != kIID_PopRelaxing
+        i.remove()
+        hall.addItemToSlot(kIID_PopRelaxing, 1)
+        i = hall.itemInSlot(1)
+      SetItemCharges(i, popRelaxing)
+      
+      i = hall.itemInSlot(2)
+      if i.getTypeId() != kIID_PopCommerce
+        i.remove()
+        hall.addItemToSlot(kIID_PopCommerce, 2)
+        i = hall.itemInSlot(2)
+      SetItemCharges(i, popCommerce)
+      
+      i = hall.itemInSlot(3)
+      if i.getTypeId() != kIID_PopReset
+        i.remove()
+        hall.addItemToSlot(kIID_PopReset, 3)
+      
+      i = hall.itemInSlot(4)
+      if i.getTypeId() != kIID_PopScience
+        i.remove()
+        hall.addItemToSlot(kIID_PopScience, 4)
+        i = hall.itemInSlot(4)
+      SetItemCharges(i, popScience)
+
+  function setAge(int age)
+    if age > this.currentAge
+      this.currentAge = age
+
+  function setResearchCenter(unit u)
+    this.researchCenter = u
+  
+  function setActiveResearch(int rid)
+    currentResearchIndex =  getResearchInfo(rid).index
+    if (researchProgresses[currentResearchIndex] < 0
+        or researchProgresses[currentResearchIndex] > 1.0)
+      // Make sure it's valid, or reset it.
+      researchProgresses[currentResearchIndex] = 0
+
+  function setActiveResearchOff()
+    currentResearchIndex = -1
+
+  function addHouse(unit u)
+    houseGroup.addUnit(u)
+
+  function removeHouse(unit u)
+    houseGroup.removeUnit(u)
+
+  function addHall(unit u)
+    hallGroup.addUnit(u)
+
+  function removeHall(unit u)
+    hallGroup.removeUnit(u)
+
+  // Checks the current power needed vs generated and disables/enables stuff
+  function checkPowerState()
+    let surplus = powerGenerated - powerRequired
+    if surplus >= 0 and powerDisabled == true
+      powerDisabled = false
+      for u in groupPower
+        u.unpause()
+    else if surplus < 0 and powerDisabled == false
+      powerDisabled = true
+      for u in groupPower
+        u.pause()
+
+  function handleUnitConstructionFinish(unit u)
+    handleUnitAddition(u)
+  
+  function handleUnitConstructionStart(unit u)
+    // add to upgrading units to avoid improper removal calls.
+    upgradingUnits.add(u)
+
+  function handleUpgradeStart(unit u)
+    // remove the unit while upgrading. Use the old id.
+    handleUnitRemoval(u, upgradingIds.get(u))
+    // Houses need mana set
+    if u.isHouse()
+      u.setMana(u.getMana() * 0.5)
+    // add them to the upgrading units list
+    upgradingUnits.add(u)
     
-    function handleUnitConstructionStart(unit u)
-        // add to upgrading units to avoid improper removal calls.
-        upgradingUnits.add(u)
+  function handleUpgradeFinish(unit u)
+    // Log.debug("Upgrade Finished: " + u.getName())
+    // Remove them from the upgrading list
+    upgradingUnits.remove(u)
+    // Re-add them, to apply any new building effects.
+    handleUnitAddition(u)
+    // Research center finding
+    if u.getTypeId() == kUID_Struct_ResearchCenter
+      setResearchCenter(u)
 
-    function handleUpgradeStart(unit u)
-        // remove the unit while upgrading. Use the old id.
-        handleUnitRemoval(u, upgradingIds.get(u))
-        // Houses need mana set
-        if u.isHouse()
-            u.setMana(u.getMana() * 0.5)
-        // add them to the upgrading units list
-        upgradingUnits.add(u)
-        
-    function handleUpgradeFinish(unit u)
-        // Log.debug("Upgrade Finished: " + u.getName())
-        // Remove them from the upgrading list
-        upgradingUnits.remove(u)
-        // Re-add them, to apply any new building effects.
-        handleUnitAddition(u)
-        // Research center finding
-        if u.getTypeId() == kUID_Struct_ResearchCenter
-            setResearchCenter(u)
+  function handleUpgradeCancel(unit u)
+    // Canceled, so just add the old unit to it.
+    upgradingIds.remove(u)
+    handleUnitAddition(u)
+    
+  function handleUnitDeath(unit u)
+    // Log.debug("Unit death: " + u.getName() + "(" + p.getId().toString() +")")
+    handleUnitRemoval(u, 0)
 
-    function handleUpgradeCancel(unit u)
-        // Canceled, so just add the old unit to it.
-        upgradingIds.remove(u)
-        handleUnitAddition(u)
-        
-    function handleUnitDeath(unit u)
-        // Log.debug("Unit death: " + u.getName() + "(" + p.getId().toString() +")")
-        handleUnitRemoval(u, 0)
+  function applyUnitTypePower(int uid, bool adding)
+    powerGenerated += (adding ? 1 : -1) * getUnitPowerGeneration(uid)
+    powerRequired += (adding ? 1 : -1) * getUnitPowerRequirement(uid)
+    checkPowerState()
 
-    function applyUnitTypePower(int uid, bool adding)
-        powerGenerated += (adding ? 1 : -1) * getUnitPowerGeneration(uid)
-        powerRequired += (adding ? 1 : -1) * getUnitPowerRequirement(uid)
-        checkPowerState()
+  function handleUnitAddition(unit u)
+    upgradingIds.put(u, u.getTypeId())
+    applyUnitTypePower(u.getTypeId(), true)
+    if u.getPowerRequirement() > 0
+      groupPower.addUnit(u)
+      if powerDisabled // power is disabled, so disable this unit.
+        u.pause()
+    // Check to see if this is a special type
+    if u.getTypeId() == kUID_Struct_Hall1 or  u.getTypeId() == kUID_Struct_Hall2 or  u.getTypeId() == kUID_Struct_Hall3
+      addHall(u)
+      fixTownHallItems()
+    else if u.isHouse()
+      addHouse(u)
+    else if u.getTypeId() == kUID_Struct_Farm
+      farms++
+    else if u.getTypeId() == kUID_Struct_FarmMechanized
+      farmsMechanical++
+    else if u.getTypeId() == kUID_Struct_FireDept
+      groupFireDepts.addUnit(u)
 
-    function handleUnitAddition(unit u)
-        upgradingIds.put(u, u.getTypeId())
-        applyUnitTypePower(u.getTypeId(), true)
-        if u.getPowerRequirement() > 0
-            groupPower.addUnit(u)
-            if powerDisabled // power is disabled, so disable this unit.
-                u.pause()
-        // Check to see if this is a special type
-        if u.getTypeId() == kUID_Struct_Hall1 or  u.getTypeId() == kUID_Struct_Hall2 or  u.getTypeId() == kUID_Struct_Hall3
-            addHall(u)
-            fixTownHallItems()
-        else if u.isHouse()
-            addHouse(u)
-        else if u.getTypeId() == kUID_Struct_Farm
-            farms++
-        else if u.getTypeId() == kUID_Struct_FarmMechanized
-            farmsMechanical++
-        else if u.getTypeId() == kUID_Struct_FireDept
-            groupFireDepts.addUnit(u)
-
-    // Handles the unit's removal. If a non-0 uid is passed, uses it instead of this.
-    function handleUnitRemoval(unit u, int uid)
-        let id = uid == 0 ? u.getTypeId() : uid
-        if not upgradingUnits.has(u)
-            // If units are upgrading/underconstruction, they don't count.
-            applyUnitTypePower(id, false)
-            if (u.getPowerRequirement() > 0)
-                groupPower.removeUnit(u)
-            // Remove houses, halls, and farms
-            if id == kUID_Struct_Hall1 or id == kUID_Struct_Hall2 or id == kUID_Struct_Hall3
-                removeHall(u)
-            else if u.isHouse()
-                removeHouse(u)
-            else if id == kUID_Struct_Farm and not upgradingUnits.has(u)
-                farms--
-            else if id == kUID_Struct_FarmMechanized and not upgradingUnits.has(u)
-                // if it's in the upgrade list, that means that it hasn't been counted yet
-                farmsMechanical--
-            else if id == kUID_Struct_FireDept // Fire dept
-                groupFireDepts.removeUnit(u)
-        
-        
-        // Remove from the upgrading gimmicks.
-        if upgradingUnits.has(u)
-            upgradingUnits.remove(u)
-        upgradingIds.remove(u)
+  // Handles the unit's removal. If a non-0 uid is passed, uses it instead of this.
+  function handleUnitRemoval(unit u, int uid)
+    let id = uid == 0 ? u.getTypeId() : uid
+    if not upgradingUnits.has(u)
+      // If units are upgrading/underconstruction, they don't count.
+      applyUnitTypePower(id, false)
+      if (u.getPowerRequirement() > 0)
+        groupPower.removeUnit(u)
+      // Remove houses, halls, and farms
+      if id == kUID_Struct_Hall1 or id == kUID_Struct_Hall2 or id == kUID_Struct_Hall3
+        removeHall(u)
+      else if u.isHouse()
+        removeHouse(u)
+      else if id == kUID_Struct_Farm and not upgradingUnits.has(u)
+        farms--
+      else if id == kUID_Struct_FarmMechanized and not upgradingUnits.has(u)
+        // if it's in the upgrade list, that means that it hasn't been counted yet
+        farmsMechanical--
+      else if id == kUID_Struct_FireDept // Fire dept
+        groupFireDepts.removeUnit(u)
     
     
+    // Remove from the upgrading gimmicks.
+    if upgradingUnits.has(u)
+      upgradingUnits.remove(u)
+    upgradingIds.remove(u)
+  
+  
 
 init 
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH, () -> begin
-        if GetConstructedStructure().getOwner().getRole() == PlayerRole.Empire 
-            GetConstructedStructure().getOwner().getEmpireInfo().handleUnitConstructionFinish(GetConstructedStructure())
-    end)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START, () -> begin
-        if GetConstructedStructure().getOwner().getRole() == PlayerRole.Empire 
-            GetConstructedStructure().getOwner().getEmpireInfo().handleUnitConstructionStart(GetConstructedStructure())
-    end)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_FINISH, () -> begin
-        if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire 
-            GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeFinish(GetTriggerUnit())
-    end)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH, () -> begin
-        if GetDyingUnit().getOwner().getRole() == PlayerRole.Empire 
-            GetDyingUnit().getOwner().getEmpireInfo().handleUnitDeath(GetDyingUnit())
-    end)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START) -> 
-        if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
-            GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeStart(GetTriggerUnit())
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_CANCEL, () -> begin
-        if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
-            GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeCancel(GetTriggerUnit())
-    end)
-    
-    
-    
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH, () -> begin
+    if GetConstructedStructure().getOwner().getRole() == PlayerRole.Empire 
+      GetConstructedStructure().getOwner().getEmpireInfo().handleUnitConstructionFinish(GetConstructedStructure())
+  end)
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START, () -> begin
+    if GetConstructedStructure().getOwner().getRole() == PlayerRole.Empire 
+      GetConstructedStructure().getOwner().getEmpireInfo().handleUnitConstructionStart(GetConstructedStructure())
+  end)
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_FINISH, () -> begin
+    if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire 
+      GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeFinish(GetTriggerUnit())
+  end)
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH, () -> begin
+    if GetDyingUnit().getOwner().getRole() == PlayerRole.Empire 
+      GetDyingUnit().getOwner().getEmpireInfo().handleUnitDeath(GetDyingUnit())
+  end)
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START) -> 
+    if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
+      GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeStart(GetTriggerUnit())
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_CANCEL, () -> begin
+    if GetTriggerUnit().getOwner().getRole() == PlayerRole.Empire
+      GetTriggerUnit().getOwner().getEmpireInfo().handleUpgradeCancel(GetTriggerUnit())
+  end)
+  
+  
+  

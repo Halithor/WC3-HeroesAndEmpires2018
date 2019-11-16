@@ -9,23 +9,23 @@ import HeroClass_Ranger
 import HeroClass_Wizard
 
 public function beginHeroGameForPlayer(player p)
-    let spwn = getRandomHeroSpawn()
-    int typeid
-    switch p.getHeroClass()
-        case NONE
-            // This shouldn't happen tbh, but in case some weirdness happens.
-            typeid = kUID_HeroFighter
-            p.setHeroInfo(new HeroInfoFighter())
-            p.setHeroClass(HeroClass.Fighter)
-        case Fighter
-            typeid = kUID_HeroFighter
-            p.setHeroInfo(new HeroInfoFighter())
-        case Ranger
-            typeid = kUID_HeroRanger
-            p.setHeroInfo(new HeroInfoRanger())
-        case Wizard
-            typeid = kUID_HeroWizard
-            p.setHeroInfo(new HeroInfoWizard())
-    SetCameraPositionForPlayer(p, GetRectCenterX(spwn), GetRectCenterY(spwn))
-    let u = CreateUnit(p, typeid, GetRectCenterX(spwn), GetRectCenterY(spwn), 0)
-    SelectUnitForPlayerSingle(u, p)
+  let spwn = getRandomHeroSpawn()
+  int typeid
+  switch p.getHeroClass()
+    case NONE
+      // This shouldn't happen tbh, but in case some weirdness happens.
+      typeid = kUID_HeroFighter
+      p.setHeroInfo(new HeroInfoFighter())
+      p.setHeroClass(HeroClass.Fighter)
+    case Fighter
+      typeid = kUID_HeroFighter
+      p.setHeroInfo(new HeroInfoFighter())
+    case Ranger
+      typeid = kUID_HeroRanger
+      p.setHeroInfo(new HeroInfoRanger())
+    case Wizard
+      typeid = kUID_HeroWizard
+      p.setHeroInfo(new HeroInfoWizard())
+  SetCameraPositionForPlayer(p, GetRectCenterX(spwn), GetRectCenterY(spwn))
+  let u = CreateUnit(p, typeid, GetRectCenterX(spwn), GetRectCenterY(spwn), 0)
+  SelectUnitForPlayerSingle(u, p)

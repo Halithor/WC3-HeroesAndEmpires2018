@@ -6,21 +6,21 @@ import Globals
 import EmpireGlobals
 
 function handleItemUse()
-    let user = GetManipulatingUnit()
-    let i = GetManipulatedItem()
-    if user.getOwner().getRole() == PlayerRole.Empire
-        let p = user.getOwner()
-        switch i.getTypeId()
-            case kIID_PopCommerce
-                p.getEmpireInfo().increasePopCommerce()
-            case kIID_PopIndustry
-                p.getEmpireInfo().increasePopIndustry()
-            case kIID_PopScience
-                p.getEmpireInfo().increasePopScience()
-            case kIID_PopRelaxing
-                p.getEmpireInfo().increasePopRelaxing()
-            case kIID_PopReset
-                p.getEmpireInfo().resetPopFocus()
+  let user = GetManipulatingUnit()
+  let i = GetManipulatedItem()
+  if user.getOwner().getRole() == PlayerRole.Empire
+    let p = user.getOwner()
+    switch i.getTypeId()
+      case kIID_PopCommerce
+        p.getEmpireInfo().increasePopCommerce()
+      case kIID_PopIndustry
+        p.getEmpireInfo().increasePopIndustry()
+      case kIID_PopScience
+        p.getEmpireInfo().increasePopScience()
+      case kIID_PopRelaxing
+        p.getEmpireInfo().increasePopRelaxing()
+      case kIID_PopReset
+        p.getEmpireInfo().resetPopFocus()
 
 init 
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM, function handleItemUse)
+  registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM, function handleItemUse)

@@ -11,70 +11,70 @@ constant kEmpireUpdateCycleDuration = 6.0
 // TODO some optimization on the player group of empires. 
 
 function updateHappiness()
-    bj_FORCE_ALL_PLAYERS.forEach() ->
-        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-            GetEnumPlayer().getEmpireInfo().updateHappiness()
+  bj_FORCE_ALL_PLAYERS.forEach() ->
+    if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+      GetEnumPlayer().getEmpireInfo().updateHappiness()
 
 function updatePopulation()
-    bj_FORCE_ALL_PLAYERS.forEach() ->
-        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-            GetEnumPlayer().getEmpireInfo().updatePopulation()
-    
+  bj_FORCE_ALL_PLAYERS.forEach() ->
+    if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+      GetEnumPlayer().getEmpireInfo().updatePopulation()
+  
 function updateIncome()
-    bj_FORCE_ALL_PLAYERS.forEach() ->
-        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-            GetEnumPlayer().getEmpireInfo().updateIncome()
-            GetEnumPlayer().getEmpireInfo().updateMultiboard()
-            printTimedToPlayer(GetEnumPlayer().getEmpireInfo().toString(), 4, GetEnumPlayer())
+  bj_FORCE_ALL_PLAYERS.forEach() ->
+    if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+      GetEnumPlayer().getEmpireInfo().updateIncome()
+      GetEnumPlayer().getEmpireInfo().updateMultiboard()
+      printTimedToPlayer(GetEnumPlayer().getEmpireInfo().toString(), 4, GetEnumPlayer())
 
 function updateResearch()
-    bj_FORCE_ALL_PLAYERS.forEach() ->
-        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-            GetEnumPlayer().getEmpireInfo().updateResearch()
+  bj_FORCE_ALL_PLAYERS.forEach() ->
+    if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+      GetEnumPlayer().getEmpireInfo().updateResearch()
 
 function updateEvents()
-    bj_FORCE_ALL_PLAYERS.forEach() ->
-        if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
-            GetEnumPlayer().getEmpireInfo().updateEvents()
+  bj_FORCE_ALL_PLAYERS.forEach() ->
+    if GetEnumPlayer().isActive() and GetEnumPlayer().getRole() == PlayerRole.Empire
+      GetEnumPlayer().getEmpireInfo().updateEvents()
 
 public function startEmpires()
+  doPeriodically(kEmpireUpdateCycleDuration) cb ->
+    updateHappiness()
+  doAfter(1.0) ->
     doPeriodically(kEmpireUpdateCycleDuration) cb ->
-        updateHappiness()
-    doAfter(1.0) ->
-        doPeriodically(kEmpireUpdateCycleDuration) cb ->
-            updatePopulation()
-    doAfter(2.0) ->
-        doPeriodically(kEmpireUpdateCycleDuration) cb ->
-            updateIncome()
-    doAfter(3.0) ->
-        doPeriodically(kEmpireUpdateCycleDuration) cb ->
-            updateResearch()
-    doAfter(4.0) ->
-        doPeriodically(kEmpireUpdateCycleDuration) cb ->
-            updateEvents()
-    // getTimer()
-    //     ..start(1.0, () -> begin
-    //         getTimer()
-    //             ..startPeriodic(kEmpireUpdateCycleDuration, function updatePopulation)
-    //         GetExpiredTimer().release()
-    //     end)
-    // getTimer()
-    //     ..start(2.0, () -> begin
-    //         getTimer()
-    //             ..startPeriodic(kEmpireUpdateCycleDuration, function updateIncome)
-    //         GetExpiredTimer().release()
-    //     end)
-    // getTimer()
-    //     ..start(3.0, () -> begin
-    //         getTimer()
-    //             ..startPeriodic(kEmpireUpdateCycleDuration, function updateResearch)
-    //         GetExpiredTimer().release()
-    //     end)
-    
-    for i = 0 to 23
-        CreateTrigger()..registerPlayerChatEvent(Player(i), "-stats", true)
-            ..addAction(() -> begin
-                if GetTriggerPlayer().getRole() == PlayerRole.Empire
-                    printTimedToPlayerClear(GetTriggerPlayer().getEmpireInfo().toString(), 15.0, GetTriggerPlayer())
-            end)
-    
+      updatePopulation()
+  doAfter(2.0) ->
+    doPeriodically(kEmpireUpdateCycleDuration) cb ->
+      updateIncome()
+  doAfter(3.0) ->
+    doPeriodically(kEmpireUpdateCycleDuration) cb ->
+      updateResearch()
+  doAfter(4.0) ->
+    doPeriodically(kEmpireUpdateCycleDuration) cb ->
+      updateEvents()
+  // getTimer()
+  //     ..start(1.0, () -> begin
+  //         getTimer()
+  //             ..startPeriodic(kEmpireUpdateCycleDuration, function updatePopulation)
+  //         GetExpiredTimer().release()
+  //     end)
+  // getTimer()
+  //     ..start(2.0, () -> begin
+  //         getTimer()
+  //             ..startPeriodic(kEmpireUpdateCycleDuration, function updateIncome)
+  //         GetExpiredTimer().release()
+  //     end)
+  // getTimer()
+  //     ..start(3.0, () -> begin
+  //         getTimer()
+  //             ..startPeriodic(kEmpireUpdateCycleDuration, function updateResearch)
+  //         GetExpiredTimer().release()
+  //     end)
+  
+  for i = 0 to 23
+    CreateTrigger()..registerPlayerChatEvent(Player(i), "-stats", true)
+      ..addAction(() -> begin
+        if GetTriggerPlayer().getRole() == PlayerRole.Empire
+          printTimedToPlayerClear(GetTriggerPlayer().getEmpireInfo().toString(), 15.0, GetTriggerPlayer())
+      end)
+  

@@ -7,20 +7,20 @@ import Assets
 
 public class HeroInfoWizard extends HeroInfo
 
-    override function onLevelUp()
-        skip
+  override function onLevelUp()
+    skip
 
-    
+  
 
 
 
 @compiletime function genFighter()
-    var def = genBlankHero(kUID_HeroWizard)
-    def..setIconGameInterface(Icons.bTNJaina)
-        ..setName("Wizard")
-        ..setProperNames("Wizard")
-        ..setProperNamesUsed(1)
-        ..setModelFile(Units.jaina1)
-        ..setUnitSoundSet("Jaina")
-        ..setSelectionScale(1.0)
-        ..setPrimaryAttribute("INT")
+  var def = genBlankHero(kUID_HeroWizard)
+  def..setIconGameInterface(Icons.bTNJaina)
+    ..setName("Wizard")
+    ..setProperNames("Wizard")
+    ..setProperNamesUsed(1)
+    ..setModelFile(Units.jaina1)
+    ..setUnitSoundSet("Jaina")
+    ..setSelectionScale(1.0)
+    ..setPrimaryAttribute("INT")

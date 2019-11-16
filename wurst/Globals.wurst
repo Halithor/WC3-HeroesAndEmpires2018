@@ -20,23 +20,23 @@ public int playersInGame = 0
 
 
 public enum PlayerRole
-    NONE    
-    Hero
-    Empire
+  NONE    
+  Hero
+  Empire
 
 public enum HeroClass
-    NONE
-    Fighter
-    Ranger
-    Wizard
+  NONE
+  Fighter
+  Ranger
+  Wizard
 
 public function HeroClass.getName() returns string
-    switch this
-        case NONE
-            return "NO CLASS"
-        case Fighter
-            return "Fighter"
-        case Ranger
-            return "Ranger"
-        case Wizard
-            return "Wizard"
+  switch this
+    case NONE
+      return "NO CLASS"
+    case Fighter
+      return "Fighter"
+    case Ranger
+      return "Ranger"
+    case Wizard
+      return "Wizard"

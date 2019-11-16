@@ -5,19 +5,19 @@ constant kDmgAmount = 1.5
 constant kLifeRequirement = 0.405 + 1.5 * kDmgAmount
 
 public function unit.isStructureFinished() returns bool
-    if not this.isType(UNIT_TYPE_STRUCTURE)
-        return true
-    let s = this.getLife()
-    var r = s
-    // Make sure we have enough life
-    if s < kLifeRequirement
-        r = s + kLifeRequirement
-        this.setLife(r)
-    // Check this thing
-    this.damageTarget(this, kDmgAmount, ATTACK_TYPE_MAGIC)
-    var finished = (r - this.getLife()) != kDmgAmount
-    // reset life
-    this.setLife(s)
+  if not this.isType(UNIT_TYPE_STRUCTURE)
+    return true
+  let s = this.getLife()
+  var r = s
+  // Make sure we have enough life
+  if s < kLifeRequirement
+    r = s + kLifeRequirement
+    this.setLife(r)
+  // Check this thing
+  this.damageTarget(this, kDmgAmount, ATTACK_TYPE_MAGIC)
+  var finished = (r - this.getLife()) != kDmgAmount
+  // reset life
+  this.setLife(s)
 
-    return finished
-    
+  return finished
+  
