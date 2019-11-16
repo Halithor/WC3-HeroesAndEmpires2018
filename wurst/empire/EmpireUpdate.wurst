@@ -441,7 +441,7 @@ public class EmpireInfo
         soundFire.playForPlayer(p)
 
     function toString() returns string
-        return kStrGold + "===== Empire Report =====\n" +
+        var result = kStrGold + "===== Empire Report =====\n" +
             kStrBlue + "Owner:|r " + p.getName() + "\n" +
             kStrBlue + "Happiness:|r " + happiness.toString() + "(" + happyIncome.toString() + ")\n" +
             kStrBlue + "Population:|r " + population.toString() + " [" + houses.toString() + " houses |" + lastGrowthRate.toString(2) + " growth rate | " + lastGrowthSum.toString(2) + " total | " + (lastGrowthBonusAvg * 100.0).toString(2) + "% aura bonus avg]\n" +
@@ -452,9 +452,13 @@ public class EmpireInfo
             kStrBlue + "Food Rate:|r " + foodRate.toString() + "\n"  +
             kStrBlue + "Food Income:|r " + foodIncome.toString() + "(" + farms.toString() + " farms)\n" +
             kStrBlue + "Power:|r " + powerRequired.toString() + "/" + powerGenerated.toString() + "(disabled: " + powerDisabled.toString() +")\n" +
-            kStrBlue + "Research:|r " + (currentResearchIndex > -1 ? getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" : "No Tech Selected") 
-                + " [ETA: " +   researchEtaCycles.toString() + " cycles]\n" 
-    
+            kStrBlue + "Research:|r "
+        if currentResearchIndex > -1 
+            result += getResearchInfoFromIndex(currentResearchIndex).name + " @ " + (researchProgresses[currentResearchIndex] * 100).toString() + "%" + " [ETA: " +   researchEtaCycles.toString() + " cycles]\n" 
+        else 
+            result += "No Tech Selected"
+        return result
+                
     private function starvePeople(int starved)
         // what percent of the pop is left?
         real left = (population - starved) / population
