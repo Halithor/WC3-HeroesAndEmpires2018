@@ -1,4 +1,4 @@
-# WC3-HeroesAndEmpires2018
+# WC3-HeroesAndEmpires2019
 *By Halithor*
 
 This is a remake project of the classic Heroes and Empires game from whenever ago in WC3 history. The game has been one of my personal favorites, but has many elements that could be improved on. There's also the issue with there being many hacked versions and nobody being totally sure which version to host.
