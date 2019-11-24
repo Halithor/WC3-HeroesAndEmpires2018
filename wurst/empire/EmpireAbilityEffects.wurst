@@ -35,14 +35,18 @@ function handleEmpireCast()
     case kAID_GrowTrees
       let loc = GetSpellTargetLoc()
       EnumDestructablesInCircleBJ(kTreeKillRadius, loc, () -> begin
-        if GetEnumDestructable().getTypeId() == 'LTlt'
+        if GetEnumDestructable().getTypeId() == 'LTlt' 
+            or GetEnumDestructable().getTypeId() == 'BTtw' 
+            or GetEnumDestructable().getTypeId() == 'WTst'
           DestructableRestoreLife(GetEnumDestructable(), 10000000, true)
       end)
       RemoveLocation(loc)
     case kAID_KillTrees
       let loc = GetSpellTargetLoc()
       EnumDestructablesInCircleBJ(kTreeKillRadius, loc, () -> begin
-        if GetEnumDestructable().getTypeId() == 'LTlt'
+        if GetEnumDestructable().getTypeId() == 'LTlt' 
+            or GetEnumDestructable().getTypeId() == 'BTtw' 
+            or GetEnumDestructable().getTypeId() == 'WTst'
           GetEnumDestructable().kill()
       end)
       RemoveLocation(loc)

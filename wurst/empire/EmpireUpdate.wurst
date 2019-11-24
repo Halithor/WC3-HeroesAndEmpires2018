@@ -633,6 +633,9 @@ public class EmpireInfo
   function handleUpgradeCancel(unit u)
     // Canceled, so just add the old unit to it.
     upgradingIds.remove(u)
+    // Set max mana of houses due to upgrade cancel glitch.
+    if u.isHouse()
+      u.setMaxMana(Pow(2, u.getHouseLevel() * 1.0).round() * 20)
     handleUnitAddition(u)
     
   function handleUnitDeath(unit u)

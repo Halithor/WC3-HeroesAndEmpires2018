@@ -39,7 +39,7 @@ function genGrowthAura(int newId, int buffId, string name, string icon, string i
 
   new AbilityDefinitionHarvestLumber(kAID_WorkerHarvest)
     ..setLevels(50)
-    ..presetCastRange((int _) -> 70.0)
+    ..presetCastRange((int _) -> 116.0)
     ..presetDamagetoTree((int lvl) -> 1 + lvl)
     ..presetLumberCapacity((int lvl) -> 10 + 10*lvl)
     ..presetDurationNormal((int _) -> 2.0)
